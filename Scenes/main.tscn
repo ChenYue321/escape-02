@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://cli80dl3lj78" path="res://texture/table/wood_table_nor_gl_1k.jpg" id="5_hptm8"]
 [ext_resource type="Texture2D" uid="uid://dvbc36oxrftfi" path="res://texture/table/wood_table_rough_1k.jpg" id="6_d1ilt"]
 [ext_resource type="Material" uid="uid://dnxrsnwevuoe0" path="res://texture/desk_leg.tres" id="7_6iyac"]
+[ext_resource type="Texture2D" uid="uid://canlgd0cn0aba" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_diff_1k.jpg" id="8_k4x2p"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_p3ljj"]
 top_radius = 0.1
@@ -20,12 +21,9 @@ height = 1.8
 [sub_resource type="BoxMesh" id="BoxMesh_p3oet"]
 size = Vector3(8, 0.1, 8)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_d1ilt"]
-load_path = "res://.godot/imported/concrete_floor_worn_001_diff_1k.jpg-34c0f489b1b6028c6cb9d22e256b1e8c.s3tc.ctex"
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8gbba"]
 albedo_color = Color(0.881126, 0.881179, 0.8661595, 1)
-albedo_texture = SubResource("CompressedTexture2D_d1ilt")
+albedo_texture = ExtResource("8_k4x2p")
 roughness = 0.9
 roughness_texture = ExtResource("2_6bp64")
 normal_enabled = true
