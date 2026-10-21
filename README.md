@@ -6,6 +6,7 @@
 
 ![Godot](https://img.shields.io/badge/Godot-4.7-478cbf)
 ![Status](https://img.shields.io/badge/status-prototype-orange)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 ---
 
@@ -89,9 +90,11 @@ escape-02/
 
 `texture/` 下的 PBR 贴图取自公开素材库（ambientCG / Poly Haven 系列命名格式），主体为 CC0 授权。由于本仓库为公开仓库，**如需再分发或商用，请自行核对其原始授权条款**；`texture/*.tres` 材质与场景文件均为本项目原创。
 
-## 关于 License
+## License
 
-本项目目前**未声明开源许可**，默认保留所有权利。若希望他人复用代码，建议后续补充 MIT 或 Apache-2.0 许可文件（需要的话可以随时添加）。
+代码以 [MIT License](LICENSE) 开源，随便用，不必打招呼。
+
+需要说明的是，MIT 只覆盖本仓库中的原创部分（脚本、场景、材质资源等）；`texture/` 下的第三方贴图仍遵循其原始授权条款，不在 MIT 覆盖范围内。
 
 ---
 
