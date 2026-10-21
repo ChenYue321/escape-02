@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dnxrsnwevuoe0"]
+
+[ext_resource type="Texture2D" uid="uid://bl0frr6uaki0b" path="res://texture/table/wood_table_worn_diff_1k.jpg" id="1_1xm7m"]
+[ext_resource type="Texture2D" uid="uid://ojfpebepro5r" path="res://texture/table/wood_table_worn_nor_gl_1k.jpg" id="2_trwe4"]
+[ext_resource type="Texture2D" uid="uid://jgcwsyu53r48" path="res://texture/table/wood_table_worn_rough_1k.jpg" id="3_j3ewg"]
+
+[resource]
+albedo_texture = ExtResource("1_1xm7m")
+roughness_texture = ExtResource("3_j3ewg")
+normal_enabled = true
+normal_scale = 0.4
+normal_texture = ExtResource("2_trwe4")
