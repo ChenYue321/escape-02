@@ -21,7 +21,7 @@
 
 ## 当前进度
 
-已完成的是一间可自由行走的封闭房间场景（`Scenes/main.tscn`，61 个节点）：
+已完成的是一间可自由行走的封闭房间场景（`Scenes/main.tscn`，67 个节点）：
 
 - **房间**：地板、天花板、四面墙，混凝土与砖墙材质，踢脚线处的电源插座；`RoomCollision` 提供 6 个盒形碰撞体（地面/天花板/四面墙）
 - **顶灯**：吊顶灯罩 + `SpotLight3D`，灯罩内侧有自发光表面
@@ -29,7 +29,8 @@
 - **电脑**：机箱、显示器（多部件拼装）、键盘，以及沿 `Path3D` 程序化生成的键盘线与电源线
 - **台灯**：灯罩、支架、底座 + `SpotLight3D`
 - **第一人称控制器**：`Character`（`CharacterBody3D`）+ 胶囊碰撞体 + `script/player.gd`，相机位于 1.6 m 眼高
-- **准星**：`HUD/Crosshair`（`CanvasLayer` + 自绘 `Control`），屏幕正中的圆点与四段短线
+- **准星**：`HUD/Crosshair`（`CanvasLayer` + 自绘 `Control`），屏幕正中的圆点与四段短线，指到可交互物体时变金色并张开
+- **交互**：`Camera3D/InteractRay`（`RayCast3D`，2.5 m）命中带 `interact()` 方法的碰撞体后弹出 `[E]` 提示；吊灯与台灯都可以用 `E` 开关
 - **环境**：`WorldEnvironment`（Filmic 色调映射、微弱冷色环境光、SSAO、辉光），见 `environment/room_env.tres`
 
 > 说明：角色**没有可见的身体模型**——相机位于胶囊体内部，第一人称下本来就看不到自己，只有投影会落在地上。交互与解谜逻辑尚未开始。
@@ -43,8 +44,18 @@
 | 移动鼠标 | 转动视角（左右转身体，上下只转相机，俯仰限制 ±89°） |
 | `ESC` | 释放鼠标，方便切出窗口 |
 | 鼠标左键 | 重新捕获鼠标 |
+| `E` | 与准星指着的物体交互（目前是吊灯 / 台灯的开关） |
 
 准星位于屏幕正中，形状由 `script/crosshair.gd` 的导出参数控制（点半径、四段短线长度、颜色），改完在 Inspector 里立即生效。
+
+### 给新物体加交互
+
+不需要继承任何基类：只要一个 `CollisionObject3D` 实现了 `interact(user)` 方法，就会被射线识别。
+
+1. 在目标物体旁建一个 `StaticBody3D`，加 `CollisionShape3D`，碰撞层设为 **2（interactable）**、mask 设为 0 —— 玩家撞不到它，但射线看得到
+2. 挂一个脚本，实现 `func interact(user: Node3D) -> void:`
+3. 想改提示文字，改 `HUD/Prompt` 的 `text`
+
 
 按键映射定义在项目设置的 `input/` 段，可在 `项目 → 项目设置 → 输入映射` 中改键或加重绑定（比如手柄）。
 
@@ -56,7 +67,9 @@ escape-02/
 ├── Scenes/
 │   └── main.tscn          # 主场景：房间 / 书桌 / 电脑 / 台灯
 ├── script/
-│   ├── player.gd          # 第一人称控制器：WASD 移动、跳跃、鼠标视角
+│   ├── player.gd          # 第一人称控制器：WASD 移动、跳跃、鼠标视角、交互射线
+│   ├── hud.gd             # HUD：把交互焦点翻译成准星高亮与 [E] 提示
+│   ├── lamp_switch.gd      # 交互示例：开关灯（切换 SpotLight3D 与自发光灯片）
 │   ├── crosshair.gd       # 屏幕准星：用 _draw() 画的圆点与短线
 │   └── wire.gd            # @tool 脚本：把 Path3D 曲线生成为管状网格
 ├── environment/
@@ -101,7 +114,7 @@ escape-02/
 ## Roadmap（想到哪做到哪）
 
 - [x] 第一人称控制 + 碰撞体
-- [ ] 交互系统（拾取、观察、开关）
+- [x] 射线交互系统（开关灯已实现；拾取、观察尚未做）
 - [ ] 至少一条完整的解谜链路
 - [ ] 音效与氛围音乐
 - [ ] 光照与后处理调优（SSAO、体积雾）

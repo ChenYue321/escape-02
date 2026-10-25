@@ -16,7 +16,14 @@ extends CharacterBody3D
 ## 俯仰角上限，度。防止视角翻过头顶
 @export var pitch_limit: float = 89.0
 
+## 准星指到可交互物体时发出，target 为 null 表示失去目标
+signal focus_changed(target: Node)
+
 @onready var _camera: Camera3D = $Camera3D
+@onready var _interact_ray: RayCast3D = $Camera3D/InteractRay
+
+## 当前准星指着的可交互物体（实现 interact() 方法的碰撞体）
+var _focus: Node = null
 
 ## 从项目设置读取重力，不写死 9.8，改物理设置后这里自动跟随
 var _gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
@@ -34,6 +41,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	elif event is InputEventMouseButton and event.pressed:
 		_capture_mouse()
+	elif event.is_action_pressed("interact"):
+		_try_interact()
 
 
 func _physics_process(delta: float) -> void:
@@ -51,6 +60,7 @@ func _physics_process(delta: float) -> void:
 	velocity.z = direction.z * move_speed
 
 	move_and_slide()
+	_update_focus()
 
 
 ## 鼠标转身：左右转整个身体，上下只转相机，身体始终保持竖直
@@ -60,6 +70,27 @@ func _look(motion: InputEventMouseMotion) -> void:
 	rotate_y(-motion.relative.x * mouse_sensitivity)
 	var pitch: float = _camera.rotation.x - motion.relative.y * mouse_sensitivity
 	_camera.rotation.x = clampf(pitch, -deg_to_rad(pitch_limit), deg_to_rad(pitch_limit))
+
+
+## 每帧检查交互射线打到了什么。
+## 用"有没有 interact() 方法"来判断能否交互（鸭子类型），
+## 这样任何碰撞体只要实现一个 interact(user) 就能被使用，不必继承特定基类。
+func _update_focus() -> void:
+	var target: Node = null
+	if _interact_ray.is_colliding():
+		var collider = _interact_ray.get_collider()
+		if collider != null and collider.has_method("interact"):
+			target = collider
+	if target != _focus:
+		_focus = target
+		focus_changed.emit(_focus)
+
+
+func _try_interact() -> void:
+	if _focus == null:
+		return
+	# call() 是动态调用：编辑期 _focus 只是 Node，编译期不知道它有 interact()
+	_focus.call("interact", self)
 
 
 func _capture_mouse() -> void:

@@ -36,6 +36,14 @@ extends Control
 	set(value):
 		outline_color = value
 		queue_redraw()
+## 指到可交互物体时的颜色
+@export var active_color: Color = Color(1.0, 0.85, 0.45, 1.0):
+	set(value):
+		active_color = value
+		queue_redraw()
+
+## 是否正处于"指着可交互物体"的状态
+var _active: bool = false
 
 
 func _ready() -> void:
@@ -43,15 +51,26 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
+## 由 HUD 调用：切换"可交互"高亮
+func set_active(active: bool) -> void:
+	if _active == active:
+		return
+	_active = active
+	queue_redraw()
+
+
 func _draw() -> void:
 	var center := size * 0.5
+	var tint := active_color if _active else color
+	# 指到可交互物体时四段短线会向外张开一点，作为第二重提示
+	var spread := gap + (2.0 if _active else 0.0)
 
 	# 先画一圈略大的深色底，再叠亮色，形成描边
 	draw_circle(center, dot_radius + 1.0, outline_color)
-	draw_circle(center, dot_radius, color)
+	draw_circle(center, dot_radius, tint)
 
 	for dir: Vector2 in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
-		var from := center + dir * gap
-		var to := center + dir * (gap + tick_length)
+		var from := center + dir * spread
+		var to := center + dir * (spread + tick_length)
 		draw_line(from, to, outline_color, tick_width + 2.0, true)
-		draw_line(from, to, color, tick_width, true)
+		draw_line(from, to, tint, tick_width, true)
