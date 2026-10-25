@@ -5,19 +5,37 @@ extends Control
 
 @export_group("形状")
 ## 中心圆点半径，像素
-@export var dot_radius: float = 2.0
+@export var dot_radius: float = 2.0:
+	set(value):
+		dot_radius = value
+		queue_redraw()
 ## 短线离中心的距离，像素（越大越"张开"）
-@export var gap: float = 4.0
+@export var gap: float = 4.0:
+	set(value):
+		gap = value
+		queue_redraw()
 ## 短线长度，像素
-@export var tick_length: float = 5.0
+@export var tick_length: float = 5.0:
+	set(value):
+		tick_length = value
+		queue_redraw()
 ## 短线粗细，像素
-@export var tick_width: float = 1.5
+@export var tick_width: float = 1.5:
+	set(value):
+		tick_width = value
+		queue_redraw()
 
 @export_group("颜色")
 ## 亮部颜色
-@export var color: Color = Color(1.0, 1.0, 1.0, 0.85)
+@export var color: Color = Color(1.0, 1.0, 1.0, 0.85):
+	set(value):
+		color = value
+		queue_redraw()
 ## 描边颜色：深色描边保证在亮背景上也看得见
-@export var outline_color: Color = Color(0.0, 0.0, 0.0, 0.5)
+@export var outline_color: Color = Color(0.0, 0.0, 0.0, 0.5):
+	set(value):
+		outline_color = value
+		queue_redraw()
 
 
 func _ready() -> void:
