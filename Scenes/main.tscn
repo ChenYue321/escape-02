@@ -106,7 +106,7 @@ _data = {
 }
 point_count = 10
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_d1ilt"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_6iyac"]
 _surfaces = [{
 "aabb": AABB(-0.19347723, -0.055, -0.0049604173, 0.27184463, 0.059961036, 0.31877378),
 "format": 34359742471,
@@ -125,7 +125,7 @@ _data = {
 }
 point_count = 11
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_6iyac"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_fdnlq"]
 _surfaces = [{
 "aabb": AABB(-0.0099948, -0.61257005, -1.334069, 0.25991905, 0.62251544, 1.3351121),
 "format": 34359742471,
@@ -329,7 +329,7 @@ script = ExtResource("1_jjgbg")
 radius = 0.005
 
 [node name="WireMesh" type="MeshInstance3D" parent="Desk/Computer/Case/wire to keyboard" unique_id=1165869543]
-mesh = SubResource("ArrayMesh_d1ilt")
+mesh = SubResource("ArrayMesh_6iyac")
 
 [node name="Power cord" type="Node3D" parent="Desk/Computer/Case" unique_id=540409664]
 
@@ -340,7 +340,7 @@ script = ExtResource("1_jjgbg")
 radius = 0.01
 
 [node name="WireMesh" type="MeshInstance3D" parent="Desk/Computer/Case/Power cord/Power cord wire" unique_id=264676649]
-mesh = SubResource("ArrayMesh_6iyac")
+mesh = SubResource("ArrayMesh_fdnlq")
 surface_material_override/0 = SubResource("StandardMaterial3D_2xply")
 
 [node name="plug" type="MeshInstance3D" parent="Desk/Computer/Case/Power cord" unique_id=1425464764]
