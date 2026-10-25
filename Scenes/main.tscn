@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://dvbc36oxrftfi" path="res://texture/table/wood_table_rough_1k.jpg" id="6_d1ilt"]
 [ext_resource type="Material" uid="uid://dnxrsnwevuoe0" path="res://texture/desk_leg.tres" id="7_6iyac"]
 [ext_resource type="Texture2D" uid="uid://canlgd0cn0aba" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_diff_1k.jpg" id="8_k4x2p"]
+[ext_resource type="Environment" path="res://environment/room_env.tres" id="9_env"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_p3ljj"]
 top_radius = 0.1
@@ -221,6 +222,9 @@ bottom_radius = 0.15
 height = 0.01
 
 [node name="Main" type="Node3D" unique_id=2012244315]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("9_env")
 
 [node name="Character" type="MeshInstance3D" parent="." unique_id=2133256776]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)

@@ -21,7 +21,7 @@
 
 ## 当前进度
 
-已完成的是一间可自由观察的封闭房间场景（`Scenes/main.tscn`，47 个节点）：
+已完成的是一间可自由观察的封闭房间场景（`Scenes/main.tscn`，48 个节点）：
 
 - **房间**：地板、天花板、四面墙，混凝土与砖墙材质，踢脚线处的电源插座
 - **顶灯**：吊顶灯罩 + `SpotLight3D`，灯罩内侧有自发光表面
@@ -29,6 +29,7 @@
 - **电脑**：机箱、显示器（多部件拼装）、键盘，以及沿 `Path3D` 程序化生成的键盘线与电源线
 - **台灯**：灯罩、支架、底座 + `SpotLight3D`
 - **观察相机**：`Character` 下的 `Camera3D`，当前为固定视角
+- **环境**：`WorldEnvironment`（Filmic 色调映射、微弱冷色环境光、SSAO、辉光），见 `environment/room_env.tres`
 
 > 说明：场景内**尚未添加碰撞体与玩家控制器**，因此目前只能以静态视角浏览美术效果，还不能行走或交互。
 
@@ -41,6 +42,8 @@ escape-02/
 │   └── main.tscn          # 主场景：房间 / 书桌 / 电脑 / 台灯
 ├── script/
 │   └── wire.gd            # @tool 脚本：把 Path3D 曲线生成为管状网格
+├── environment/
+│   └── room_env.tres      # 环境资源：环境光、色调映射、SSAO、辉光
 ├── texture/
 │   ├── wall/              # 砖墙 PBR 贴图
 │   ├── ceiling/           # 天花板 PBR 贴图
