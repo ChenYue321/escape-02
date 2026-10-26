@@ -19,11 +19,11 @@ extends StaticBody3D
 ## 把手按下多少度（正值 = 从门外看顺时针，即把手往下压）
 @export var handle_angle_deg: float = 45.0
 ## 门打开多少度（正值会绕 -Y 转，门朝室外方向打开）
-@export var door_angle_deg: float = 150.0
+@export var door_angle_deg: float = 110.0
 
 @export_group("时长")
 @export var handle_duration: float = 0.22
-@export var door_duration: float = 1.1
+@export var door_duration: float = 1.5
 
 var _busy: bool = false
 var _open: bool = false
