@@ -25,11 +25,15 @@ signal focus_changed(target: Node)
 ## 当前准星指着的可交互物体（实现 interact() 方法的碰撞体）
 var _focus: Node = null
 
+## 出生点，掉出世界时用来复位
+var _spawn_position: Vector3
+
 ## 从项目设置读取重力，不写死 9.8，改物理设置后这里自动跟随
 var _gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
 
 
 func _ready() -> void:
+	_spawn_position = global_position
 	_camera.current = true
 	_capture_mouse()
 
@@ -46,6 +50,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	# 掉出关卡（门外还没有做地图）时回到出生点，避免无限下坠
+	if global_position.y < -5.0:
+		global_position = _spawn_position
+		velocity = Vector3.ZERO
+		return
+
 	if not is_on_floor():
 		velocity.y -= _gravity * delta
 

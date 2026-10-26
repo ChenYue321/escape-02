@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://c6n7ga4qfn233" path="res://script/crosshair.gd" id="11_crosshair"]
 [ext_resource type="Script" uid="uid://dvotsjsr4ahmq" path="res://script/hud.gd" id="12_hud"]
 [ext_resource type="Script" uid="uid://c0d0tdmke7sle" path="res://script/lamp_switch.gd" id="13_switch"]
+[ext_resource type="Script" path="res://script/door.gd" id="14_door"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.3
@@ -299,6 +300,34 @@ emission_enabled = true
 emission = Color(1, 1, 1, 1)
 emission_energy_multiplier = 2.5
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_door_leaf"]
+size = Vector3(0.94, 2, 0.055)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_door_handle"]
+size = Vector3(0.22, 0.16, 0.14)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_side"]
+size = Vector3(3.45, 3, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_lintel"]
+size = Vector3(1.1, 0.85, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_outside_floor"]
+size = Vector3(4, 0.1, 6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_outside_floor"]
+size = Vector3(4, 0.1, 6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_outside_floor"]
+albedo_color = Color(0.881126, 0.881179, 0.8661595, 1)
+albedo_texture = ExtResource("8_k4x2p")
+roughness = 0.9
+roughness_texture = ExtResource("2_6bp64")
+normal_enabled = true
+normal_scale = 0.3
+normal_texture = ExtResource("1_21xkr")
+uv1_scale = Vector3(2, 2, 2)
+
 [sub_resource type="SphereShape3D" id="SphereShape3D_switch"]
 radius = 0.16
 
@@ -475,10 +504,20 @@ shape = SubResource("BoxShape3D_floor")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 shape = SubResource("BoxShape3D_floor")
 
-[node name="Wall1" type="CollisionShape3D" parent="Room/RoomCollision" unique_id=770178547]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 3.95)
+[node name="Wall1 Left" type="CollisionShape3D" parent="Room/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.275, 1.5, 3.95)
 visible = false
-shape = SubResource("BoxShape3D_wall_z")
+shape = SubResource("BoxShape3D_wall_side")
+
+[node name="Wall1 Right" type="CollisionShape3D" parent="Room/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.275, 1.5, 3.95)
+visible = false
+shape = SubResource("BoxShape3D_wall_side")
+
+[node name="Wall1 Lintel" type="CollisionShape3D" parent="Room/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.575, 3.95)
+visible = false
+shape = SubResource("BoxShape3D_wall_lintel")
 
 [node name="Wall2" type="CollisionShape3D" parent="Room/RoomCollision" unique_id=1631749786]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -3.95)
@@ -513,17 +552,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.13, 0)
 material_override = SubResource("StandardMaterial3D_door_frame")
 mesh = SubResource("BoxMesh_door_header")
 
-[node name="Leaf" type="MeshInstance3D" parent="Room/Door" unique_id=937786673]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.07, 0.0175)
-material_override = SubResource("StandardMaterial3D_door_leaf")
-mesh = SubResource("BoxMesh_door_leaf")
-
-[node name="Light Leak" type="MeshInstance3D" parent="Room/Door" unique_id=878972553]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.062, 0.0175)
-material_override = SubResource("StandardMaterial3D_door_leak")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_door_leak")
-
 [node name="Door Lamp" type="MeshInstance3D" parent="Room/Door" unique_id=1786965259]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.42, -0.06)
 material_override = SubResource("StandardMaterial3D_door_frame")
@@ -541,38 +569,86 @@ light_color = Color(0.8, 0.87, 1, 1)
 light_energy = 0.9
 light_size = 0.25
 shadow_enabled = true
+shadow_opacity = 1.0
 spot_range = 3.5
 spot_angle = 52.0
 
-[node name="Hinge Top" type="MeshInstance3D" parent="Room/Door" unique_id=37107354]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.44, 1.79, -0.0125)
+[node name="DoorPivot" type="Node3D" parent="Room/Door"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.47, 0, 0)
+
+[node name="Leaf" type="MeshInstance3D" parent="Room/Door/DoorPivot" unique_id=937786673]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47, 1.07, 0.0175)
+material_override = SubResource("StandardMaterial3D_door_leaf")
+mesh = SubResource("BoxMesh_door_leaf")
+
+[node name="Light Leak" type="MeshInstance3D" parent="Room/Door/DoorPivot" unique_id=878972553]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47, 0.062, 0.0175)
+material_override = SubResource("StandardMaterial3D_door_leak")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_door_leak")
+
+[node name="LeafBody" type="StaticBody3D" parent="Room/Door/DoorPivot"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Door/DoorPivot/LeafBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47, 1.07, 0.0175)
+shape = SubResource("BoxShape3D_door_leaf")
+
+[node name="Hinge Top" type="MeshInstance3D" parent="Room/Door/DoorPivot" unique_id=37107354]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03, 1.79, -0.0125)
 material_override = SubResource("StandardMaterial3D_door_metal")
 mesh = SubResource("BoxMesh_door_hinge")
 
-[node name="Hinge Middle" type="MeshInstance3D" parent="Room/Door" unique_id=439130761]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.44, 1.07, -0.0125)
+[node name="Hinge Middle" type="MeshInstance3D" parent="Room/Door/DoorPivot" unique_id=439130761]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03, 1.07, -0.0125)
 material_override = SubResource("StandardMaterial3D_door_metal")
 mesh = SubResource("BoxMesh_door_hinge")
 
-[node name="Hinge Bottom" type="MeshInstance3D" parent="Room/Door" unique_id=1337896486]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.44, 0.35, -0.0125)
+[node name="Hinge Bottom" type="MeshInstance3D" parent="Room/Door/DoorPivot" unique_id=1337896486]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03, 0.35, -0.0125)
 material_override = SubResource("StandardMaterial3D_door_metal")
 mesh = SubResource("BoxMesh_door_hinge")
 
-[node name="Handle Plate" type="MeshInstance3D" parent="Room/Door" unique_id=1656494415]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.36, 1.05, -0.015)
+[node name="Handle Plate" type="MeshInstance3D" parent="Room/Door/DoorPivot" unique_id=1656494415]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.83, 1.05, -0.015)
 material_override = SubResource("StandardMaterial3D_door_metal")
 mesh = SubResource("BoxMesh_door_plate")
 
-[node name="Handle Rose" type="MeshInstance3D" parent="Room/Door" unique_id=410454343]
-transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0.36, 1.05, -0.035)
+[node name="HandlePivot" type="Node3D" parent="Room/Door/DoorPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.83, 1.05, -0.035)
+
+[node name="Handle Rose" type="MeshInstance3D" parent="Room/Door/DoorPivot/HandlePivot" unique_id=410454343]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_door_metal")
 mesh = SubResource("CylinderMesh_door_rose")
 
-[node name="Handle Lever" type="MeshInstance3D" parent="Room/Door" unique_id=1567691064]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.295, 1.02, -0.05)
+[node name="Handle Lever" type="MeshInstance3D" parent="Room/Door/DoorPivot/HandlePivot" unique_id=1567691064]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.065, -0.03, -0.015)
 material_override = SubResource("StandardMaterial3D_door_metal")
 mesh = SubResource("BoxMesh_door_lever")
+
+[node name="HandleHit" type="StaticBody3D" parent="Room/Door/DoorPivot" node_paths=PackedStringArray("handle_pivot", "door_pivot")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78, 1.045, -0.045)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("14_door")
+handle_pivot = NodePath("../HandlePivot")
+door_pivot = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Door/DoorPivot/HandleHit"]
+shape = SubResource("BoxShape3D_door_handle")
+
+[node name="Outside" type="Node3D" parent="."]
+
+[node name="Landing" type="MeshInstance3D" parent="Outside"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
+mesh = SubResource("BoxMesh_outside_floor")
+material_override = SubResource("StandardMaterial3D_outside_floor")
+
+[node name="LandingBody" type="StaticBody3D" parent="Outside"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Outside/LandingBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
+shape = SubResource("BoxShape3D_outside_floor")
 
 [node name="Desk" type="Node3D" parent="." unique_id=1186838603]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, -2.5)
