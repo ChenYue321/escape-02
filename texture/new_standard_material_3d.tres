@@ -1,8 +1,8 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://bdpuf1xkvwya3"]
+[gd_resource type="StandardMaterial3D" format=3]
 
-[ext_resource type="Texture2D" uid="uid://wdsac1knumk4" path="res://texture/wall/brick_wall_006_diff_1k.jpg" id="1_2vqiq"]
-[ext_resource type="Texture2D" uid="uid://cbe1ubfxbim33" path="res://texture/wall/brick_wall_006_nor_gl_1k.jpg" id="2_lfqk8"]
-[ext_resource type="Texture2D" uid="uid://cwrlws6gdjhab" path="res://texture/wall/brick_wall_006_rough_1k.jpg" id="3_sabur"]
+[ext_resource type="Texture2D" path="res://texture/wall/brick_wall_006_diff_1k.jpg" id="1_2vqiq"]
+[ext_resource type="Texture2D" path="res://texture/wall/brick_wall_006_nor_gl_1k.jpg" id="2_lfqk8"]
+[ext_resource type="Texture2D" path="res://texture/wall/brick_wall_006_rough_1k.jpg" id="3_sabur"]
 
 [resource]
 albedo_color = Color(0.6810102, 0.68101007, 0.68101, 1)
@@ -11,4 +11,6 @@ roughness_texture = ExtResource("3_sabur")
 normal_enabled = true
 normal_scale = 0.3
 normal_texture = ExtResource("2_lfqk8")
-uv1_scale = Vector3(7, 2, 1)
+uv1_scale = Vector3(0.88, 0.67, 0.88)
+uv1_triplanar = true
+uv1_world_triplanar = true
