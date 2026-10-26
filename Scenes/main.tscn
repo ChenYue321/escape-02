@@ -179,22 +179,6 @@ size = Vector3(0.13, 0.025, 0.025)
 [sub_resource type="BoxShape3D" id="BoxShape3D_door_handle"]
 size = Vector3(0.22, 0.16, 0.14)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_outside_floor"]
-albedo_color = Color(0.881126, 0.881179, 0.8661595, 1)
-albedo_texture = ExtResource("8_k4x2p")
-roughness = 0.9
-roughness_texture = ExtResource("2_6bp64")
-normal_enabled = true
-normal_scale = 0.3
-normal_texture = ExtResource("1_21xkr")
-uv1_scale = Vector3(2, 2, 2)
-
-[sub_resource type="BoxMesh" id="BoxMesh_outside_floor"]
-size = Vector3(4, 0.1, 6)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_outside_floor"]
-size = Vector3(4, 0.1, 6)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_desk"]
 size = Vector3(1.8, 0.05, 1)
 
@@ -392,6 +376,9 @@ script = ExtResource("10_player")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 visible = false
 shape = SubResource("CapsuleShape3D_body")
+
+[node name="FallVoice" type="AudioStreamPlayer" parent="Character"]
+volume_db = -2.0
 
 [node name="Camera3D" type="Camera3D" parent="Character" unique_id=1550534383]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5999999, 0)
@@ -637,19 +624,6 @@ door_pivot = NodePath("..")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Door/DoorPivot/HandleHit" unique_id=607147231]
 visible = false
 shape = SubResource("BoxShape3D_door_handle")
-
-[node name="Outside" type="Node3D" parent="." unique_id=1495551138]
-
-[node name="Landing" type="MeshInstance3D" parent="Outside" unique_id=853063817]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
-material_override = SubResource("StandardMaterial3D_outside_floor")
-mesh = SubResource("BoxMesh_outside_floor")
-
-[node name="LandingBody" type="StaticBody3D" parent="Outside" unique_id=1688867448]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Outside/LandingBody" unique_id=726210266]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
-shape = SubResource("BoxShape3D_outside_floor")
 
 [node name="Desk" type="Node3D" parent="." unique_id=1186838603]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, -2.5)

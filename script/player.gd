@@ -10,6 +10,12 @@ extends CharacterBody3D
 ## 跳跃高度，米。内部按重力反推初速度，所以改重力后跳起高度仍保持不变。
 @export var jump_height: float = 0.5
 
+@export_group("掉出世界")
+## 低于这个高度就判定为掉出去了
+@export var fall_threshold: float = -8.0
+## 掉下去之后多久送回出生点，留时间给旁白把话说完
+@export var respawn_delay: float = 2.5
+
 @export_group("视角")
 ## 鼠标灵敏度，弧度/像素
 @export var mouse_sensitivity: float = 0.0025
@@ -19,6 +25,9 @@ extends CharacterBody3D
 ## 准星指到可交互物体时发出，target 为 null 表示失去目标
 signal focus_changed(target: Node)
 
+## 掉出世界（门外没有地面）时发出，方便以后接旁白、字幕或成就
+signal fell_out_of_world
+
 @onready var _camera: Camera3D = $Camera3D
 @onready var _interact_ray: RayCast3D = $Camera3D/InteractRay
 
@@ -27,6 +36,8 @@ var _focus: Node = null
 
 ## 出生点，掉出世界时用来复位
 var _spawn_position: Vector3
+## 是否已经触发过掉落（避免每帧重复触发）
+var _falling: bool = false
 
 ## 从项目设置读取重力，不写死 9.8，改物理设置后这里自动跟随
 var _gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
@@ -50,11 +61,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	# 掉出关卡（门外还没有做地图）时回到出生点，避免无限下坠
-	if global_position.y < -5.0:
-		global_position = _spawn_position
-		velocity = Vector3.ZERO
-		return
+	if not _falling and global_position.y < fall_threshold:
+		_start_fall()
 
 	if not is_on_floor():
 		velocity.y -= _gravity * delta
@@ -101,6 +109,23 @@ func _try_interact() -> void:
 		return
 	# call() 是动态调用：编辑期 _focus 只是 Node，编译期不知道它有 interact()
 	_focus.call("interact", self)
+
+
+## 掉出世界：放语音（如果挂了音频）、广播信号，过一会儿把玩家送回出生点
+func _start_fall() -> void:
+	_falling = true
+
+	var voice := get_node_or_null("FallVoice") as AudioStreamPlayer
+	if voice != null and voice.stream != null:
+		voice.play()
+
+	fell_out_of_world.emit()
+
+	await get_tree().create_timer(respawn_delay).timeout
+
+	global_position = _spawn_position
+	velocity = Vector3.ZERO
+	_falling = false
 
 
 func _capture_mouse() -> void:
