@@ -64,3 +64,4 @@ interact={
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=3
