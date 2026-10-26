@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://d1d58poev6wch" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_nor_gl_1k.jpg" id="1_21xkr"]
 [ext_resource type="Script" uid="uid://dnbeuh1k5xa1u" path="res://script/wire.gd" id="1_jjgbg"]
 [ext_resource type="Texture2D" uid="uid://ciobpku1sjrx6" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_rough_1k.jpg" id="2_6bp64"]
-[ext_resource type="Material" uid="uid://bdpuf1xkvwya3" path="res://texture/new_standard_material_3d.tres" id="3_344ge"]
+[ext_resource type="Material" uid="uid://elgtnjxkcj27" path="res://texture/new_standard_material_3d.tres" id="3_344ge"]
 [ext_resource type="Texture2D" uid="uid://b1gwme7oi23us" path="res://texture/ceiling/ceiling_interior_diff_1k.jpg" id="3_d1ilt"]
 [ext_resource type="Texture2D" uid="uid://dy0hrduog4mxg" path="res://texture/ceiling/ceiling_interior_nor_gl_1k.jpg" id="4_6iyac"]
 [ext_resource type="Texture2D" uid="uid://bkd6ioqs57g0k" path="res://texture/table/wood_table_diff_1k.jpg" id="4_ynf5e"]
@@ -78,6 +78,19 @@ radius = 0.16
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall_side"]
 size = Vector3(3.45, 3, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4rkuk"]
+size = Vector3(0.1, 0.1, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_switch_button"]
+size = Vector3(0.05, 0.05, 0.02)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_switch"]
+size = Vector3(0.14, 0.16, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_switch_button"]
+albedo_color = Color(0.86, 0.83, 0.72, 1)
+roughness = 0.35
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall_lintel"]
 size = Vector3(1.1, 0.85, 0.1)
@@ -396,14 +409,6 @@ shadow_enabled = true
 spot_attenuation = 1.5
 spot_angle = 60.0
 
-[node name="LampSwitch" type="StaticBody3D" parent="Room/Ceiling/Top Light/Lampshade" unique_id=989905842]
-collision_layer = 2
-collision_mask = 0
-script = ExtResource("13_switch")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Ceiling/Top Light/Lampshade/LampSwitch" unique_id=1594822016]
-shape = SubResource("SphereShape3D_switch")
-
 [node name="Wall1 Left" type="MeshInstance3D" parent="Room" unique_id=392236091]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.275, 1.5, 3.95)
 material_override = ExtResource("3_344ge")
@@ -413,6 +418,26 @@ mesh = SubResource("BoxMesh_wall_side")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.275, 1.5, 3.95)
 material_override = ExtResource("3_344ge")
 mesh = SubResource("BoxMesh_wall_side")
+
+[node name="Top Light Switch" type="StaticBody3D" parent="Room/Wall1 Right" unique_id=2071807930 node_paths=PackedStringArray("target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0817673, 0, -0.040485382)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("13_switch")
+target = NodePath("../../Ceiling/Top Light")
+
+[node name="Plate" type="MeshInstance3D" parent="Room/Wall1 Right/Top Light Switch"]
+mesh = SubResource("BoxMesh_4rkuk")
+material_override = SubResource("StandardMaterial3D_door_metal")
+
+[node name="Button" type="MeshInstance3D" parent="Room/Wall1 Right/Top Light Switch"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.033)
+mesh = SubResource("BoxMesh_switch_button")
+material_override = SubResource("StandardMaterial3D_switch_button")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Wall1 Right/Top Light Switch"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.02)
+shape = SubResource("BoxShape3D_switch")
 
 [node name="Wall1 Lintel" type="MeshInstance3D" parent="Room" unique_id=805097124]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.575, 3.95)
@@ -449,18 +474,22 @@ shape = SubResource("BoxShape3D_floor")
 
 [node name="Wall1" type="CollisionShape3D" parent="Room/RoomCollision" unique_id=770178547]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 3.95)
+visible = false
 shape = SubResource("BoxShape3D_wall_z")
 
 [node name="Wall2" type="CollisionShape3D" parent="Room/RoomCollision" unique_id=1631749786]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -3.95)
+visible = false
 shape = SubResource("BoxShape3D_wall_z")
 
 [node name="Wall3" type="CollisionShape3D" parent="Room/RoomCollision" unique_id=330327582]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.95, 1.5, 0)
+visible = false
 shape = SubResource("BoxShape3D_wall_x")
 
 [node name="Wall4" type="CollisionShape3D" parent="Room/RoomCollision" unique_id=629645537]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.95, 1.5, 0)
+visible = false
 shape = SubResource("BoxShape3D_wall_x")
 
 [node name="Door" type="Node3D" parent="Room" unique_id=694539455]

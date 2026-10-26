@@ -1,9 +1,16 @@
 extends StaticBody3D
 
-## 灯开关：准星指到它并按 E，切换同一盏灯下的 SpotLight3D 与自发光灯片。
+## 灯开关：准星指到它并按 E，切换目标灯下的 SpotLight3D 与自发光灯片。
+##
+## 两种用法：
+##   1. 直接挂在灯下面（target 留空）——控制自己父节点这一组灯，例如台灯
+##   2. 挂在墙上当按钮——用 target 指向要控制的灯，例如门口/墙上的电灯开关
 ##
 ## 本节点位于碰撞层 2（interactable）且 mask 为 0，所以玩家撞不到它，
 ## 只有设了 collision_mask=3 的交互射线能"看到"它。
+
+## 要控制的灯组根节点；留空则控制自己的父节点
+@export var target: Node3D
 
 ## 当前是否开着
 var _on: bool = true
@@ -19,13 +26,18 @@ func _ready() -> void:
 func interact(_user: Node3D) -> void:
 	_on = not _on
 
-	for light in get_parent().find_children("*", "SpotLight3D", true, false):
+	var root := _lamp_root()
+	for light in root.find_children("*", "SpotLight3D", true, false):
 		light.visible = _on
 
-	for mesh in get_parent().find_children("*", "MeshInstance3D", true, false):
+	for mesh in root.find_children("*", "MeshInstance3D", true, false):
 		var material := _emission_material(mesh)
 		if material != null:
 			material.emission_energy_multiplier = _emission_energy if _on else 0.0
+
+
+func _lamp_root() -> Node:
+	return target if target != null else get_parent()
 
 
 ## 从网格的表面覆盖材质里找一个开启了自发光的
@@ -40,7 +52,8 @@ func _emission_material(mesh: MeshInstance3D) -> StandardMaterial3D:
 
 
 func _find_emission_energy() -> float:
-	for mesh in get_parent().find_children("*", "MeshInstance3D", true, false):
+	var root := _lamp_root()
+	for mesh in root.find_children("*", "MeshInstance3D", true, false):
 		var material := _emission_material(mesh)
 		if material != null:
 			return material.emission_energy_multiplier
