@@ -13,8 +13,8 @@ extends CharacterBody3D
 @export_group("掉出世界")
 ## 低于这个高度就判定为掉出去了
 @export var fall_threshold: float = -8.0
-## 掉下去之后多久送回出生点，留时间给旁白把话说完
-@export var respawn_delay: float = 2.5
+## 没有挂语音时，掉落后多久复位；挂了语音则以语音播放完毕为准
+@export var respawn_delay: float = 6.0
 
 @export_group("视角")
 ## 鼠标灵敏度，弧度/像素
@@ -111,7 +111,8 @@ func _try_interact() -> void:
 	_focus.call("interact", self)
 
 
-## 掉出世界：放语音（如果挂了音频）、广播信号，过一会儿把玩家送回出生点
+## 掉出世界：放语音、广播信号，等语音播完再黑屏回到出生点。
+## 期间玩家一直在往下坠，这正是想要的效果。
 func _start_fall() -> void:
 	_falling = true
 
@@ -121,11 +122,22 @@ func _start_fall() -> void:
 
 	fell_out_of_world.emit()
 
-	await get_tree().create_timer(respawn_delay).timeout
+	# 有语音就等它说完，没有就按固定时长
+	if voice != null and voice.playing:
+		await voice.finished
+	else:
+		await get_tree().create_timer(respawn_delay).timeout
+
+	var fade := get_node_or_null("/root/ScreenFade")
+	if fade != null:
+		await fade.fade_to_black(0.8)
 
 	global_position = _spawn_position
 	velocity = Vector3.ZERO
 	_falling = false
+
+	if fade != null:
+		await fade.fade_from_black(1.4)
 
 
 func _capture_mouse() -> void:
