@@ -19,21 +19,37 @@ var _emission_energy: float = 0.0
 
 
 func _ready() -> void:
+	# 先记住"开灯时"的自发光强度，再按场景里的灯节点状态同步一次，
+	# 这样默认关着的灯在开局时灯片也不会亮
 	_emission_energy = _find_emission_energy()
+	_on = _is_lit()
+	_apply(_on)
 
 
 ## 交互入口：player.gd 用 call("interact", self) 动态调用
 func interact(_user: Node3D) -> void:
 	_on = not _on
+	_apply(_on)
 
+
+## 把开关状态套用到灯和自发光灯片上
+func _apply(on: bool) -> void:
 	var root := _lamp_root()
 	for light in root.find_children("*", "SpotLight3D", true, false):
-		light.visible = _on
+		light.visible = on
 
 	for mesh in root.find_children("*", "MeshInstance3D", true, false):
 		var material := _emission_material(mesh)
 		if material != null:
-			material.emission_energy_multiplier = _emission_energy if _on else 0.0
+			material.emission_energy_multiplier = _emission_energy if on else 0.0
+
+
+## 以场景里灯的 visible 为准，决定开关初始状态
+func _is_lit() -> bool:
+	var root := _lamp_root()
+	for light in root.find_children("*", "SpotLight3D", true, false):
+		return light.visible
+	return true
 
 
 func _lamp_root() -> Node:

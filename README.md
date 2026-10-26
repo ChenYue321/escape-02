@@ -32,8 +32,9 @@
 - **第一人称控制器**：`Character`（`CharacterBody3D`）+ 胶囊碰撞体 + `script/player.gd`，相机位于 1.6 m 眼高
 - **准星**：`HUD/Crosshair`（`CanvasLayer` + 自绘 `Control`），屏幕正中的圆点与四段短线，指到可交互物体时变金色并张开
 - **交互**：`Camera3D/InteractRay`（`RayCast3D`，2.5 m）命中带 `interact()` 方法的碰撞体后弹出 `[E]` 提示
-  - 吊灯：按门边墙上的按钮 `Room/Wall1 Right/Top Light Switch`
-  - 台灯：直接对着台灯按 `E`
+  - 吊灯：按门边墙上的按钮 `Room/Wall1 Right/Top Light Switch`（开局**默认亮着**）
+  - 台灯：直接对着台灯按 `E`（开局**默认熄灭**）
+  - 灯的默认状态直接由场景里 `SpotLight3D` 的 `visible` 决定，开关在 `_ready()` 时按它同步自发光灯片
 - **环境**：`WorldEnvironment`（Filmic 色调映射、微弱冷色环境光、SSAO、辉光），见 `environment/room_env.tres`
 
 > 说明：角色**没有可见的身体模型**——相机位于胶囊体内部，第一人称下本来就看不到自己，只有投影会落在地上。交互与解谜逻辑尚未开始。
