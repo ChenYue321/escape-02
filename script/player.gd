@@ -15,6 +15,8 @@ extends CharacterBody3D
 @export var fall_threshold: float = -8.0
 ## 没有挂语音时，掉落后多久复位；挂了语音则以语音播放完毕为准
 @export var respawn_delay: float = 6.0
+## 旁白字幕时间轴（JSON，和音频同名放一起）
+@export var subtitle_cues_path: String = "res://audio/voice/fall_01.json"
 
 @export_group("视角")
 ## 鼠标灵敏度，弧度/像素
@@ -27,6 +29,9 @@ signal focus_changed(target: Node)
 
 ## 掉出世界（门外没有地面）时发出，方便以后接旁白、字幕或成就
 signal fell_out_of_world
+
+## 旁白字幕变化，空字符串表示收起。由 HUD 监听并显示
+signal subtitle_changed(text: String)
 
 @onready var _camera: Camera3D = $Camera3D
 @onready var _interact_ray: RayCast3D = $Camera3D/InteractRay
@@ -111,6 +116,33 @@ func _try_interact() -> void:
 	_focus.call("interact", self)
 
 
+## 按 JSON 里的时间轴把字幕一句句推给 HUD
+func _run_subtitles() -> void:
+	var cues := _load_cues()
+	if cues.is_empty():
+		return
+
+	var elapsed := 0.0
+	for cue in cues:
+		var start := float(cue.get("start", 0.0))
+		var end := float(cue.get("end", start + 2.0))
+		if start > elapsed:
+			await get_tree().create_timer(start - elapsed).timeout
+		subtitle_changed.emit(str(cue.get("text", "")))
+		if end > start:
+			await get_tree().create_timer(end - start).timeout
+		elapsed = maxf(end, start)
+
+	subtitle_changed.emit("")
+
+
+func _load_cues() -> Array:
+	if subtitle_cues_path.is_empty() or not FileAccess.file_exists(subtitle_cues_path):
+		return []
+	var parsed = JSON.parse_string(FileAccess.get_file_as_string(subtitle_cues_path))
+	return parsed if parsed is Array else []
+
+
 ## 掉出世界：放语音、广播信号，等语音播完再黑屏回到出生点。
 ## 期间玩家一直在往下坠，这正是想要的效果。
 func _start_fall() -> void:
@@ -119,6 +151,7 @@ func _start_fall() -> void:
 	var voice := get_node_or_null("FallVoice") as AudioStreamPlayer
 	if voice != null and voice.stream != null:
 		voice.play()
+		_run_subtitles()
 
 	fell_out_of_world.emit()
 

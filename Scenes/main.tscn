@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://dvotsjsr4ahmq" path="res://script/hud.gd" id="12_hud"]
 [ext_resource type="Script" uid="uid://c0d0tdmke7sle" path="res://script/lamp_switch.gd" id="13_switch"]
 [ext_resource type="Script" uid="uid://bf52asixe6xya" path="res://script/door.gd" id="14_door"]
+[ext_resource type="AudioStream" uid="uid://cw2y874waioec" path="res://audio/voice/fall_01.mp3" id="15_fall_01"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.3
@@ -349,6 +350,22 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("11_crosshair")
 
+[node name="Subtitle" type="Label" parent="HUD"]
+visible = false
+anchor_left = 0.12
+anchor_top = 0.82
+anchor_right = 0.88
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.94)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
 [node name="Prompt" type="Label" parent="HUD" unique_id=1349683114]
 anchors_preset = 8
 anchor_left = 0.5
@@ -377,8 +394,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 visible = false
 shape = SubResource("CapsuleShape3D_body")
 
-[node name="FallVoice" type="AudioStreamPlayer" parent="Character"]
+[node name="FallVoice" type="AudioStreamPlayer" parent="Character" unique_id=1321540066]
 volume_db = -2.0
+stream = ExtResource("15_fall_01")
 
 [node name="Camera3D" type="Camera3D" parent="Character" unique_id=1550534383]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5999999, 0)
@@ -776,3 +794,4 @@ mesh = SubResource("BoxMesh_6bp64")
 mesh = SubResource("CylinderMesh_3xxii")
 
 [connection signal="focus_changed" from="Character" to="HUD" method="_on_focus_changed"]
+[connection signal="subtitle_changed" from="Character" to="HUD" method="_on_subtitle_changed"]

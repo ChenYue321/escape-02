@@ -5,10 +5,12 @@ extends CanvasLayer
 
 @onready var _crosshair: Control = $Crosshair
 @onready var _prompt: Label = $Prompt
+@onready var _subtitle: Label = $Subtitle
 
 
 func _ready() -> void:
 	_prompt.visible = false
+	_subtitle.visible = false
 
 
 ## target 为 null 表示从可交互物体上移开了
@@ -16,3 +18,12 @@ func _on_focus_changed(target: Node) -> void:
 	var focusing := target != null
 	_prompt.visible = focusing
 	_crosshair.set_active(focusing)
+
+
+## 旁白字幕：传空字符串表示收起
+func _on_subtitle_changed(text: String) -> void:
+	if text.is_empty():
+		_subtitle.visible = false
+		return
+	_subtitle.text = text
+	_subtitle.visible = true
