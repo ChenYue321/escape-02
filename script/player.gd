@@ -101,7 +101,18 @@ func _ready() -> void:
 	_capture_mouse()
 
 
+## 转场（睁眼/闭眼）期间"啥都干不了"：不移动、不交互、不转视角
+func _is_frozen() -> bool:
+	return _screen_fade != null and _screen_fade.is_busy()
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if _is_frozen():
+		# 只保留 ESC 放光标，免得黑屏时被困住
+		if event.is_action_pressed("ui_cancel"):
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		return
+
 	if event is InputEventMouseMotion:
 		_look(event as InputEventMouseMotion)
 	elif event.is_action_pressed("ui_cancel"):
@@ -117,6 +128,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _is_frozen():
+		velocity = Vector3.ZERO
+		return
+
 	if not _falling and global_position.y < fall_threshold:
 		_start_fall()
 
@@ -288,7 +303,7 @@ func _update_focus() -> void:
 
 
 func _try_interact() -> void:
-	if _focus == null:
+	if _focus == null or _is_frozen():
 		return
 	# call() 是动态调用：编辑期 _focus 只是 Node，编译期不知道它有 interact()
 	_focus.call("interact", self)
