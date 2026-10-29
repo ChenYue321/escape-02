@@ -55,8 +55,9 @@ signal prompt_text_changed(text: String)
 ## 当前准星指着的可交互物体（实现 interact() 方法的碰撞体）
 var _focus: Node = null
 
-## 出生点，掉出世界时用来复位
+## 出生点与出生朝向，掉出世界时用来复位
 var _spawn_position: Vector3
+var _spawn_rotation_y: float = 0.0
 ## 是否已经触发过掉落（避免每帧重复触发）
 var _falling: bool = false
 
@@ -93,6 +94,7 @@ var _gravity: float = float(ProjectSettings.get_setting("physics/3d/default_grav
 
 func _ready() -> void:
 	_spawn_position = global_position
+	_spawn_rotation_y = rotation.y
 	# 每个角色一份自己的胶囊，避免运行时改高度影响到别的实例
 	_collision.shape = _collision.shape.duplicate()
 	_stand_capsule_height = (_collision.shape as CapsuleShape3D).height
@@ -358,8 +360,13 @@ func _start_fall() -> void:
 	if fade != null:
 		await fade.fade_to_black(0.8)
 
+	# 回到出生点，并把视角掰回正前方（黑屏期间完成，玩家看不到跳变）
 	global_position = _spawn_position
 	velocity = Vector3.ZERO
+	rotation.y = _spawn_rotation_y
+	_camera.rotation.x = 0.0
+	_crouching = false
+	_camera.position.y = _stand_eye_height
 	_falling = false
 
 	if fade != null:
