@@ -10,6 +10,16 @@ extends CharacterBody3D
 ## 跳跃高度，米。内部按重力反推初速度，所以改重力后跳起高度仍保持不变。
 @export var jump_height: float = 0.5
 
+@export_group("下蹲")
+## 蹲下时胶囊体的高度（站立时取场景里的原值）
+@export var crouch_height: float = 1.15
+## 蹲下时的眼高
+@export var crouch_eye_height: float = 0.95
+## 蹲下时的移动速度倍率
+@export var crouch_speed_scale: float = 0.45
+## 视点升降的跟随速度，越大越跟手
+@export var crouch_lerp_speed: float = 14.0
+
 @export_group("掉出世界")
 ## 低于这个高度就判定为掉出去了
 @export var fall_threshold: float = -8.0
@@ -35,6 +45,7 @@ signal subtitle_changed(text: String)
 
 @onready var _camera: Camera3D = $Camera3D
 @onready var _interact_ray: RayCast3D = $Camera3D/InteractRay
+@onready var _collision: CollisionShape3D = $CollisionShape3D
 
 ## 当前准星指着的可交互物体（实现 interact() 方法的碰撞体）
 var _focus: Node = null
@@ -44,12 +55,21 @@ var _spawn_position: Vector3
 ## 是否已经触发过掉落（避免每帧重复触发）
 var _falling: bool = false
 
+## 站立时的胶囊高度 / 眼高，下蹲结束后要还原
+var _stand_capsule_height: float = 1.8
+var _stand_eye_height: float = 1.6
+var _crouching: bool = false
+
 ## 从项目设置读取重力，不写死 9.8，改物理设置后这里自动跟随
 var _gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
 
 
 func _ready() -> void:
 	_spawn_position = global_position
+	# 每个角色一份自己的胶囊，避免运行时改高度影响到别的实例
+	_collision.shape = _collision.shape.duplicate()
+	_stand_capsule_height = (_collision.shape as CapsuleShape3D).height
+	_stand_eye_height = _camera.position.y
 	_camera.current = true
 	_capture_mouse()
 
@@ -69,6 +89,8 @@ func _physics_process(delta: float) -> void:
 	if not _falling and global_position.y < fall_threshold:
 		_start_fall()
 
+	_update_crouch(delta)
+
 	if not is_on_floor():
 		velocity.y -= _gravity * delta
 
@@ -76,14 +98,43 @@ func _physics_process(delta: float) -> void:
 		# v = sqrt(2gh)：给定跳跃高度反推初速度
 		velocity.y = sqrt(2.0 * _gravity * jump_height)
 
+	var speed := move_speed * (crouch_speed_scale if _crouching else 1.0)
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	# 用身体朝向（只含 yaw）把输入转成世界方向，所以抬头低头不影响前进方向
 	var direction := (transform.basis * Vector3(input_dir.x, 0.0, input_dir.y)).normalized()
-	velocity.x = direction.x * move_speed
-	velocity.z = direction.z * move_speed
+	velocity.x = direction.x * speed
+	velocity.z = direction.z * speed
 
 	move_and_slide()
 	_update_focus()
+
+
+## 按住 Shift 蹲下：缩短胶囊、压低视点、降低移速。
+## 松开时先检查头顶有没有空间，被卡住就保持蹲着。
+func _update_crouch(delta: float) -> void:
+	var want_crouch := Input.is_action_pressed("crouch")
+
+	if want_crouch:
+		_crouching = true
+	elif _crouching and _has_headroom():
+		_crouching = false
+
+	var target_height: float = crouch_height if _crouching else _stand_capsule_height
+	var capsule := _collision.shape as CapsuleShape3D
+	if not is_equal_approx(capsule.height, target_height):
+		capsule.height = target_height
+		# 胶囊底部始终贴地，所以中心跟着高度走
+		_collision.position.y = target_height * 0.5
+
+	var target_eye: float = crouch_eye_height if _crouching else _stand_eye_height
+	var weight := 1.0 - exp(-crouch_lerp_speed * delta)
+	_camera.position.y = lerpf(_camera.position.y, target_eye, weight)
+
+
+## 头顶是否还有站起来的高度：用当前（蹲着的）胶囊向上试走一段
+func _has_headroom() -> bool:
+	var delta_height := _stand_capsule_height - crouch_height
+	return not test_move(global_transform, Vector3.UP * delta_height)
 
 
 ## 鼠标转身：左右转整个身体，上下只转相机，身体始终保持竖直
