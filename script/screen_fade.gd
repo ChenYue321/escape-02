@@ -10,6 +10,8 @@ const LAYER_ABOVE_EVERYTHING := 128
 var _rect: ColorRect
 var _material: ShaderMaterial
 var _tween: Tween
+## 转场动画是否还在跑（黑幕完全张开/合拢之前）
+var _busy: bool = false
 
 
 func _ready() -> void:
@@ -31,6 +33,11 @@ func _ready() -> void:
 	fade_from_black(1.2)
 
 
+## 转场是否还在进行，玩家在这一段时间里不该能转视角
+func is_busy() -> bool:
+	return _busy
+
+
 ## 睁眼：黑幕退开
 func fade_from_black(duration: float = 1.2) -> void:
 	await _animate_to(0.0, duration)
@@ -45,11 +52,13 @@ func _animate_to(target: float, duration: float) -> void:
 	if _tween != null and _tween.is_valid():
 		_tween.kill()
 
+	_busy = true
 	var from: float = _material.get_shader_parameter("progress")
 	_tween = create_tween()
 	_tween.tween_method(_set_progress, from, target, duration) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await _tween.finished
+	_busy = false
 
 
 func _set_progress(value: float) -> void:

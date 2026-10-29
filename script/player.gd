@@ -49,6 +49,8 @@ signal prompt_text_changed(text: String)
 @onready var _camera: Camera3D = $Camera3D
 @onready var _interact_ray: RayCast3D = $Camera3D/InteractRay
 @onready var _collision: CollisionShape3D = $CollisionShape3D
+## 全屏转场（autoload），开场睁眼期间要锁住视角
+@onready var _screen_fade: CanvasLayer = get_node_or_null("/root/ScreenFade")
 
 ## 当前准星指着的可交互物体（实现 interact() 方法的碰撞体）
 var _focus: Node = null
@@ -247,6 +249,14 @@ func _has_headroom() -> bool:
 ## 鼠标转身：左右转整个身体，上下只转相机，身体始终保持竖直
 func _look(motion: InputEventMouseMotion) -> void:
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return
+	_apply_look(motion)
+
+
+## 真正的转视角。和"鼠标是否被捕获"分开，方便单独测试/复用
+func _apply_look(motion: InputEventMouseMotion) -> void:
+	# 开场"睁眼"还没结束时，鼠标不平移视角
+	if _screen_fade != null and _screen_fade.is_busy():
 		return
 	rotate_y(-motion.relative.x * mouse_sensitivity)
 	var pitch: float = _camera.rotation.x - motion.relative.y * mouse_sensitivity

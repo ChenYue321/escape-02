@@ -29,7 +29,7 @@
   - 门与墙体碰撞都拆好了，门开后人可以走出去；**门外没有地面**，走出去会直接掉下去
   - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**（没挂语音时等 6 秒）再黑屏复位到出生点
 - **旁白与字幕**：`Character/FallVoice` 播 `audio/voice/fall_01.mp3`（24 秒），字幕时间轴在 `audio/voice/fall_01.json`，按秒数逐句推到 `HUD/UIRoot/Subtitle`
-- **转场**：`ScreenFade`（autoload）用 `shaders/iris_fade.gdshader` 做睁眼式黑幕——开场自动张开一次，掉出世界回来时再播一次
+- **转场**：`ScreenFade`（autoload）用 `shaders/iris_fade.gdshader` 做睁眼式黑幕——开场自动张开一次，掉出世界回来时再播一次；**黑幕没完全退开之前鼠标不能转视角**
 - **顶灯**：吊顶灯罩 + `SpotLight3D`，灯罩内侧有自发光表面
 - **书桌**：桌面与四条桌腿，桌面为木纹材质，桌面带碰撞体（可以跳上去）
 - **电脑**：仿 90 年代卧式主机 + 大头 CRT（机箱带软驱/光驱面板与散热格栅，显示器有底座、后凸显像管、凹陷屏面与调节旋钮），键盘，以及沿 `Path3D` 程序化生成的键盘线与电源线
