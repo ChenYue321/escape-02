@@ -19,6 +19,8 @@
 [ext_resource type="Script" uid="uid://c0d0tdmke7sle" path="res://script/lamp_switch.gd" id="13_switch"]
 [ext_resource type="Script" uid="uid://bf52asixe6xya" path="res://script/door.gd" id="14_door"]
 [ext_resource type="AudioStream" uid="uid://cw2y874waioec" path="res://audio/voice/fall_01.mp3" id="15_fall_01"]
+[ext_resource type="AudioStream" uid="uid://baivv18okyan3" path="res://audio/sfx/switch_on.mp3" id="18_switch_on"]
+[ext_resource type="AudioStream" uid="uid://chl5rhbkf58o3" path="res://audio/sfx/switch_off.mp3" id="19_switch_off"]
 [ext_resource type="Shader" uid="uid://npbg7u0nb0ni" path="res://shaders/crt_static.gdshader" id="16_crt_static"]
 [ext_resource type="Script" uid="uid://h4bal0cx1mfq" path="res://script/sit_spot.gd" id="17_sit"]
 
@@ -520,6 +522,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0817673, 0, -0.040485382)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("13_switch")
+sound_on = ExtResource("18_switch_on")
+sound_off = ExtResource("19_switch_off")
 target = NodePath("../../Ceiling/Top Light")
 
 [node name="Plate" type="MeshInstance3D" parent="Room/Wall1 Right/Top Light Switch" unique_id=496611611]
@@ -946,6 +950,8 @@ spot_angle = 29.85
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("13_switch")
+sound_on = ExtResource("18_switch_on")
+sound_off = ExtResource("19_switch_off")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Desk/Lamp/Lampshade/LampSwitch" unique_id=645397426]
 visible = false

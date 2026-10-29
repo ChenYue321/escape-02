@@ -12,13 +12,29 @@ extends StaticBody3D
 ## 要控制的灯组根节点；留空则控制自己的父节点
 @export var target: Node3D
 
+@export_group("音效")
+## 灯被点亮时播放
+@export var sound_on: AudioStream
+## 灯被关掉时播放
+@export var sound_off: AudioStream
+## 播放音量（dB）
+@export var sound_volume_db: float = -4.0
+
 ## 当前是否开着
 var _on: bool = true
 ## 记录自发光强度原始值，关灯时归零、开灯时还原
 var _emission_energy: float = 0.0
+## 开关音效的播放器，运行时创建（跟着开关节点的位置发声）
+var _audio: AudioStreamPlayer3D
 
 
 func _ready() -> void:
+	_audio = AudioStreamPlayer3D.new()
+	_audio.name = "SwitchSound"
+	_audio.volume_db = sound_volume_db
+	_audio.max_distance = 18.0
+	add_child(_audio)
+
 	# 先记住"开灯时"的自发光强度，再按场景里的灯节点状态同步一次，
 	# 这样默认关着的灯在开局时灯片也不会亮
 	_emission_energy = _find_emission_energy()
@@ -30,6 +46,17 @@ func _ready() -> void:
 func interact(_user: Node3D) -> void:
 	_on = not _on
 	_apply(_on)
+	# 音效只跟"这次操作是开还是关"有关，和灯的初始状态无关
+	_play_switch_sound(_on)
+
+
+## 开/关音效。初始同步（_ready）不调用它，所以进游戏不会响
+func _play_switch_sound(turning_on: bool) -> void:
+	var stream := sound_on if turning_on else sound_off
+	if stream == null:
+		return
+	_audio.stream = stream
+	_audio.play()
 
 
 ## 把开关状态套用到灯和自发光灯片上

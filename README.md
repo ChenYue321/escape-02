@@ -31,6 +31,7 @@
 - **旁白与字幕**：`Character/FallVoice` 播 `audio/voice/fall_01.mp3`（24 秒），字幕时间轴在 `audio/voice/fall_01.json`，按秒数逐句推到 `HUD/UIRoot/Subtitle`
 - **转场**：`ScreenFade`（autoload）用 `shaders/iris_fade.gdshader` 做睁眼式黑幕——开场自动张开一次，掉出世界回来时再播一次；**黑幕完全退开之前不能移动、不能交互、不能转视角**（`ScreenFade.is_busy()` 统一判断，只保留 ESC 放光标）
 - **顶灯**：吊顶灯罩 + `SpotLight3D`，灯罩内侧有自发光表面
+- **开关音效**：`lamp_switch.gd` 在运行时给每个开关挂一个 `AudioStreamPlayer3D`，**开灯放 `switch_on`、关灯放 `switch_off`**，与初始状态无关（开局同步状态时不发声）
 - **书桌**：桌面与四条桌腿，桌面为木纹材质，桌面带碰撞体（可以跳上去）
 - **电脑**：仿 90 年代卧式主机 + 大头 CRT（机箱带软驱/光驱面板与散热格栅，显示器有底座、后凸显像管、凹陷屏面与调节旋钮），键盘，以及沿 `Path3D` 程序化生成的键盘线与电源线
   - 屏幕是**无信号雪花屏**：`shaders/crt_static.gdshader` 程序化生成噪点 + 扫描线 + 滚动亮带 + 暗角，屏幕前另有一盏冷光把桌面照亮
@@ -96,6 +97,9 @@ escape-02/
 ├── audio/voice/
 │   ├── fall_01.mp3        # 坠落旁白（由 m4a 转码而来）
 │   └── fall_01.json       # 字幕时间轴：每句的起止秒数
+├── audio/sfx/
+│   ├── switch_on.mp3      # 灯亮音效（CC0）
+│   └── switch_off.mp3     # 灯灭音效（CC0）
 ├── texture/
 │   ├── wall/              # 砖墙 PBR 贴图
 │   ├── ceiling/           # 天花板 PBR 贴图
