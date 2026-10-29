@@ -162,9 +162,6 @@ roughness = 0.55
 [sub_resource type="BoxMesh" id="BoxMesh_door_leaf"]
 size = Vector3(0.94, 2, 0.055)
 
-[sub_resource type="BoxMesh" id="BoxMesh_door_leak"]
-size = Vector3(0.92, 0.02, 0.012)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_door_leaf"]
 size = Vector3(0.94, 2, 0.055)
 
@@ -649,12 +646,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.47, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47, 1.07, 0.0175)
 material_override = SubResource("StandardMaterial3D_door_leaf")
 mesh = SubResource("BoxMesh_door_leaf")
-
-[node name="Light Leak" type="MeshInstance3D" parent="Room/Door/DoorPivot" unique_id=878972553]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47, 0.062, 0.0175)
-material_override = SubResource("StandardMaterial3D_door_leak")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_door_leak")
 
 [node name="LeafBody" type="StaticBody3D" parent="Room/Door/DoorPivot" unique_id=1645738202]
 
