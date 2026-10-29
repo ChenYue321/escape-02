@@ -43,6 +43,9 @@ signal fell_out_of_world
 ## 旁白字幕变化，空字符串表示收起。由 HUD 监听并显示
 signal subtitle_changed(text: String)
 
+## 交互提示文字变化（默认 [E]，坐着看凳子时是 [Shift]）
+signal prompt_text_changed(text: String)
+
 @onready var _camera: Camera3D = $Camera3D
 @onready var _interact_ray: RayCast3D = $Camera3D/InteractRay
 @onready var _collision: CollisionShape3D = $CollisionShape3D
@@ -69,6 +72,13 @@ var _saved_position: Vector3
 var _saved_rotation_y: float = 0.0
 ## Shift 既是蹲下又是起身：起身那一下要"吃掉"，松开前不触发蹲下
 var _suppress_crouch_until_release: bool = false
+## 坐着的那个交互体，用来判断提示文字
+var _seat: Node3D = null
+## 坐下/起身的位姿补间是否还在跑
+var _seat_busy: bool = false
+var _seat_tween: Tween = null
+## 上一次发出的提示文字，避免每帧重复发信号
+var _prompt_text: String = "[E]"
 
 ## 从项目设置读取重力，不写死 9.8，改物理设置后这里自动跟随
 var _gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
@@ -103,8 +113,8 @@ func _physics_process(delta: float) -> void:
 	if not _falling and global_position.y < fall_threshold:
 		_start_fall()
 
-	# 坐着时不能移动，但视角照常
-	if _seated:
+	# 坐着（或正在坐下/起身）时不能移动，但视角照常
+	if _seated or _seat_busy:
 		velocity = Vector3.ZERO
 		_update_crouch(delta)
 		_update_focus()
@@ -164,29 +174,43 @@ func _update_crouch(delta: float) -> void:
 	_camera.position.y = lerpf(_camera.position.y, target_eye, weight)
 
 
-## 坐到凳子上：瞬移到座位、朝向跟着凳子，之后只允许转视角
+## 坐到凳子上：平滑挪到座位、朝向跟着凳子，之后只允许转视角
 func sit_down(seat: Node3D, eye_height: float) -> void:
-	if _seated or _falling:
+	if _seated or _falling or _seat_busy:
 		return
 	_seated = true
+	_seat = seat
 	_saved_position = global_position
 	_saved_rotation_y = rotation.y
 	_seated_eye_height = eye_height
-
-	global_position = seat.global_position
-	rotation.y = seat.global_rotation.y
-	velocity = Vector3.ZERO
 	_crouching = false
+	_glide_to(seat.global_position, seat.global_rotation.y, 0.4)
 
 
-## 起身：回到坐下前的位置和朝向
+## 起身：平滑回到坐下前的位置和朝向
 func stand_up() -> void:
-	if not _seated:
+	if not _seated or _seat_busy:
 		return
 	_seated = false
-	global_position = _saved_position
-	rotation.y = _saved_rotation_y
+	_seat = null
+	_glide_to(_saved_position, _saved_rotation_y, 0.35)
+
+
+## 坐下 / 起身共用的位移补间：位置和朝向一起插值
+func _glide_to(target_position: Vector3, target_yaw: float, duration: float) -> void:
+	if _seat_tween != null and _seat_tween.is_valid():
+		_seat_tween.kill()
+
 	velocity = Vector3.ZERO
+	_seat_busy = true
+
+	_seat_tween = create_tween()
+	_seat_tween.set_parallel(true)
+	_seat_tween.tween_property(self, "global_position", target_position, duration) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_seat_tween.tween_property(self, "rotation:y", target_yaw, duration) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_seat_tween.finished.connect(func() -> void: _seat_busy = false)
 
 
 ## 头顶是否还有站起来的高度：用当前（蹲着的）胶囊向上试走一段
@@ -216,6 +240,14 @@ func _update_focus() -> void:
 	if target != _focus:
 		_focus = target
 		focus_changed.emit(_focus)
+
+	# 提示文字：坐下后对着凳子应是"Shift 起身"
+	var prompt := "[E]"
+	if _seated and _focus != null and _focus == _seat:
+		prompt = "[Shift]"
+	if prompt != _prompt_text:
+		_prompt_text = prompt
+		prompt_text_changed.emit(_prompt_text)
 
 
 func _try_interact() -> void:

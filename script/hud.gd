@@ -27,3 +27,8 @@ func _on_subtitle_changed(text: String) -> void:
 		return
 	_subtitle.text = text
 	_subtitle.visible = true
+
+
+## 提示文字随交互对象变化（[E] / [Shift]）
+func _on_prompt_text_changed(text: String) -> void:
+	_prompt.text = text

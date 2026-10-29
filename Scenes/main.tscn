@@ -966,7 +966,7 @@ mesh = SubResource("BoxMesh_6bp64")
 mesh = SubResource("CylinderMesh_3xxii")
 
 [node name="Stool" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.05, -1.62)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.05, -1.72)
 
 [node name="Seat" type="MeshInstance3D" parent="Stool"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0)
@@ -1011,3 +1011,4 @@ shape = SubResource("BoxShape3D_stool_solid")
 
 [connection signal="focus_changed" from="Character" to="HUD" method="_on_focus_changed"]
 [connection signal="subtitle_changed" from="Character" to="HUD" method="_on_subtitle_changed"]
+[connection signal="prompt_text_changed" from="Character" to="HUD" method="_on_prompt_text_changed"]
