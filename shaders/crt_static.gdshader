@@ -6,8 +6,8 @@ render_mode unshaded, cull_back;
 
 // 整体亮度
 uniform float brightness : hint_range(0.0, 2.0) = 0.85;
-// 噪点密度：屏幕横向大约多少个颗粒
-uniform float grain : hint_range(20.0, 400.0) = 150.0;
+// 噪点密度：屏幕横向大约多少个颗粒（越大颗粒越细）
+uniform float grain : hint_range(20.0, 2000.0) = 150.0;
 // 每秒换几次雪花
 uniform float speed : hint_range(1.0, 60.0) = 20.0;
 // 扫描线条数
