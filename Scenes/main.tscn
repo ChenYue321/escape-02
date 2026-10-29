@@ -21,6 +21,7 @@
 [ext_resource type="AudioStream" uid="uid://cw2y874waioec" path="res://audio/voice/fall_01.mp3" id="15_fall_01"]
 [ext_resource type="AudioStream" uid="uid://baivv18okyan3" path="res://audio/sfx/switch_on.mp3" id="18_switch_on"]
 [ext_resource type="AudioStream" uid="uid://chl5rhbkf58o3" path="res://audio/sfx/switch_off.mp3" id="19_switch_off"]
+[ext_resource type="AudioStream" uid="uid://ds2o3uimo0a1h" path="res://audio/sfx/door_knob.mp3" id="20_door_knob"]
 [ext_resource type="Shader" uid="uid://npbg7u0nb0ni" path="res://shaders/crt_static.gdshader" id="16_crt_static"]
 [ext_resource type="Script" uid="uid://h4bal0cx1mfq" path="res://script/sit_spot.gd" id="17_sit"]
 
@@ -700,6 +701,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78, 1.045, -0.045)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("14_door")
+sound_handle = ExtResource("20_door_knob")
 handle_pivot = NodePath("../HandlePivot")
 door_pivot = NodePath("..")
 
