@@ -11,8 +11,6 @@
 [ext_resource type="Texture2D" uid="uid://cli80dl3lj78" path="res://texture/table/wood_table_nor_gl_1k.jpg" id="5_hptm8"]
 [ext_resource type="Texture2D" uid="uid://dvbc36oxrftfi" path="res://texture/table/wood_table_rough_1k.jpg" id="6_d1ilt"]
 [ext_resource type="Material" uid="uid://dnxrsnwevuoe0" path="res://texture/desk_leg.tres" id="7_6iyac"]
-[ext_resource type="Material" path="res://texture/computer/pc_plastic.tres" id="21_plastic"]
-[ext_resource type="Material" path="res://texture/computer/pc_plastic_aged.tres" id="22_plastic_aged"]
 [ext_resource type="Texture2D" uid="uid://canlgd0cn0aba" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_diff_1k.jpg" id="8_k4x2p"]
 [ext_resource type="Environment" path="res://environment/room_env.tres" id="9_env"]
 [ext_resource type="Script" uid="uid://cp55x6qmufw1o" path="res://script/player.gd" id="10_player"]
@@ -21,11 +19,13 @@
 [ext_resource type="Script" uid="uid://c0d0tdmke7sle" path="res://script/lamp_switch.gd" id="13_switch"]
 [ext_resource type="Script" uid="uid://bf52asixe6xya" path="res://script/door.gd" id="14_door"]
 [ext_resource type="AudioStream" uid="uid://cw2y874waioec" path="res://audio/voice/fall_01.mp3" id="15_fall_01"]
+[ext_resource type="Shader" uid="uid://npbg7u0nb0ni" path="res://shaders/crt_static.gdshader" id="16_crt_static"]
+[ext_resource type="Script" uid="uid://h4bal0cx1mfq" path="res://script/sit_spot.gd" id="17_sit"]
 [ext_resource type="AudioStream" uid="uid://baivv18okyan3" path="res://audio/sfx/switch_on.mp3" id="18_switch_on"]
 [ext_resource type="AudioStream" uid="uid://chl5rhbkf58o3" path="res://audio/sfx/switch_off.mp3" id="19_switch_off"]
 [ext_resource type="AudioStream" uid="uid://ds2o3uimo0a1h" path="res://audio/sfx/door_knob.mp3" id="20_door_knob"]
-[ext_resource type="Shader" uid="uid://npbg7u0nb0ni" path="res://shaders/crt_static.gdshader" id="16_crt_static"]
-[ext_resource type="Script" uid="uid://h4bal0cx1mfq" path="res://script/sit_spot.gd" id="17_sit"]
+[ext_resource type="Material" path="res://texture/computer/pc_plastic.tres" id="21_plastic"]
+[ext_resource type="Material" path="res://texture/computer/pc_plastic_aged.tres" id="22_plastic_aged"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.3
@@ -93,9 +93,15 @@ roughness = 0.32
 [sub_resource type="BoxMesh" id="BoxMesh_4rkuk"]
 size = Vector3(0.1, 0.1, 0.05)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_switch_button"]
-albedo_color = Color(0.86, 0.83, 0.72, 1)
-roughness = 0.35
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cable_rubber"]
+albedo_color = Color(0.028, 0.028, 0.031, 1)
+metallic_specular = 0.22
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_button_gloss"]
+albedo_color = Color(0.88, 0.85, 0.74, 1)
+metallic_specular = 0.85
+roughness = 0.06
 
 [sub_resource type="BoxMesh" id="BoxMesh_switch_button"]
 size = Vector3(0.05, 0.05, 0.02)
@@ -238,7 +244,7 @@ _data = {
 }
 point_count = 10
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_pdsj5"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_cbgmd"]
 _surfaces = [{
 "aabb": AABB(-0.19347723, -0.055, -0.0049604173, 0.27184463, 0.059961036, 0.31877378),
 "format": 34359742471,
@@ -257,7 +263,7 @@ _data = {
 }
 point_count = 11
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_ee4r6"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_1w6v2"]
 _surfaces = [{
 "aabb": AABB(-0.0099948, -0.61257005, -1.334069, 0.25991905, 0.62251544, 1.3351121),
 "format": 34359742471,
@@ -268,9 +274,6 @@ _surfaces = [{
 "vertex_count": 257,
 "vertex_data": PackedByteArray("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")
 }]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2xply"]
-albedo_color = Color(0.23392534, 0.23392549, 0.23392543, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_344ge"]
 size = Vector3(0.08, 0.04, 0.05)
@@ -452,7 +455,6 @@ shape = SubResource("CapsuleShape3D_body")
 
 [node name="FallVoice" type="AudioStreamPlayer" parent="Character" unique_id=1321540066]
 stream = ExtResource("15_fall_01")
-volume_db = 0.0
 
 [node name="Camera3D" type="Camera3D" parent="Character" unique_id=1550534383]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5999999, 0)
@@ -516,9 +518,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0817673, 0, -0.040485382)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("13_switch")
+target = NodePath("../../Ceiling/Top Light")
 sound_on = ExtResource("18_switch_on")
 sound_off = ExtResource("19_switch_off")
-target = NodePath("../../Ceiling/Top Light")
 
 [node name="Plate" type="MeshInstance3D" parent="Room/Wall1 Right/Top Light Switch" unique_id=496611611]
 material_override = SubResource("StandardMaterial3D_door_metal")
@@ -526,7 +528,7 @@ mesh = SubResource("BoxMesh_4rkuk")
 
 [node name="Button" type="MeshInstance3D" parent="Room/Wall1 Right/Top Light Switch" unique_id=75701571]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.033)
-material_override = SubResource("StandardMaterial3D_switch_button")
+material_override = SubResource("StandardMaterial3D_button_gloss")
 mesh = SubResource("BoxMesh_switch_button")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Wall1 Right/Top Light Switch" unique_id=186738739]
@@ -688,9 +690,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78, 1.045, -0.045)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("14_door")
-sound_handle = ExtResource("20_door_knob")
 handle_pivot = NodePath("../HandlePivot")
 door_pivot = NodePath("..")
+sound_handle = ExtResource("20_door_knob")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Door/DoorPivot/HandleHit" unique_id=607147231]
 visible = false
@@ -746,12 +748,12 @@ material_override = ExtResource("22_plastic_aged")
 mesh = SubResource("BoxMesh_case_face")
 
 [node name="Drive Bay Upper" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=699095510]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.066, 0.206)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.062607884, 0.20599961)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_bay")
 
 [node name="Drive Bay Lower" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1680712584]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.019, 0.206)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.01456213, 0.20599985)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_bay")
 
@@ -761,7 +763,7 @@ material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_floppy")
 
 [node name="Power Button" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1845853052]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19, -0.008, 0.206)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19, -0.02018845, 0.20599985)
 material_override = SubResource("StandardMaterial3D_crt_glass")
 mesh = SubResource("BoxMesh_case_button")
 
@@ -807,7 +809,8 @@ script = ExtResource("1_jjgbg")
 radius = 0.005
 
 [node name="WireMesh" type="MeshInstance3D" parent="Desk/Computer/Case/wire to keyboard" unique_id=1165869543]
-mesh = SubResource("ArrayMesh_pdsj5")
+material_override = SubResource("StandardMaterial3D_cable_rubber")
+mesh = SubResource("ArrayMesh_cbgmd")
 
 [node name="Power cord" type="Node3D" parent="Desk/Computer/Case" unique_id=540409664]
 
@@ -818,8 +821,8 @@ script = ExtResource("1_jjgbg")
 radius = 0.01
 
 [node name="WireMesh" type="MeshInstance3D" parent="Desk/Computer/Case/Power cord/Power cord wire" unique_id=264676649]
-mesh = SubResource("ArrayMesh_ee4r6")
-surface_material_override/0 = SubResource("StandardMaterial3D_2xply")
+mesh = SubResource("ArrayMesh_1w6v2")
+surface_material_override/0 = SubResource("StandardMaterial3D_cable_rubber")
 
 [node name="plug" type="MeshInstance3D" parent="Desk/Computer/Case/Power cord" unique_id=1425464764]
 transform = Transform3D(1.1111112, 0, 0, 0, 1.1111112, 0, 0, 0, 1.1111112, 0.08399459, -0.53450143, -1.4396241)
@@ -886,7 +889,7 @@ mesh = SubResource("BoxMesh_crt_knob")
 
 [node name="Power Switch" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=1778686105]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13, 0.062, 0.17)
-material_override = ExtResource("21_plastic")
+material_override = SubResource("StandardMaterial3D_button_gloss")
 mesh = SubResource("BoxMesh_crt_knob")
 
 [node name="Monitor Light" type="OmniLight3D" parent="Desk/Computer/Monitor" unique_id=1484748390]
