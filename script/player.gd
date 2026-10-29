@@ -60,6 +60,16 @@ var _stand_capsule_height: float = 1.8
 var _stand_eye_height: float = 1.6
 var _crouching: bool = false
 
+## 是否坐在凳子上
+var _seated: bool = false
+## 坐着时的相机高度（相对脚底）
+var _seated_eye_height: float = 1.1
+## 坐下前的位置与朝向，起身时还原
+var _saved_position: Vector3
+var _saved_rotation_y: float = 0.0
+## Shift 既是蹲下又是起身：起身那一下要"吃掉"，松开前不触发蹲下
+var _suppress_crouch_until_release: bool = false
+
 ## 从项目设置读取重力，不写死 9.8，改物理设置后这里自动跟随
 var _gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
 
@@ -81,6 +91,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	elif event is InputEventMouseButton and event.pressed:
 		_capture_mouse()
+	elif _seated and event.is_action_pressed("crouch"):
+		# 坐着时 Shift 是"起身"，不是"蹲下"
+		stand_up()
+		_suppress_crouch_until_release = true
 	elif event.is_action_pressed("interact"):
 		_try_interact()
 
@@ -88,6 +102,13 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if not _falling and global_position.y < fall_threshold:
 		_start_fall()
+
+	# 坐着时不能移动，但视角照常
+	if _seated:
+		velocity = Vector3.ZERO
+		_update_crouch(delta)
+		_update_focus()
+		return
 
 	_update_crouch(delta)
 
@@ -112,23 +133,60 @@ func _physics_process(delta: float) -> void:
 ## 按住 Shift 蹲下：缩短胶囊、压低视点、降低移速。
 ## 松开时先检查头顶有没有空间，被卡住就保持蹲着。
 func _update_crouch(delta: float) -> void:
-	var want_crouch := Input.is_action_pressed("crouch")
+	var target_eye: float
 
-	if want_crouch:
-		_crouching = true
-	elif _crouching and _has_headroom():
+	if _seated:
+		# 坐着时胶囊保持站立高度，只把视点落到座位眼高
 		_crouching = false
+		target_eye = _seated_eye_height
+	else:
+		var want_crouch := Input.is_action_pressed("crouch")
+		if _suppress_crouch_until_release:
+			if not want_crouch:
+				_suppress_crouch_until_release = false
+			want_crouch = false
 
-	var target_height: float = crouch_height if _crouching else _stand_capsule_height
-	var capsule := _collision.shape as CapsuleShape3D
-	if not is_equal_approx(capsule.height, target_height):
-		capsule.height = target_height
-		# 胶囊底部始终贴地，所以中心跟着高度走
-		_collision.position.y = target_height * 0.5
+		if want_crouch:
+			_crouching = true
+		elif _crouching and _has_headroom():
+			_crouching = false
 
-	var target_eye: float = crouch_eye_height if _crouching else _stand_eye_height
+		var target_height: float = crouch_height if _crouching else _stand_capsule_height
+		var capsule := _collision.shape as CapsuleShape3D
+		if not is_equal_approx(capsule.height, target_height):
+			capsule.height = target_height
+			# 胶囊底部始终贴地，所以中心跟着高度走
+			_collision.position.y = target_height * 0.5
+
+		target_eye = crouch_eye_height if _crouching else _stand_eye_height
+
 	var weight := 1.0 - exp(-crouch_lerp_speed * delta)
 	_camera.position.y = lerpf(_camera.position.y, target_eye, weight)
+
+
+## 坐到凳子上：瞬移到座位、朝向跟着凳子，之后只允许转视角
+func sit_down(seat: Node3D, eye_height: float) -> void:
+	if _seated or _falling:
+		return
+	_seated = true
+	_saved_position = global_position
+	_saved_rotation_y = rotation.y
+	_seated_eye_height = eye_height
+
+	global_position = seat.global_position
+	rotation.y = seat.global_rotation.y
+	velocity = Vector3.ZERO
+	_crouching = false
+
+
+## 起身：回到坐下前的位置和朝向
+func stand_up() -> void:
+	if not _seated:
+		return
+	_seated = false
+	global_position = _saved_position
+	rotation.y = _saved_rotation_y
+	velocity = Vector3.ZERO
 
 
 ## 头顶是否还有站起来的高度：用当前（蹲着的）胶囊向上试走一段

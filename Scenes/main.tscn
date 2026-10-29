@@ -20,6 +20,7 @@
 [ext_resource type="Script" uid="uid://bf52asixe6xya" path="res://script/door.gd" id="14_door"]
 [ext_resource type="AudioStream" uid="uid://cw2y874waioec" path="res://audio/voice/fall_01.mp3" id="15_fall_01"]
 [ext_resource type="Shader" path="res://shaders/crt_static.gdshader" id="16_crt_static"]
+[ext_resource type="Script" path="res://script/sit_spot.gd" id="17_sit"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_case_body"]
 size = Vector3(0.46, 0.14, 0.4)
@@ -97,6 +98,18 @@ shader_parameter/vignette = 0.7
 shader_parameter/flicker = 0.08
 shader_parameter/roll_speed = 0.11
 shader_parameter/tint = Color(0.82, 0.88, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_stool_seat"]
+size = Vector3(0.36, 0.05, 0.36)
+
+[sub_resource type="BoxMesh" id="BoxMesh_stool_leg"]
+size = Vector3(0.035, 0.4, 0.035)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_stool_sit"]
+size = Vector3(0.42, 0.55, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_stool_solid"]
+size = Vector3(0.34, 0.5, 0.34)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.3
@@ -951,6 +964,50 @@ mesh = SubResource("BoxMesh_6bp64")
 
 [node name="Base" type="MeshInstance3D" parent="Desk/Lamp" unique_id=1645553618]
 mesh = SubResource("CylinderMesh_3xxii")
+
+[node name="Stool" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.05, -1.62)
+
+[node name="Seat" type="MeshInstance3D" parent="Stool"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0)
+material_override = SubResource("StandardMaterial3D_5qx63")
+mesh = SubResource("BoxMesh_stool_seat")
+
+[node name="Leg FL" type="MeshInstance3D" parent="Stool"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.145, 0.2, 0.145)
+material_override = ExtResource("7_6iyac")
+mesh = SubResource("BoxMesh_stool_leg")
+
+[node name="Leg FR" type="MeshInstance3D" parent="Stool"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.145, 0.2, 0.145)
+material_override = ExtResource("7_6iyac")
+mesh = SubResource("BoxMesh_stool_leg")
+
+[node name="Leg BL" type="MeshInstance3D" parent="Stool"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.145, 0.2, -0.145)
+material_override = ExtResource("7_6iyac")
+mesh = SubResource("BoxMesh_stool_leg")
+
+[node name="Leg BR" type="MeshInstance3D" parent="Stool"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.145, 0.2, -0.145)
+material_override = ExtResource("7_6iyac")
+mesh = SubResource("BoxMesh_stool_leg")
+
+[node name="SitBody" type="StaticBody3D" parent="Stool"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("17_sit")
+seat_eye_height = 1.1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stool/SitBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.275, 0)
+shape = SubResource("BoxShape3D_stool_sit")
+
+[node name="SolidBody" type="StaticBody3D" parent="Stool"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stool/SolidBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+shape = SubResource("BoxShape3D_stool_solid")
 
 [connection signal="focus_changed" from="Character" to="HUD" method="_on_focus_changed"]
 [connection signal="subtitle_changed" from="Character" to="HUD" method="_on_subtitle_changed"]
