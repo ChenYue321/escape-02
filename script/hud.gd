@@ -3,9 +3,9 @@ extends CanvasLayer
 ## HUD 逻辑：把"射线指到了什么"翻译成界面反馈。
 ## 挂在 HUD 节点上，接收 Character 的 focus_changed 信号。
 
-@onready var _crosshair: Control = $Crosshair
-@onready var _prompt: Label = $Prompt
-@onready var _subtitle: Label = $Subtitle
+@onready var _crosshair: Control = $UIRoot/Crosshair
+@onready var _prompt: Label = $UIRoot/Prompt
+@onready var _subtitle: Label = $UIRoot/Subtitle
 
 
 func _ready() -> void:

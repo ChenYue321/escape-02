@@ -28,14 +28,14 @@
   - **可开启**：对着把手按 `E`，把手先绕自身轴顺时针转 45°，随后整扇门绕合页竖轴向外推开 110°
   - 门与墙体碰撞都拆好了，门开后人可以走出去；**门外没有地面**，走出去会直接掉下去
   - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**（没挂语音时等 6 秒）再黑屏复位到出生点
-- **旁白与字幕**：`Character/FallVoice` 播 `audio/voice/fall_01.mp3`（24 秒），字幕时间轴在 `audio/voice/fall_01.json`，按秒数逐句推到 `HUD/Subtitle`
+- **旁白与字幕**：`Character/FallVoice` 播 `audio/voice/fall_01.mp3`（24 秒），字幕时间轴在 `audio/voice/fall_01.json`，按秒数逐句推到 `HUD/UIRoot/Subtitle`
 - **转场**：`ScreenFade`（autoload）用 `shaders/iris_fade.gdshader` 做睁眼式黑幕——开场自动张开一次，掉出世界回来时再播一次
 - **顶灯**：吊顶灯罩 + `SpotLight3D`，灯罩内侧有自发光表面
 - **书桌**：桌面与四条桌腿，桌面为木纹材质，桌面带碰撞体（可以跳上去）
 - **电脑**：机箱、显示器（多部件拼装）、键盘，以及沿 `Path3D` 程序化生成的键盘线与电源线
 - **台灯**：灯罩、支架、底座 + `SpotLight3D`
 - **第一人称控制器**：`Character`（`CharacterBody3D`）+ 胶囊碰撞体 + `script/player.gd`，相机位于 1.6 m 眼高
-- **准星**：`HUD/Crosshair`（`CanvasLayer` + 自绘 `Control`），屏幕正中的圆点与四段短线，指到可交互物体时变金色并张开
+- **准星**：`HUD/UIRoot/Crosshair`（`CanvasLayer` + 自绘 `Control`），屏幕正中的圆点与四段短线，指到可交互物体时变金色并张开
 - **交互**：`Camera3D/InteractRay`（`RayCast3D`，2.5 m）命中带 `interact()` 方法的碰撞体后弹出 `[E]` 提示
   - 吊灯：按门边墙上的按钮 `Room/Wall1 Right/Top Light Switch`（开局**默认亮着**）
   - 台灯：直接对着台灯按 `E`（开局**默认熄灭**）
@@ -63,7 +63,7 @@
 
 1. 在目标物体旁建一个 `StaticBody3D`，加 `CollisionShape3D`，碰撞层设为 **2（interactable）**、mask 设为 0 —— 玩家撞不到它，但射线看得到
 2. 挂一个脚本，实现 `func interact(user: Node3D) -> void:`
-3. 想改提示文字，改 `HUD/Prompt` 的 `text`
+3. 想改提示文字，改 `HUD/UIRoot/Prompt` 的 `text`
 
 
 按键映射定义在项目设置的 `input/` 段，可在 `项目 → 项目设置 → 输入映射` 中改键或加重绑定（比如手柄）。

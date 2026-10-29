@@ -335,7 +335,16 @@ environment = ExtResource("9_env")
 [node name="HUD" type="CanvasLayer" parent="." unique_id=131436494]
 script = ExtResource("12_hud")
 
-[node name="Crosshair" type="Control" parent="HUD" unique_id=1914745854]
+[node name="UIRoot" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Crosshair" type="Control" parent="HUD/UIRoot" unique_id=1914745854]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -350,7 +359,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("11_crosshair")
 
-[node name="Subtitle" type="Label" parent="HUD"]
+[node name="Subtitle" type="Label" parent="HUD/UIRoot"]
 visible = false
 anchor_left = 0.12
 anchor_top = 0.82
@@ -366,7 +375,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="Prompt" type="Label" parent="HUD" unique_id=1349683114]
+[node name="Prompt" type="Label" parent="HUD/UIRoot" unique_id=1349683114]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
