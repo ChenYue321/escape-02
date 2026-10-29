@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://dvbc36oxrftfi" path="res://texture/table/wood_table_rough_1k.jpg" id="6_d1ilt"]
 [ext_resource type="Material" uid="uid://dnxrsnwevuoe0" path="res://texture/desk_leg.tres" id="7_6iyac"]
 [ext_resource type="Material" path="res://texture/computer/pc_plastic.tres" id="21_plastic"]
+[ext_resource type="Material" path="res://texture/computer/pc_plastic_aged.tres" id="22_plastic_aged"]
 [ext_resource type="Texture2D" uid="uid://canlgd0cn0aba" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_diff_1k.jpg" id="8_k4x2p"]
 [ext_resource type="Environment" path="res://environment/room_env.tres" id="9_env"]
 [ext_resource type="Script" uid="uid://cp55x6qmufw1o" path="res://script/player.gd" id="10_player"]
@@ -736,12 +737,12 @@ transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -0.075595126, 0.0749999
 
 [node name="Body" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1913259887]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.027, 0)
-material_override = ExtResource("21_plastic")
+material_override = ExtResource("22_plastic_aged")
 mesh = SubResource("BoxMesh_case_body")
 
 [node name="Face" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=361798578]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.037, 0.203)
-material_override = ExtResource("21_plastic")
+material_override = ExtResource("22_plastic_aged")
 mesh = SubResource("BoxMesh_case_face")
 
 [node name="Drive Bay Upper" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=699095510]

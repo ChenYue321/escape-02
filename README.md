@@ -35,7 +35,8 @@
 - **开关音效**：`lamp_switch.gd` 在运行时给每个开关挂一个 `AudioStreamPlayer3D`，**开灯放 `switch_on`、关灯放 `switch_off`**，与初始状态无关（开局同步状态时不发声）
 - **书桌**：桌面与四条桌腿，桌面为木纹材质，桌面带碰撞体（可以跳上去）
 - **电脑**：仿 90 年代卧式主机 + 大头 CRT（机箱带软驱/光驱面板与散热格栅，显示器有底座、后凸显像管、凹陷屏面与调节旋钮），键盘，以及沿 `Path3D` 程序化生成的键盘线与电源线
-  - 外壳材质 `texture/computer/pc_plastic.tres`：用一张面粉微距贴图冒充老塑料——diffuse 做 albedo、GL 法线做表面颗粒、roughness 做哑光，世界坐标三平面映射（2.5 次/米），所以机箱、显示器、键盘的颗粒粗细一致
+  - 外壳材质用面粉微距贴图冒充老塑料——diffuse 做 albedo、GL 法线做表面颗粒、roughness 做哑光，世界坐标三平面映射（2.5 次/米），所以机箱、显示器、键盘的颗粒粗细一致
+  - 两档泛黄：`pc_plastic.tres`（显示器/键盘，轻微氧化）与 `pc_plastic_aged.tres`（机箱本体与前面板，更黄的旧塑料）；泛黄靠 `albedo_color` 乘在贴图上实现
   - 屏幕是**无信号雪花屏**：`shaders/crt_static.gdshader` 程序化生成噪点 + 扫描线 + 滚动亮带 + 暗角，屏幕前另有一盏冷光把桌面照亮
 - **台灯**：灯罩、支架、底座 + `SpotLight3D`
 - **第一人称控制器**：`Character`（`CharacterBody3D`）+ 胶囊碰撞体 + `script/player.gd`，相机位于 1.6 m 眼高
