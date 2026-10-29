@@ -26,6 +26,7 @@
 - **房间**：地板、天花板、四面墙，混凝土与砖墙材质，踢脚线处的电源插座；`RoomCollision` 提供 6 个盒形碰撞体（地面/天花板/四面墙）
 - **门**：`Room/Door` —— 后墙拆成三段留出 1.1 × 2.1 m 门洞，含门框、门板、三只铰链、把手、门缝灯带与门头灯
   - **可开启**：对着把手按 `E`，把手先绕自身轴顺时针转 45°，随后整扇门绕合页竖轴向外推开 110°
+  - 按下 `E` 的同时播放 `audio/sfx/door_knob.mp3`，录音开头的静音已剪掉，所以咔哒声和把手转动是同步的
   - 门与墙体碰撞都拆好了，门开后人可以走出去；**门外没有地面**，走出去会直接掉下去
   - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**（没挂语音时等 6 秒）再黑屏复位到出生点
 - **旁白与字幕**：`Character/FallVoice` 播 `audio/voice/fall_01.mp3`（24 秒），字幕时间轴在 `audio/voice/fall_01.json`，按秒数逐句推到 `HUD/UIRoot/Subtitle`
@@ -99,7 +100,8 @@ escape-02/
 │   └── fall_01.json       # 字幕时间轴：每句的起止秒数
 ├── audio/sfx/
 │   ├── switch_on.mp3      # 灯亮音效（CC0）
-│   └── switch_off.mp3     # 灯灭音效（CC0）
+│   ├── switch_off.mp3     # 灯灭音效（CC0）
+│   └── door_knob.mp3      # 门把手音效（自录，已剪掉开头 1.26 秒空白）
 ├── texture/
 │   ├── wall/              # 砖墙 PBR 贴图
 │   ├── ceiling/           # 天花板 PBR 贴图
