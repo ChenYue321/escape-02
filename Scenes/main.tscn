@@ -25,7 +25,6 @@
 [ext_resource type="AudioStream" uid="uid://chl5rhbkf58o3" path="res://audio/sfx/switch_off.mp3" id="19_switch_off"]
 [ext_resource type="AudioStream" uid="uid://ds2o3uimo0a1h" path="res://audio/sfx/door_knob.mp3" id="20_door_knob"]
 [ext_resource type="AudioStream" uid="uid://b08od7w3m0miv" path="res://audio/sfx/tv_static.wav" id="23_tv_static"]
-[ext_resource type="Script" path="res://script/crt_static_sound.gd" id="24_static_sound"]
 [ext_resource type="Material" path="res://texture/computer/pc_plastic.tres" id="21_plastic"]
 [ext_resource type="Material" path="res://texture/computer/pc_plastic_aged.tres" id="22_plastic_aged"]
 
@@ -904,10 +903,11 @@ omni_range = 1.6
 [node name="Static Noise" type="AudioStreamPlayer3D" parent="Desk/Computer/Monitor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.219, 0.05)
 stream = ExtResource("23_tv_static")
+autoplay = true
 volume_db = -8.0
-script = ExtResource("24_static_sound")
-falloff_radius = 6.43
-max_volume_db = -8.0
+unit_size = 1.0
+max_distance = 6.43
+attenuation_model = 0
 
 [node name="Keyboard" type="Node3D" parent="Desk/Computer" unique_id=401018644]
 transform = Transform3D(1, 0, 0, 0, 0.9975642, -0.06975648, 0, 0.06975648, 0.9975642, 0, -0.04, 0.35)
