@@ -241,9 +241,14 @@ func _update_focus() -> void:
 		_focus = target
 		focus_changed.emit(_focus)
 
-	# 提示文字：坐下后对着凳子应是"Shift 起身"
-	var prompt := "[E]"
-	if _seated and _focus != null and _focus == _seat:
+	# 提示文字：
+	#   对着可交互物体 -> [E]
+	#   坐着且没对着别的东西 -> [Shift] 起身（常驻，不用对准凳子）
+	#   其余 -> 空字符串（收起）
+	var prompt := ""
+	if _focus != null:
+		prompt = "[E]"
+	if _seated and (_focus == null or _focus == _seat):
 		prompt = "[Shift]"
 	if prompt != _prompt_text:
 		_prompt_text = prompt

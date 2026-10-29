@@ -15,9 +15,8 @@ func _ready() -> void:
 
 ## target 为 null 表示从可交互物体上移开了
 func _on_focus_changed(target: Node) -> void:
-	var focusing := target != null
-	_prompt.visible = focusing
-	_crosshair.set_active(focusing)
+	# 提示的显隐改由提示文字决定（坐着时即使没对准任何东西也要显示 [Shift]）
+	_crosshair.set_active(target != null)
 
 
 ## 旁白字幕：传空字符串表示收起
@@ -29,6 +28,7 @@ func _on_subtitle_changed(text: String) -> void:
 	_subtitle.visible = true
 
 
-## 提示文字随交互对象变化（[E] / [Shift]）
+## 提示文字随交互对象变化（[E] / [Shift]），空字符串表示收起
 func _on_prompt_text_changed(text: String) -> void:
 	_prompt.text = text
+	_prompt.visible = not text.is_empty()
