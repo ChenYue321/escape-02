@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" uid="uid://c5ei1g2xkhlxn" path="res://texture/computer/pc_plastic_diff.jpg" id="1_diff"]
+[ext_resource type="Texture2D" uid="uid://c6ecr4yk8h36p" path="res://texture/computer/pc_plastic_nor_gl.jpg" id="2_nor"]
+[ext_resource type="Texture2D" uid="uid://bkkod4qegbd0i" path="res://texture/computer/pc_plastic_rough.jpg" id="3_rough"]
+
+[resource]
+albedo_texture = ExtResource("1_diff")
+metallic = 0.0
+roughness = 1.0
+roughness_texture = ExtResource("3_rough")
+normal_enabled = true
+normal_scale = 0.7
+normal_texture = ExtResource("2_nor")
+uv1_triplanar = true
+uv1_world_triplanar = true
+uv1_scale = Vector3(2.5, 2.5, 2.5)

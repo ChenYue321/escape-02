@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://cli80dl3lj78" path="res://texture/table/wood_table_nor_gl_1k.jpg" id="5_hptm8"]
 [ext_resource type="Texture2D" uid="uid://dvbc36oxrftfi" path="res://texture/table/wood_table_rough_1k.jpg" id="6_d1ilt"]
 [ext_resource type="Material" uid="uid://dnxrsnwevuoe0" path="res://texture/desk_leg.tres" id="7_6iyac"]
+[ext_resource type="Material" path="res://texture/computer/pc_plastic.tres" id="21_plastic"]
 [ext_resource type="Texture2D" uid="uid://canlgd0cn0aba" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_diff_1k.jpg" id="8_k4x2p"]
 [ext_resource type="Environment" path="res://environment/room_env.tres" id="9_env"]
 [ext_resource type="Script" uid="uid://cp55x6qmufw1o" path="res://script/player.gd" id="10_player"]
@@ -199,14 +200,8 @@ uv1_scale = Vector3(2, 2, 1)
 [sub_resource type="BoxMesh" id="BoxMesh_3xxii"]
 size = Vector3(0.05, 0.6, 0.05)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3suue"]
-albedo_color = Color(0.6340774, 0.6091169, 0.5098669, 1)
-
 [sub_resource type="BoxMesh" id="BoxMesh_case_body"]
 size = Vector3(0.46, 0.14, 0.4)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fbakg"]
-albedo_color = Color(0.72156864, 0.69803923, 0.6039216, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_case_face"]
 size = Vector3(0.44, 0.1, 0.012)
@@ -741,12 +736,12 @@ transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -0.075595126, 0.0749999
 
 [node name="Body" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1913259887]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.027, 0)
-material_override = SubResource("StandardMaterial3D_3suue")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_case_body")
 
 [node name="Face" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=361798578]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.037, 0.203)
-material_override = SubResource("StandardMaterial3D_fbakg")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_case_face")
 
 [node name="Drive Bay Upper" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=699095510]
@@ -835,42 +830,42 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.097, -0.02)
 
 [node name="Base" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=175331020]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, 0)
-material_override = SubResource("StandardMaterial3D_fbakg")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("CylinderMesh_crt_base")
 
 [node name="Neck" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=257543568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.029, 0)
-material_override = SubResource("StandardMaterial3D_fbakg")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_crt_neck")
 
 [node name="Body" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=1408476564]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.209, 0)
-material_override = SubResource("StandardMaterial3D_3suue")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_crt_body")
 
 [node name="Rear Bulge" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=296717384]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.214, -0.17)
-material_override = SubResource("StandardMaterial3D_3suue")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_crt_rear")
 
 [node name="Bezel Top" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=180011581]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.359, 0.145)
-material_override = SubResource("StandardMaterial3D_fbakg")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_crt_bezel_top")
 
 [node name="Bezel Bottom" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=1193437167]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.074, 0.145)
-material_override = SubResource("StandardMaterial3D_fbakg")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_crt_bezel_bottom")
 
 [node name="Bezel Left" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=290820462]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17125, 0.209, 0.145)
-material_override = SubResource("StandardMaterial3D_fbakg")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_crt_bezel_side")
 
 [node name="Bezel Right" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=1097212674]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17125, 0.209, 0.145)
-material_override = SubResource("StandardMaterial3D_fbakg")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_crt_bezel_side")
 
 [node name="Screen" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=295117719]
@@ -890,7 +885,7 @@ mesh = SubResource("BoxMesh_crt_knob")
 
 [node name="Power Switch" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=1778686105]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13, 0.062, 0.17)
-material_override = SubResource("StandardMaterial3D_fbakg")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_crt_knob")
 
 [node name="Monitor Light" type="OmniLight3D" parent="Desk/Computer/Monitor" unique_id=1484748390]
@@ -904,12 +899,12 @@ omni_range = 1.6
 transform = Transform3D(1, 0, 0, 0, 0.9975642, -0.06975648, 0, 0.06975648, 0.9975642, 0, -0.04, 0.35)
 
 [node name="Body" type="MeshInstance3D" parent="Desk/Computer/Keyboard" unique_id=1505782156]
-material_override = SubResource("StandardMaterial3D_3suue")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_kb_body")
 
 [node name="Keys" type="MeshInstance3D" parent="Desk/Computer/Keyboard" unique_id=849217046]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0.004)
-material_override = SubResource("StandardMaterial3D_fbakg")
+material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_kb_keys")
 
 [node name="Lamp" type="Node3D" parent="Desk" unique_id=1249673965]
