@@ -19,97 +19,8 @@
 [ext_resource type="Script" uid="uid://c0d0tdmke7sle" path="res://script/lamp_switch.gd" id="13_switch"]
 [ext_resource type="Script" uid="uid://bf52asixe6xya" path="res://script/door.gd" id="14_door"]
 [ext_resource type="AudioStream" uid="uid://cw2y874waioec" path="res://audio/voice/fall_01.mp3" id="15_fall_01"]
-[ext_resource type="Shader" path="res://shaders/crt_static.gdshader" id="16_crt_static"]
-[ext_resource type="Script" path="res://script/sit_spot.gd" id="17_sit"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_case_body"]
-size = Vector3(0.46, 0.14, 0.4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_case_face"]
-size = Vector3(0.44, 0.1, 0.012)
-
-[sub_resource type="BoxMesh" id="BoxMesh_case_bay"]
-size = Vector3(0.17, 0.042, 0.016)
-
-[sub_resource type="BoxMesh" id="BoxMesh_case_floppy"]
-size = Vector3(0.13, 0.012, 0.016)
-
-[sub_resource type="BoxMesh" id="BoxMesh_case_button"]
-size = Vector3(0.018, 0.014, 0.014)
-
-[sub_resource type="BoxMesh" id="BoxMesh_case_vent"]
-size = Vector3(0.012, 0.09, 0.018)
-
-[sub_resource type="BoxMesh" id="BoxMesh_case_foot"]
-size = Vector3(0.03, 0.012, 0.03)
-
-[sub_resource type="BoxMesh" id="BoxMesh_crt_body"]
-size = Vector3(0.36, 0.33, 0.3)
-
-[sub_resource type="BoxMesh" id="BoxMesh_crt_rear"]
-size = Vector3(0.28, 0.26, 0.16)
-
-[sub_resource type="BoxMesh" id="BoxMesh_crt_bezel_top"]
-size = Vector3(0.385, 0.055, 0.045)
-
-[sub_resource type="BoxMesh" id="BoxMesh_crt_bezel_bottom"]
-size = Vector3(0.385, 0.085, 0.045)
-
-[sub_resource type="BoxMesh" id="BoxMesh_crt_bezel_side"]
-size = Vector3(0.0425, 0.355, 0.045)
-
-[sub_resource type="BoxMesh" id="BoxMesh_crt_screen"]
-size = Vector3(0.31, 0.225, 0.012)
-
-[sub_resource type="BoxMesh" id="BoxMesh_crt_knob"]
-size = Vector3(0.022, 0.012, 0.01)
-
-[sub_resource type="BoxMesh" id="BoxMesh_crt_neck"]
-size = Vector3(0.1, 0.03, 0.1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_kb_body"]
-size = Vector3(0.44, 0.022, 0.16)
-
-[sub_resource type="BoxMesh" id="BoxMesh_kb_keys"]
-size = Vector3(0.4, 0.008, 0.125)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_crt_base"]
-top_radius = 0.115
-bottom_radius = 0.115
-height = 0.014
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dark_plastic"]
-albedo_color = Color(0.085, 0.085, 0.09, 1)
-roughness = 0.55
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_crt_glass"]
-albedo_color = Color(0.035, 0.042, 0.058, 1)
-roughness = 0.12
-metallic = 0.15
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_crt_static"]
-shader = ExtResource("16_crt_static")
-shader_parameter/brightness = 0.85
-shader_parameter/grain = 70.0
-shader_parameter/speed = 20.0
-shader_parameter/scanlines = 240.0
-shader_parameter/scanline_strength = 0.22
-shader_parameter/vignette = 0.7
-shader_parameter/flicker = 0.08
-shader_parameter/roll_speed = 0.11
-shader_parameter/tint = Color(0.82, 0.88, 1, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_stool_seat"]
-size = Vector3(0.36, 0.05, 0.36)
-
-[sub_resource type="BoxMesh" id="BoxMesh_stool_leg"]
-size = Vector3(0.035, 0.4, 0.035)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_stool_sit"]
-size = Vector3(0.42, 0.55, 0.42)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_stool_solid"]
-size = Vector3(0.34, 0.5, 0.34)
+[ext_resource type="Shader" uid="uid://npbg7u0nb0ni" path="res://shaders/crt_static.gdshader" id="16_crt_static"]
+[ext_resource type="Script" uid="uid://h4bal0cx1mfq" path="res://script/sit_spot.gd" id="17_sit"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.3
@@ -291,6 +202,39 @@ size = Vector3(0.05, 0.6, 0.05)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3suue"]
 albedo_color = Color(0.6340774, 0.6091169, 0.5098669, 1)
 
+[sub_resource type="BoxMesh" id="BoxMesh_case_body"]
+size = Vector3(0.46, 0.14, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fbakg"]
+albedo_color = Color(0.72156864, 0.69803923, 0.6039216, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_case_face"]
+size = Vector3(0.44, 0.1, 0.012)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dark_plastic"]
+albedo_color = Color(0.085, 0.085, 0.09, 1)
+roughness = 0.55
+
+[sub_resource type="BoxMesh" id="BoxMesh_case_bay"]
+size = Vector3(0.17, 0.042, 0.016)
+
+[sub_resource type="BoxMesh" id="BoxMesh_case_floppy"]
+size = Vector3(0.13, 0.012, 0.016)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_crt_glass"]
+albedo_color = Color(0.035, 0.042, 0.058, 1)
+metallic = 0.15
+roughness = 0.12
+
+[sub_resource type="BoxMesh" id="BoxMesh_case_button"]
+size = Vector3(0.018, 0.014, 0.014)
+
+[sub_resource type="BoxMesh" id="BoxMesh_case_vent"]
+size = Vector3(0.012, 0.09, 0.018)
+
+[sub_resource type="BoxMesh" id="BoxMesh_case_foot"]
+size = Vector3(0.03, 0.012, 0.03)
+
 [sub_resource type="Curve3D" id="Curve3D_7u77a"]
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.079, -0.01, 0.01, 0, 0, 0, 0, 0, 0, -0.156, -0.045, 0.056, 0, 0, 0, 0, 0, 0, -0.184, -0.05, 0.125, 0, 0, 0, 0, 0, 0, -0.189, -0.05, 0.194, 0, 0, 0, 0, 0, 0, -0.157, -0.05, 0.253, 0, 0, 0, 0, 0, 0, -0.106, -0.05, 0.292, 0, 0, 0, 0, 0, 0, -0.054, -0.05, 0.302, 0, 0, 0, 0, 0, 0, -0.006, -0.05, 0.305, 0, 0, 0, 0, 0, 0, 0.07836738, -0.048000038, 0.30999994),
@@ -298,7 +242,7 @@ _data = {
 }
 point_count = 10
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_fevyy"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_pdsj5"]
 _surfaces = [{
 "aabb": AABB(-0.19347723, -0.055, -0.0049604173, 0.27184463, 0.059961036, 0.31877378),
 "format": 34359742471,
@@ -317,7 +261,7 @@ _data = {
 }
 point_count = 11
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_hibaj"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_ee4r6"]
 _surfaces = [{
 "aabb": AABB(-0.0099948, -0.61257005, -1.334069, 0.25991905, 0.62251544, 1.3351121),
 "format": 34359742471,
@@ -338,11 +282,53 @@ size = Vector3(0.08, 0.04, 0.05)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ukihg"]
 albedo_color = Color(0.19076231, 0.19076234, 0.19076231, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fbakg"]
-albedo_color = Color(0.72156864, 0.69803923, 0.6039216, 1)
+[sub_resource type="CylinderMesh" id="CylinderMesh_crt_base"]
+top_radius = 0.115
+bottom_radius = 0.115
+height = 0.014
 
-[sub_resource type="BoxMesh" id="BoxMesh_3cf21"]
-size = Vector3(0.4, 0.02, 0.12)
+[sub_resource type="BoxMesh" id="BoxMesh_crt_neck"]
+size = Vector3(0.1, 0.03, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crt_body"]
+size = Vector3(0.36, 0.33, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crt_rear"]
+size = Vector3(0.28, 0.26, 0.16)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crt_bezel_top"]
+size = Vector3(0.385, 0.055, 0.045)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crt_bezel_bottom"]
+size = Vector3(0.385, 0.085, 0.045)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crt_bezel_side"]
+size = Vector3(0.0425, 0.355, 0.045)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_crt_static"]
+render_priority = 0
+shader = ExtResource("16_crt_static")
+shader_parameter/brightness = 0.85
+shader_parameter/grain = 70.0
+shader_parameter/speed = 20.0
+shader_parameter/scanlines = 240.0
+shader_parameter/scanline_strength = 0.22
+shader_parameter/vignette = 0.7
+shader_parameter/flicker = 0.08
+shader_parameter/roll_speed = 0.11
+shader_parameter/tint = Color(0.82, 0.88, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crt_screen"]
+size = Vector3(0.31, 0.225, 0.012)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crt_knob"]
+size = Vector3(0.022, 0.012, 0.01)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kb_body"]
+size = Vector3(0.44, 0.022, 0.16)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kb_keys"]
+size = Vector3(0.4, 0.008, 0.125)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_344ge"]
 top_radius = 0.02
@@ -377,6 +363,18 @@ size = Vector3(0.01, 0.2, 0.01)
 top_radius = 0.15
 bottom_radius = 0.15
 height = 0.01
+
+[sub_resource type="BoxMesh" id="BoxMesh_stool_seat"]
+size = Vector3(0.36, 0.05, 0.36)
+
+[sub_resource type="BoxMesh" id="BoxMesh_stool_leg"]
+size = Vector3(0.035, 0.4, 0.035)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_stool_sit"]
+size = Vector3(0.42, 0.55, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_stool_solid"]
+size = Vector3(0.34, 0.5, 0.34)
 
 [node name="Main" type="Node3D" unique_id=2012244315]
 
@@ -744,67 +742,67 @@ transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -0.075595126, 0.0749999
 
 [node name="Case" type="Node3D" parent="Desk/Computer" unique_id=2061642083]
 
-[node name="Body" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Body" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1913259887]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.027, 0)
 material_override = SubResource("StandardMaterial3D_3suue")
 mesh = SubResource("BoxMesh_case_body")
 
-[node name="Face" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Face" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=361798578]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.037, 0.203)
 material_override = SubResource("StandardMaterial3D_fbakg")
 mesh = SubResource("BoxMesh_case_face")
 
-[node name="Drive Bay Upper" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Drive Bay Upper" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=699095510]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.066, 0.206)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_bay")
 
-[node name="Drive Bay Lower" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Drive Bay Lower" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1680712584]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.019, 0.206)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_bay")
 
-[node name="Floppy Slot" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Floppy Slot" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=304766633]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.11, 0.005, 0.206)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_floppy")
 
-[node name="Power Button" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Power Button" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1845853052]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19, -0.008, 0.206)
 material_override = SubResource("StandardMaterial3D_crt_glass")
 mesh = SubResource("BoxMesh_case_button")
 
-[node name="Vent 1" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Vent 1" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1398538263]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.232, 0.039, -0.06)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_vent")
 
-[node name="Vent 2" type="MeshInstance3D" parent="Desk/Computer/Case"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.232, 0.039, 0.0)
+[node name="Vent 2" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=393124410]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.232, 0.039, 0)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_vent")
 
-[node name="Vent 3" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Vent 3" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1012417479]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.232, 0.039, 0.06)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_vent")
 
-[node name="Foot FL" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Foot FL" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=877148463]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19, -0.049, 0.16)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_foot")
 
-[node name="Foot FR" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Foot FR" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1210638663]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.19, -0.049, 0.16)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_foot")
 
-[node name="Foot BL" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Foot BL" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=1074159872]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19, -0.049, -0.16)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_foot")
 
-[node name="Foot BR" type="MeshInstance3D" parent="Desk/Computer/Case"]
+[node name="Foot BR" type="MeshInstance3D" parent="Desk/Computer/Case" unique_id=751716443]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.19, -0.049, -0.16)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_case_foot")
@@ -816,7 +814,7 @@ script = ExtResource("1_jjgbg")
 radius = 0.005
 
 [node name="WireMesh" type="MeshInstance3D" parent="Desk/Computer/Case/wire to keyboard" unique_id=1165869543]
-mesh = SubResource("ArrayMesh_fevyy")
+mesh = SubResource("ArrayMesh_pdsj5")
 
 [node name="Power cord" type="Node3D" parent="Desk/Computer/Case" unique_id=540409664]
 
@@ -827,7 +825,7 @@ script = ExtResource("1_jjgbg")
 radius = 0.01
 
 [node name="WireMesh" type="MeshInstance3D" parent="Desk/Computer/Case/Power cord/Power cord wire" unique_id=264676649]
-mesh = SubResource("ArrayMesh_hibaj")
+mesh = SubResource("ArrayMesh_ee4r6")
 surface_material_override/0 = SubResource("StandardMaterial3D_2xply")
 
 [node name="plug" type="MeshInstance3D" parent="Desk/Computer/Case/Power cord" unique_id=1425464764]
@@ -838,82 +836,81 @@ surface_material_override/0 = SubResource("StandardMaterial3D_ukihg")
 [node name="Monitor" type="Node3D" parent="Desk/Computer" unique_id=1787699531]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.097, -0.02)
 
-[node name="Base" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
+[node name="Base" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=175331020]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, 0)
 material_override = SubResource("StandardMaterial3D_fbakg")
 mesh = SubResource("CylinderMesh_crt_base")
 
-[node name="Neck" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
+[node name="Neck" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=257543568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.029, 0)
 material_override = SubResource("StandardMaterial3D_fbakg")
 mesh = SubResource("BoxMesh_crt_neck")
 
-[node name="Body" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
+[node name="Body" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=1408476564]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.209, 0)
 material_override = SubResource("StandardMaterial3D_3suue")
 mesh = SubResource("BoxMesh_crt_body")
 
-[node name="Rear Bulge" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
+[node name="Rear Bulge" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=296717384]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.214, -0.17)
 material_override = SubResource("StandardMaterial3D_3suue")
 mesh = SubResource("BoxMesh_crt_rear")
 
-[node name="Bezel Top" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
+[node name="Bezel Top" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=180011581]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.359, 0.145)
 material_override = SubResource("StandardMaterial3D_fbakg")
 mesh = SubResource("BoxMesh_crt_bezel_top")
 
-[node name="Bezel Bottom" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
+[node name="Bezel Bottom" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=1193437167]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.074, 0.145)
 material_override = SubResource("StandardMaterial3D_fbakg")
 mesh = SubResource("BoxMesh_crt_bezel_bottom")
 
-[node name="Bezel Left" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
+[node name="Bezel Left" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=290820462]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17125, 0.209, 0.145)
 material_override = SubResource("StandardMaterial3D_fbakg")
 mesh = SubResource("BoxMesh_crt_bezel_side")
 
-[node name="Bezel Right" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
+[node name="Bezel Right" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=1097212674]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17125, 0.209, 0.145)
 material_override = SubResource("StandardMaterial3D_fbakg")
 mesh = SubResource("BoxMesh_crt_bezel_side")
 
-[node name="Screen" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.224, 0.150)
+[node name="Screen" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=295117719]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.224, 0.15)
 material_override = SubResource("ShaderMaterial_crt_static")
 mesh = SubResource("BoxMesh_crt_screen")
 
-[node name="Knob 1" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.064, 0.170)
+[node name="Knob 1" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=177003552]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.064, 0.17)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_crt_knob")
 
-[node name="Knob 2" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.085, 0.064, 0.170)
+[node name="Knob 2" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=4958669]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.085, 0.064, 0.17)
 material_override = SubResource("StandardMaterial3D_dark_plastic")
 mesh = SubResource("BoxMesh_crt_knob")
 
-[node name="Power Switch" type="MeshInstance3D" parent="Desk/Computer/Monitor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13, 0.062, 0.170)
+[node name="Power Switch" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=1778686105]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13, 0.062, 0.17)
 material_override = SubResource("StandardMaterial3D_fbakg")
 mesh = SubResource("BoxMesh_crt_knob")
 
-[node name="Monitor Light" type="OmniLight3D" parent="Desk/Computer/Monitor"]
+[node name="Monitor Light" type="OmniLight3D" parent="Desk/Computer/Monitor" unique_id=1484748390]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.219, 0.24)
 light_color = Color(0.72, 0.82, 1, 1)
 light_energy = 0.35
 light_size = 0.15
 omni_range = 1.6
-shadow_enabled = false
 
 [node name="Keyboard" type="Node3D" parent="Desk/Computer" unique_id=401018644]
-transform = Transform3D(1, 0, 0, 0, 0.9975642, -0.06975648, 0, 0.06975648, 0.9975642, 0, -0.040, 0.35)
+transform = Transform3D(1, 0, 0, 0, 0.9975642, -0.06975648, 0, 0.06975648, 0.9975642, 0, -0.04, 0.35)
 
-[node name="Body" type="MeshInstance3D" parent="Desk/Computer/Keyboard"]
+[node name="Body" type="MeshInstance3D" parent="Desk/Computer/Keyboard" unique_id=1505782156]
 material_override = SubResource("StandardMaterial3D_3suue")
 mesh = SubResource("BoxMesh_kb_body")
 
-[node name="Keys" type="MeshInstance3D" parent="Desk/Computer/Keyboard"]
+[node name="Keys" type="MeshInstance3D" parent="Desk/Computer/Keyboard" unique_id=849217046]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0.004)
 material_override = SubResource("StandardMaterial3D_fbakg")
 mesh = SubResource("BoxMesh_kb_keys")
@@ -965,50 +962,51 @@ mesh = SubResource("BoxMesh_6bp64")
 [node name="Base" type="MeshInstance3D" parent="Desk/Lamp" unique_id=1645553618]
 mesh = SubResource("CylinderMesh_3xxii")
 
-[node name="Stool" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.05, -1.72)
+[node name="Stool" type="Node3D" parent="." unique_id=417310115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.075595126, 0.05, -1.3717327)
 
-[node name="Seat" type="MeshInstance3D" parent="Stool"]
+[node name="Seat" type="MeshInstance3D" parent="Stool" unique_id=860830658]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0)
 material_override = SubResource("StandardMaterial3D_5qx63")
 mesh = SubResource("BoxMesh_stool_seat")
 
-[node name="Leg FL" type="MeshInstance3D" parent="Stool"]
+[node name="Leg FL" type="MeshInstance3D" parent="Stool" unique_id=1779603710]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.145, 0.2, 0.145)
 material_override = ExtResource("7_6iyac")
 mesh = SubResource("BoxMesh_stool_leg")
 
-[node name="Leg FR" type="MeshInstance3D" parent="Stool"]
+[node name="Leg FR" type="MeshInstance3D" parent="Stool" unique_id=24719364]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.145, 0.2, 0.145)
 material_override = ExtResource("7_6iyac")
 mesh = SubResource("BoxMesh_stool_leg")
 
-[node name="Leg BL" type="MeshInstance3D" parent="Stool"]
+[node name="Leg BL" type="MeshInstance3D" parent="Stool" unique_id=2104364386]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.145, 0.2, -0.145)
 material_override = ExtResource("7_6iyac")
 mesh = SubResource("BoxMesh_stool_leg")
 
-[node name="Leg BR" type="MeshInstance3D" parent="Stool"]
+[node name="Leg BR" type="MeshInstance3D" parent="Stool" unique_id=1807800979]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.145, 0.2, -0.145)
 material_override = ExtResource("7_6iyac")
 mesh = SubResource("BoxMesh_stool_leg")
 
-[node name="SitBody" type="StaticBody3D" parent="Stool"]
+[node name="SitBody" type="StaticBody3D" parent="Stool" unique_id=1792286564]
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("17_sit")
-seat_eye_height = 1.1
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Stool/SitBody"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stool/SitBody" unique_id=1402345164]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.275, 0)
+visible = false
 shape = SubResource("BoxShape3D_stool_sit")
 
-[node name="SolidBody" type="StaticBody3D" parent="Stool"]
+[node name="SolidBody" type="StaticBody3D" parent="Stool" unique_id=180476484]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Stool/SolidBody"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stool/SolidBody" unique_id=169886288]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+visible = false
 shape = SubResource("BoxShape3D_stool_solid")
 
 [connection signal="focus_changed" from="Character" to="HUD" method="_on_focus_changed"]
-[connection signal="subtitle_changed" from="Character" to="HUD" method="_on_subtitle_changed"]
 [connection signal="prompt_text_changed" from="Character" to="HUD" method="_on_prompt_text_changed"]
+[connection signal="subtitle_changed" from="Character" to="HUD" method="_on_subtitle_changed"]
