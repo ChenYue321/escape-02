@@ -80,6 +80,11 @@ var _seat_tween: Tween = null
 ## 上一次发出的提示文字，避免每帧重复发信号
 var _prompt_text: String = "[E]"
 
+## 坐上凳子后弹出的起身提示
+const STAND_HINT := "Press [shift] to stand up"
+## 当前屏幕上的字幕，用来判断能不能安全清掉
+var _current_subtitle: String = ""
+
 ## 从项目设置读取重力，不写死 9.8，改物理设置后这里自动跟随
 var _gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
 
@@ -174,6 +179,20 @@ func _update_crouch(delta: float) -> void:
 	_camera.position.y = lerpf(_camera.position.y, target_eye, weight)
 
 
+## 发一条字幕，并记下当前内容
+func _set_subtitle(text: String) -> void:
+	_current_subtitle = text
+	subtitle_changed.emit(text)
+
+
+## 临时字幕：显示一段时间后自动收起（若中途被别的字幕替换则不动）
+func _flash_subtitle(text: String, duration: float) -> void:
+	_set_subtitle(text)
+	await get_tree().create_timer(duration).timeout
+	if _current_subtitle == text:
+		_set_subtitle("")
+
+
 ## 坐到凳子上：平滑挪到座位、朝向跟着凳子，之后只允许转视角
 func sit_down(seat: Node3D, eye_height: float) -> void:
 	if _seated or _falling or _seat_busy:
@@ -186,6 +205,10 @@ func sit_down(seat: Node3D, eye_height: float) -> void:
 	_crouching = false
 	_glide_to(seat.global_position, seat.global_rotation.y, 0.4)
 
+	# 等视角移动完成，再像旁白一样提示怎么起身
+	await _seat_tween.finished
+	_flash_subtitle(STAND_HINT, 5.0)
+
 
 ## 起身：平滑回到坐下前的位置和朝向
 func stand_up() -> void:
@@ -193,6 +216,8 @@ func stand_up() -> void:
 		return
 	_seated = false
 	_seat = null
+	if _current_subtitle == STAND_HINT:
+		_set_subtitle("")
 	_glide_to(_saved_position, _saved_rotation_y, 0.35)
 
 
@@ -241,15 +266,12 @@ func _update_focus() -> void:
 		_focus = target
 		focus_changed.emit(_focus)
 
-	# 提示文字：
-	#   对着可交互物体 -> [E]
-	#   坐着且没对着别的东西 -> [Shift] 起身（常驻，不用对准凳子）
-	#   其余 -> 空字符串（收起）
+	# 提示文字：对着可交互物体显示 [E]，其余收起。
+	# 坐着时的"如何起身"改用字幕提示，不再占用准星旁边的位置
 	var prompt := ""
-	if _focus != null:
+	# 坐着时对着自己屁股底下的凳子不该再提示 [E]（按了也没用）
+	if _focus != null and _focus != _seat:
 		prompt = "[E]"
-	if _seated and (_focus == null or _focus == _seat):
-		prompt = "[Shift]"
 	if prompt != _prompt_text:
 		_prompt_text = prompt
 		prompt_text_changed.emit(_prompt_text)
@@ -274,12 +296,12 @@ func _run_subtitles() -> void:
 		var end := float(cue.get("end", start + 2.0))
 		if start > elapsed:
 			await get_tree().create_timer(start - elapsed).timeout
-		subtitle_changed.emit(str(cue.get("text", "")))
+		_set_subtitle(str(cue.get("text", "")))
 		if end > start:
 			await get_tree().create_timer(end - start).timeout
 		elapsed = maxf(end, start)
 
-	subtitle_changed.emit("")
+	_set_subtitle("")
 
 
 func _load_cues() -> Array:
