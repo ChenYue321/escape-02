@@ -10,6 +10,14 @@ extends CharacterBody3D
 ## 跳跃高度，米。内部按重力反推初速度，所以改重力后跳起高度仍保持不变。
 @export var jump_height: float = 0.5
 
+@export_group("彩蛋房间")
+## 第二次坠落时把玩家送进去的房间
+@export var easter_egg_scene: PackedScene
+## 把彩蛋房间放到离主场景很远的地方，避免两套几何重叠
+@export var easter_egg_offset: Vector3 = Vector3(2000, 0, 0)
+## 在彩蛋房间里待多久自动送回（0 = 不自动返回）
+@export var easter_egg_duration: float = 60.0
+
 @export_group("下蹲")
 ## 蹲下时胶囊体的高度（站立时取场景里的原值）
 @export var crouch_height: float = 1.15
@@ -67,6 +75,9 @@ var _spawn_rotation_y: float = 0.0
 var _falling: bool = false
 ## 掉下去过几次，用来决定播哪一条旁白
 var _fall_count: int = 0
+## 彩蛋房间的实例 / 当前是否在里面
+var _easter_egg: Node3D = null
+var _in_easter_egg: bool = false
 
 ## 站立时的胶囊高度 / 眼高，下蹲结束后要还原
 var _stand_capsule_height: float = 1.8
@@ -357,6 +368,12 @@ func _load_cues(cues_path: String) -> Array:
 func _start_fall() -> void:
 	_falling = true
 
+	# 彩蛋房间里没有能掉出去的地方，这里只是保险
+	if _in_easter_egg:
+		await _leave_easter_egg()
+		_falling = false
+		return
+
 	var line := _current_fall_line()
 	var voice := get_node_or_null("FallVoice") as AudioStreamPlayer
 	if voice != null and line != null and line >= 0:
@@ -376,6 +393,14 @@ func _start_fall() -> void:
 	if fade != null:
 		await fade.fade_to_black(0.8)
 
+	# 第二次坠落 = 彩蛋：进房间而不是回出生点
+	if _fall_count == 1 and easter_egg_scene != null:
+		_enter_easter_egg()
+		_fall_count += 1
+		if fade != null:
+			await fade.fade_from_black(1.4)
+		return
+
 	# 回到出生点，并把视角掰回正前方（黑屏期间完成，玩家看不到跳变）
 	global_position = _spawn_position
 	velocity = Vector3.ZERO
@@ -393,3 +418,55 @@ func _start_fall() -> void:
 
 func _capture_mouse() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+## 把彩蛋房间实例化到远处，并把玩家挪进去
+func _enter_easter_egg() -> void:
+	if _easter_egg == null:
+		_easter_egg = easter_egg_scene.instantiate() as Node3D
+		_easter_egg.name = "EasterEggRoom"
+		_easter_egg.position = easter_egg_offset
+		get_parent().add_child(_easter_egg)
+
+	_in_easter_egg = true
+
+	# 房间里没有门，出生点放在桌子正前方，朝向桌子
+	global_position = easter_egg_offset + Vector3(0.0, 0.05, 2.5)
+	velocity = Vector3.ZERO
+	rotation.y = 0.0
+	_camera.rotation.x = 0.0
+	_camera.position.y = _stand_eye_height
+	_crouching = false
+
+	if easter_egg_duration > 0.0:
+		_auto_leave_easter_egg()
+
+
+## 待够时间自动送回主场景
+func _auto_leave_easter_egg() -> void:
+	await get_tree().create_timer(easter_egg_duration).timeout
+	if _in_easter_egg:
+		await _leave_easter_egg()
+
+
+## 离开彩蛋房间：黑屏 → 回主场景出生点 → 张开，并销毁房间实例
+func _leave_easter_egg() -> void:
+	var fade := get_node_or_null("/root/ScreenFade")
+	if fade != null:
+		await fade.fade_to_black(0.8)
+
+	_in_easter_egg = false
+	global_position = _spawn_position
+	rotation.y = _spawn_rotation_y
+	_camera.rotation.x = 0.0
+	_camera.position.y = _stand_eye_height
+	velocity = Vector3.ZERO
+	_crouching = false
+	respawned.emit()
+
+	if _easter_egg != null:
+		_easter_egg.queue_free()
+		_easter_egg = null
+
+	if fade != null:
+		await fade.fade_from_black(1.4)

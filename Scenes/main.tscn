@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://canlgd0cn0aba" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_diff_1k.jpg" id="8_k4x2p"]
 [ext_resource type="Environment" path="res://environment/room_env.tres" id="9_env"]
 [ext_resource type="Script" uid="uid://cp55x6qmufw1o" path="res://script/player.gd" id="10_player"]
+[ext_resource type="PackedScene" path="res://Scenes/escape01_room.tscn" id="27_easter_egg"]
 [ext_resource type="Script" uid="uid://c6n7ga4qfn233" path="res://script/crosshair.gd" id="11_crosshair"]
 [ext_resource type="Script" uid="uid://dvotsjsr4ahmq" path="res://script/hud.gd" id="12_hud"]
 [ext_resource type="Script" uid="uid://c0d0tdmke7sle" path="res://script/lamp_switch.gd" id="13_switch"]
@@ -495,6 +496,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3.6)
 script = ExtResource("10_player")
 fall_voices = Array[AudioStream]([ExtResource("15_fall_01"), ExtResource("26_fall_02")])
 fall_cue_paths = PackedStringArray("res://audio/voice/fall_01.json", "res://audio/voice/fall_02.json")
+easter_egg_scene = ExtResource("27_easter_egg")
+easter_egg_offset = Vector3(2000, 0, 0)
+easter_egg_duration = 60.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Character" unique_id=744380879]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
