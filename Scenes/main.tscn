@@ -24,9 +24,9 @@
 [ext_resource type="AudioStream" uid="uid://baivv18okyan3" path="res://audio/sfx/switch_on.mp3" id="18_switch_on"]
 [ext_resource type="AudioStream" uid="uid://chl5rhbkf58o3" path="res://audio/sfx/switch_off.mp3" id="19_switch_off"]
 [ext_resource type="AudioStream" uid="uid://ds2o3uimo0a1h" path="res://audio/sfx/door_knob.mp3" id="20_door_knob"]
-[ext_resource type="AudioStream" uid="uid://b08od7w3m0miv" path="res://audio/sfx/tv_static.wav" id="23_tv_static"]
 [ext_resource type="Material" path="res://texture/computer/pc_plastic.tres" id="21_plastic"]
 [ext_resource type="Material" path="res://texture/computer/pc_plastic_aged.tres" id="22_plastic_aged"]
+[ext_resource type="AudioStream" uid="uid://b08od7w3m0miv" path="res://audio/sfx/tv_static.wav" id="23_tv_static"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.3
@@ -93,11 +93,6 @@ roughness = 0.32
 
 [sub_resource type="BoxMesh" id="BoxMesh_4rkuk"]
 size = Vector3(0.1, 0.1, 0.05)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cable_rubber"]
-albedo_color = Color(0.028, 0.028, 0.031, 1)
-metallic_specular = 0.22
-roughness = 0.92
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_button_gloss"]
 albedo_color = Color(0.88, 0.85, 0.74, 1)
@@ -245,7 +240,12 @@ _data = {
 }
 point_count = 10
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_cbgmd"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cable_rubber"]
+albedo_color = Color(0.028, 0.028, 0.031, 1)
+metallic_specular = 0.22
+roughness = 0.92
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_1w6v2"]
 _surfaces = [{
 "aabb": AABB(-0.19347723, -0.055, -0.0049604173, 0.27184463, 0.059961036, 0.31877378),
 "format": 34359742471,
@@ -264,7 +264,7 @@ _data = {
 }
 point_count = 11
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_1w6v2"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_ueoa1"]
 _surfaces = [{
 "aabb": AABB(-0.0099948, -0.61257005, -1.334069, 0.25991905, 0.62251544, 1.3351121),
 "format": 34359742471,
@@ -811,7 +811,7 @@ radius = 0.005
 
 [node name="WireMesh" type="MeshInstance3D" parent="Desk/Computer/Case/wire to keyboard" unique_id=1165869543]
 material_override = SubResource("StandardMaterial3D_cable_rubber")
-mesh = SubResource("ArrayMesh_cbgmd")
+mesh = SubResource("ArrayMesh_1w6v2")
 
 [node name="Power cord" type="Node3D" parent="Desk/Computer/Case" unique_id=540409664]
 
@@ -822,7 +822,7 @@ script = ExtResource("1_jjgbg")
 radius = 0.01
 
 [node name="WireMesh" type="MeshInstance3D" parent="Desk/Computer/Case/Power cord/Power cord wire" unique_id=264676649]
-mesh = SubResource("ArrayMesh_1w6v2")
+mesh = SubResource("ArrayMesh_ueoa1")
 surface_material_override/0 = SubResource("StandardMaterial3D_cable_rubber")
 
 [node name="plug" type="MeshInstance3D" parent="Desk/Computer/Case/Power cord" unique_id=1425464764]
@@ -900,14 +900,13 @@ light_energy = 0.35
 light_size = 0.15
 omni_range = 1.6
 
-[node name="Static Noise" type="AudioStreamPlayer3D" parent="Desk/Computer/Monitor"]
+[node name="Static Noise" type="AudioStreamPlayer3D" parent="Desk/Computer/Monitor" unique_id=1736014812]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.219, 0.05)
 stream = ExtResource("23_tv_static")
-autoplay = true
 volume_db = -8.0
 unit_size = 1.0
+autoplay = true
 max_distance = 6.43
-attenuation_model = 0
 
 [node name="Keyboard" type="Node3D" parent="Desk/Computer" unique_id=401018644]
 transform = Transform3D(1, 0, 0, 0, 0.9975642, -0.06975648, 0, 0.06975648, 0.9975642, 0, -0.04, 0.35)
