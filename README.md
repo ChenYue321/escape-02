@@ -31,9 +31,12 @@
   - 第一次被送回之后，门上会出现一块**吊在钉子上的告示牌**（`Room/Door/DoorPivot/Hanging Sign`）：木板 + 纸面 + 手写文字 + 钉头 + 两根由 `wire.gd` 生成的吊绳（系在钉头后面的钉杆上）；此前不可见
   - 纸上的字是 `texture/door/notice_dont_open.png`——用 Bradley Hand 手写体渲染的「Don't open!」，带轻微倾斜和墨迹扩散，透明背景叠在纸面上
   - 门与墙体碰撞都拆好了，门开后人可以走出去；**门外没有地面**，走出去会直接掉下去
-  - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**（没挂语音时等 6 秒）再黑屏复位到出生点，复位时位置、朝向、俯仰和蹲姿全部重置
+  - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**再黑屏复位到出生点，复位时位置、朝向、俯仰和蹲姿全部重置
+  - 旁白只有前两次坠落有；**第三次起没有语音，掉落 4 秒后直接送回**
 - **旁白与字幕**：`Character/FallVoice` 按**第几次掉下去**依次播 `fall_voices` 里的音频——第 1 次 `fall_01.mp3`（24 秒）、第 2 次起 `fall_02.mp3`（12 秒），再往后重复最后一条；每条的字幕时间轴在同名 JSON 里，按秒数逐句推到 `HUD/UIRoot/Subtitle`
-- **彩蛋房间**：第二次坠落时玩家会被送进 `Scenes/escape01_room.tscn`。房间实例化在 `(2000, 0, 0)` 的独立空间里，不与主场景重叠；18 个网格全部生成了凸包碰撞体。待 `easter_egg_duration`（默认 60 秒）后自动送回主场景并销毁实例
+- **彩蛋房间**：第二次坠落时玩家会被送进 `Scenes/escape01_room.tscn`。房间实例化在 `(2000, 0, 0)` 的独立空间里，不与主场景重叠；18 个网格全部生成了凸包碰撞体
+  - 进入时播放 `audio/voice/easter_01.mp3`（旁白吐槽这个房间），1.8 秒后房间中央升起一个**金色底座 + 红色发光按钮**的展台
+  - 对着按钮按 `E` 就送回主场景并销毁房间实例（`easter_egg_duration` 设为 0 表示只能靠按钮出来）
 - **转场**：`ScreenFade`（autoload）用 `shaders/iris_fade.gdshader` 做睁眼式黑幕——开场自动张开一次，掉出世界回来时再播一次；**黑幕完全退开之前不能移动、不能交互、不能转视角**（`ScreenFade.is_busy()` 统一判断，只保留 ESC 放光标）
 - **顶灯**：吊顶灯罩 + `SpotLight3D`，灯罩内侧有自发光表面
 - **开关音效**：`lamp_switch.gd` 在运行时给每个开关挂一个 `AudioStreamPlayer3D`，**开灯放 `switch_on`、关灯放 `switch_off`**，与初始状态无关（开局同步状态时不发声）
@@ -107,7 +110,9 @@ escape-02/
 │   ├── fall_01.mp3        # 第 1 次坠落的旁白
 │   ├── fall_01.json       # 对应字幕时间轴
 │   ├── fall_02.mp3        # 第 2 次起的旁白
-│   └── fall_02.json       # 对应字幕时间轴
+│   ├── fall_02.json       # 对应字幕时间轴
+│   ├── easter_01.mp3      # 彩蛋房间里的吐槽
+│   └── easter_01.json     # 对应字幕时间轴
 ├── audio/sfx/
 │   ├── switch_on.mp3      # 灯亮音效（CC0）
 │   ├── switch_off.mp3     # 灯灭音效（CC0）

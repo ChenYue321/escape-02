@@ -15,8 +15,14 @@ extends CharacterBody3D
 @export var easter_egg_scene: PackedScene
 ## 把彩蛋房间放到离主场景很远的地方，避免两套几何重叠
 @export var easter_egg_offset: Vector3 = Vector3(2000, 0, 0)
-## 在彩蛋房间里待多久自动送回（0 = 不自动返回）
-@export var easter_egg_duration: float = 60.0
+## 在彩蛋房间里待多久自动送回（0 = 不自动返回，只能按按钮出来）
+@export var easter_egg_duration: float = 0.0
+## 进入彩蛋房间时播放的旁白
+@export var easter_egg_voice: AudioStream
+## 它的字幕时间轴
+@export var easter_egg_cues: String = "res://audio/voice/easter_01.json"
+## 进入后多久把中间的展台升起来（秒）
+@export var pedestal_rise_delay: float = 1.8
 
 @export_group("下蹲")
 ## 蹲下时胶囊体的高度（站立时取场景里的原值）
@@ -31,8 +37,8 @@ extends CharacterBody3D
 @export_group("掉出世界")
 ## 低于这个高度就判定为掉出去了
 @export var fall_threshold: float = -8.0
-## 没有挂语音时，掉落后多久复位；挂了语音则以语音播放完毕为准
-@export var respawn_delay: float = 6.0
+## 没有旁白的那几次坠落，等多久复位
+@export var respawn_delay: float = 4.0
 ## 坠落旁白：按"第几次掉下去"依次取用，超出后一直用最后一条
 @export var fall_voices: Array[AudioStream] = []
 ## 每条旁白对应的字幕时间轴（JSON），与 fall_voices 一一对应
@@ -329,11 +335,21 @@ func _try_interact() -> void:
 	_focus.call("interact", self)
 
 
-## 这一次掉下去该播第几条：第一次播 0，第二次播 1……用完后就停在最后一条
+## 这一次掉下去该播第几条：第一次 0、第二次 1……条数用完就没有旁白了
 func _current_fall_line() -> int:
-	if fall_voices.is_empty():
+	if fall_voices.is_empty() or _fall_count >= fall_voices.size():
 		return -1
-	return mini(_fall_count, fall_voices.size() - 1)
+	return _fall_count
+
+
+## 播一条旁白并推它的字幕
+func _play_voice(stream: AudioStream, cues_path: String) -> void:
+	var voice := get_node_or_null("FallVoice") as AudioStreamPlayer
+	if voice == null or stream == null:
+		return
+	voice.stream = stream
+	voice.play()
+	_run_subtitles(cues_path)
 
 
 ## 按 JSON 里的时间轴把字幕一句句推给 HUD
@@ -375,16 +391,14 @@ func _start_fall() -> void:
 		return
 
 	var line := _current_fall_line()
-	var voice := get_node_or_null("FallVoice") as AudioStreamPlayer
-	if voice != null and line != null and line >= 0:
-		voice.stream = fall_voices[line]
-		voice.play()
-		_run_subtitles(fall_cue_paths[line] if line < fall_cue_paths.size() else "")
+	if line >= 0:
+		_play_voice(fall_voices[line], fall_cue_paths[line] if line < fall_cue_paths.size() else "")
 
 	fell_out_of_world.emit()
 
-	# 有语音就等它说完，没有就按固定时长
-	if voice != null and voice.playing:
+	# 有旁白就等它说完；没有旁白的那几次按固定时长
+	var voice := get_node_or_null("FallVoice") as AudioStreamPlayer
+	if line >= 0 and voice != null and voice.playing:
 		await voice.finished
 	else:
 		await get_tree().create_timer(respawn_delay).timeout
@@ -396,6 +410,7 @@ func _start_fall() -> void:
 	# 第二次坠落 = 彩蛋：进房间而不是回出生点
 	if _fall_count == 1 and easter_egg_scene != null:
 		_enter_easter_egg()
+		_falling = false
 		_fall_count += 1
 		if fade != null:
 			await fade.fade_from_black(1.4)
@@ -438,6 +453,9 @@ func _enter_easter_egg() -> void:
 	_camera.position.y = _stand_eye_height
 	_crouching = false
 
+	_play_voice(easter_egg_voice, easter_egg_cues)
+	_rise_pedestal()
+
 	if easter_egg_duration > 0.0:
 		_auto_leave_easter_egg()
 
@@ -470,3 +488,19 @@ func _leave_easter_egg() -> void:
 
 	if fade != null:
 		await fade.fade_from_black(1.4)
+
+
+## 进入一会儿之后，把房间中间的展台升上来
+func _rise_pedestal() -> void:
+	await get_tree().create_timer(pedestal_rise_delay).timeout
+	if _easter_egg == null:
+		return
+	var pedestal := _easter_egg.get_node_or_null("Pedestal")
+	if pedestal != null and pedestal.has_method("rise"):
+		pedestal.rise()
+
+
+## 给按钮调用：离开彩蛋房间（内部会黑屏、回出生点、销毁房间）
+func leave_easter_egg() -> void:
+	if _in_easter_egg:
+		await _leave_easter_egg()

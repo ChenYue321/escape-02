@@ -21,6 +21,7 @@
 [ext_resource type="Script" uid="uid://bf52asixe6xya" path="res://script/door.gd" id="14_door"]
 [ext_resource type="AudioStream" uid="uid://cw2y874waioec" path="res://audio/voice/fall_01.mp3" id="15_fall_01"]
 [ext_resource type="AudioStream" uid="uid://476c11cqkj11" path="res://audio/voice/fall_02.mp3" id="26_fall_02"]
+[ext_resource type="AudioStream" uid="uid://bf4vt45gro54l" path="res://audio/voice/easter_01.mp3" id="28_easter_voice"]
 [ext_resource type="Shader" uid="uid://npbg7u0nb0ni" path="res://shaders/crt_static.gdshader" id="16_crt_static"]
 [ext_resource type="Script" uid="uid://h4bal0cx1mfq" path="res://script/sit_spot.gd" id="17_sit"]
 [ext_resource type="Texture2D" uid="uid://bvisuwhtg6xpj" path="res://texture/door/notice_dont_open.png" id="25_notice_text"]
@@ -498,7 +499,9 @@ fall_voices = Array[AudioStream]([ExtResource("15_fall_01"), ExtResource("26_fal
 fall_cue_paths = PackedStringArray("res://audio/voice/fall_01.json", "res://audio/voice/fall_02.json")
 easter_egg_scene = ExtResource("27_easter_egg")
 easter_egg_offset = Vector3(2000, 0, 0)
-easter_egg_duration = 60.0
+easter_egg_duration = 0.0
+easter_egg_voice = ExtResource("28_easter_voice")
+easter_egg_cues = "res://audio/voice/easter_01.json"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Character" unique_id=744380879]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
