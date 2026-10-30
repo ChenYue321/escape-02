@@ -21,8 +21,6 @@ extends CharacterBody3D
 @export var easter_egg_voice: AudioStream
 ## 它的字幕时间轴
 @export var easter_egg_cues: String = "res://audio/voice/easter_01.json"
-## 进入后多久把中间的展台升起来（秒）
-@export var pedestal_rise_delay: float = 1.8
 
 @export_group("下蹲")
 ## 蹲下时胶囊体的高度（站立时取场景里的原值）
@@ -414,6 +412,8 @@ func _start_fall() -> void:
 		_fall_count += 1
 		if fade != null:
 			await fade.fade_from_black(1.4)
+		# 睁眼之后才开口，说完展台再升起来
+		await _run_easter_egg_sequence()
 		return
 
 	# 回到出生点，并把视角掰回正前方（黑屏期间完成，玩家看不到跳变）
@@ -453,9 +453,6 @@ func _enter_easter_egg() -> void:
 	_camera.position.y = _stand_eye_height
 	_crouching = false
 
-	_play_voice(easter_egg_voice, easter_egg_cues)
-	_rise_pedestal()
-
 	if easter_egg_duration > 0.0:
 		_auto_leave_easter_egg()
 
@@ -490,14 +487,20 @@ func _leave_easter_egg() -> void:
 		await fade.fade_from_black(1.4)
 
 
-## 进入一会儿之后，把房间中间的展台升上来
-func _rise_pedestal() -> void:
-	await get_tree().create_timer(pedestal_rise_delay).timeout
-	if _easter_egg == null:
-		return
-	var pedestal := _easter_egg.get_node_or_null("Pedestal")
-	if pedestal != null and pedestal.has_method("rise"):
-		pedestal.rise()
+## 彩蛋房间的流程：先说话，说完再让展台升起来
+func _run_easter_egg_sequence() -> void:
+	var voice := get_node_or_null("FallVoice") as AudioStreamPlayer
+	_play_voice(easter_egg_voice, easter_egg_cues)
+
+	if voice != null and voice.playing:
+		await voice.finished
+	else:
+		await get_tree().create_timer(3.0).timeout
+
+	if _in_easter_egg and _easter_egg != null:
+		var pedestal := _easter_egg.get_node_or_null("Pedestal")
+		if pedestal != null and pedestal.has_method("rise"):
+			pedestal.rise()
 
 
 ## 给按钮调用：离开彩蛋房间（内部会黑屏、回出生点、销毁房间）
