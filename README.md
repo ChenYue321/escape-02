@@ -28,7 +28,8 @@
   - **可开启**：对着把手按 `E`，把手先绕自身轴顺时针转 45°，随后整扇门绕合页竖轴向外推开 110°
   - 按下 `E` 的同时播放 `audio/sfx/door_knob.mp3`，录音开头的静音已剪掉，所以咔哒声和把手转动是同步的
   - **每次从虚空被送回，门都会自动关回原位**（把手归零、恢复可交互）
-  - 第一次被送回之后，门上会出现一块**吊在钉子上的告示牌**（`Room/Door/DoorPivot/Hanging Sign`）：木板 + 贴纸 + 钉头 + 两根由 `wire.gd` 生成的吊绳；此前不可见
+  - 第一次被送回之后，门上会出现一块**吊在钉子上的告示牌**（`Room/Door/DoorPivot/Hanging Sign`）：木板 + 纸面 + 手写文字 + 钉头 + 两根由 `wire.gd` 生成的吊绳（系在钉头后面的钉杆上）；此前不可见
+  - 纸上的字是 `texture/door/notice_dont_open.png`——用 Bradley Hand 手写体渲染的「Don't open!」，带轻微倾斜和墨迹扩散，透明背景叠在纸面上
   - 门与墙体碰撞都拆好了，门开后人可以走出去；**门外没有地面**，走出去会直接掉下去
   - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**（没挂语音时等 6 秒）再黑屏复位到出生点，复位时位置、朝向、俯仰和蹲姿全部重置
 - **旁白与字幕**：`Character/FallVoice` 播 `audio/voice/fall_01.mp3`（24 秒），字幕时间轴在 `audio/voice/fall_01.json`，按秒数逐句推到 `HUD/UIRoot/Subtitle`
@@ -110,6 +111,7 @@ escape-02/
 │   └── tv_static.wav      # 显示器雪花底噪（6 秒无缝循环，取原素材中段）
 ├── texture/
 │   ├── computer/          # 电脑外壳的米色粗塑料（albedo / normal / roughness）
+│   ├── door/              # 门上告示牌的手写文字贴图（透明背景）
 │   ├── wall/              # 砖墙 PBR 贴图
 │   ├── ceiling/           # 天花板 PBR 贴图
 │   ├── table/             # 木纹桌面 PBR 贴图
