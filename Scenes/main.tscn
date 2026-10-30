@@ -186,6 +186,40 @@ size = Vector3(0.13, 0.025, 0.025)
 [sub_resource type="BoxShape3D" id="BoxShape3D_door_handle"]
 size = Vector3(0.22, 0.16, 0.14)
 
+[sub_resource type="BoxMesh" id="BoxMesh_board"]
+size = Vector3(0.6, 0.4, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_paper"]
+size = Vector3(0.52, 0.34, 0.004)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_nail_shaft"]
+top_radius = 0.004
+bottom_radius = 0.004
+height = 0.05
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_nail_head"]
+top_radius = 0.012
+bottom_radius = 0.012
+height = 0.005
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_paper"]
+albedo_color = Color(0.88, 0.85, 0.74, 1)
+roughness = 0.9
+
+[sub_resource type="Curve3D" id="Curve3D_string_l"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 1.7217036, -0.035, 0, 0, 0, 0, 0, 0, -0.16, 1.695, -0.02, 0, 0, 0, 0, 0, 0, -0.3, 1.6604824, 0),
+"tilts": PackedFloat32Array(0, 0, 0)
+}
+point_count = 3
+
+[sub_resource type="Curve3D" id="Curve3D_string_r"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 1.7217036, -0.035, 0, 0, 0, 0, 0, 0, 0.16, 1.695, -0.02, 0, 0, 0, 0, 0, 0, 0.3, 1.6604824, 0),
+"tilts": PackedFloat32Array(0, 0, 0)
+}
+point_count = 3
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_desk"]
 size = Vector3(1.8, 0.05, 1)
 
@@ -686,18 +720,59 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.065, -0.03, -0.015)
 material_override = SubResource("StandardMaterial3D_door_metal")
 mesh = SubResource("BoxMesh_door_lever")
 
-[node name="HandleHit" type="StaticBody3D" parent="Room/Door/DoorPivot" unique_id=1916343562 node_paths=PackedStringArray("handle_pivot", "door_pivot")]
+[node name="HandleHit" type="StaticBody3D" parent="Room/Door/DoorPivot" unique_id=1916343562 node_paths=PackedStringArray("handle_pivot", "door_pivot", "hanging_sign")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78, 1.045, -0.045)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("14_door")
 handle_pivot = NodePath("../HandlePivot")
 door_pivot = NodePath("..")
+hanging_sign = NodePath("../Hanging Sign")
 sound_handle = ExtResource("20_door_knob")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Door/DoorPivot/HandleHit" unique_id=607147231]
 visible = false
 shape = SubResource("BoxShape3D_door_handle")
+
+[node name="Hanging Sign" type="Node3D" parent="Room/Door/DoorPivot"]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47, 0, -0.020674706)
+
+[node name="Board" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign" unique_id=2000996587]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4604824, 0)
+material_override = ExtResource("7_6iyac")
+mesh = SubResource("BoxMesh_board")
+
+[node name="Paper" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4604824, -0.012)
+material_override = SubResource("StandardMaterial3D_paper")
+mesh = SubResource("BoxMesh_paper")
+
+[node name="Nail Shaft" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 1.7217036, -0.005)
+material_override = SubResource("StandardMaterial3D_door_metal")
+mesh = SubResource("CylinderMesh_nail_shaft")
+
+[node name="Nail Head" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 1.7217036, -0.0325)
+material_override = SubResource("StandardMaterial3D_door_metal")
+mesh = SubResource("CylinderMesh_nail_head")
+
+[node name="String L" type="Path3D" parent="Room/Door/DoorPivot/Hanging Sign"]
+curve = SubResource("Curve3D_string_l")
+script = ExtResource("1_jjgbg")
+radius = 0.002
+
+[node name="WireMesh" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign/String L"]
+material_override = SubResource("StandardMaterial3D_cable_rubber")
+
+[node name="String R" type="Path3D" parent="Room/Door/DoorPivot/Hanging Sign"]
+curve = SubResource("Curve3D_string_r")
+script = ExtResource("1_jjgbg")
+radius = 0.002
+
+[node name="WireMesh" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign/String R"]
+material_override = SubResource("StandardMaterial3D_cable_rubber")
 
 [node name="Desk" type="Node3D" parent="." unique_id=1186838603]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, -2.5)
@@ -1017,3 +1092,4 @@ shape = SubResource("BoxShape3D_stool_solid")
 [connection signal="focus_changed" from="Character" to="HUD" method="_on_focus_changed"]
 [connection signal="prompt_text_changed" from="Character" to="HUD" method="_on_prompt_text_changed"]
 [connection signal="subtitle_changed" from="Character" to="HUD" method="_on_subtitle_changed"]
+[connection signal="respawned" from="Character" to="Room/Door/DoorPivot/HandleHit" method="reset_door"]

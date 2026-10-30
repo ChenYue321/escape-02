@@ -40,6 +40,9 @@ signal focus_changed(target: Node)
 ## 掉出世界（门外没有地面）时发出，方便以后接旁白、字幕或成就
 signal fell_out_of_world
 
+## 从虚空被送回出生点之后发出（门会在这时复位）
+signal respawned
+
 ## 旁白字幕变化，空字符串表示收起。由 HUD 监听并显示
 signal subtitle_changed(text: String)
 
@@ -368,6 +371,7 @@ func _start_fall() -> void:
 	_crouching = false
 	_camera.position.y = _stand_eye_height
 	_falling = false
+	respawned.emit()
 
 	if fade != null:
 		await fade.fade_from_black(1.4)

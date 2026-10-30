@@ -14,6 +14,8 @@ extends StaticBody3D
 @export var handle_pivot: Node3D
 ## 门转轴（绕它的 Y 轴旋转）
 @export var door_pivot: Node3D
+## 挂在门上的告示牌（钉子 + 木板 + 吊绳），第一次复位后才出现
+@export var hanging_sign: Node3D
 
 @export_group("角度")
 ## 把手按下多少度（正值 = 从门外看顺时针，即把手往下压）
@@ -33,6 +35,7 @@ extends StaticBody3D
 
 var _busy: bool = false
 var _open: bool = false
+var _tween: Tween
 ## 门声音效，运行时创建在门把手的位置
 var _audio: AudioStreamPlayer3D
 
@@ -56,6 +59,7 @@ func interact(_user: Node3D) -> void:
 
 	# Tween 默认串行：第一段结束后才开始第二段
 	var tween := create_tween()
+	_tween = tween
 	tween.tween_property(handle_pivot, "rotation:z", deg_to_rad(handle_angle_deg), handle_duration) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.tween_property(door_pivot, "rotation:y", -deg_to_rad(door_angle_deg), door_duration) \
@@ -74,3 +78,21 @@ func _play_handle_sound() -> void:
 		return
 	_audio.stream = sound_handle
 	_audio.play()
+
+
+## 玩家从虚空被送回来时调用：门恢复关闭，告示牌出现。
+## 可以重复调用（门本来就是关着的时候也无害）。
+func reset_door() -> void:
+	if _tween != null and _tween.is_valid():
+		_tween.kill()
+
+	handle_pivot.rotation.z = 0.0
+	door_pivot.rotation.y = 0.0
+
+	_open = false
+	_busy = false
+	# 重新变成可交互目标
+	collision_layer = 2
+
+	if hanging_sign != null:
+		hanging_sign.visible = true
