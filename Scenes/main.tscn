@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://c0d0tdmke7sle" path="res://script/lamp_switch.gd" id="13_switch"]
 [ext_resource type="Script" uid="uid://bf52asixe6xya" path="res://script/door.gd" id="14_door"]
 [ext_resource type="AudioStream" uid="uid://cw2y874waioec" path="res://audio/voice/fall_01.mp3" id="15_fall_01"]
+[ext_resource type="AudioStream" uid="uid://476c11cqkj11" path="res://audio/voice/fall_02.mp3" id="26_fall_02"]
 [ext_resource type="Shader" uid="uid://npbg7u0nb0ni" path="res://shaders/crt_static.gdshader" id="16_crt_static"]
 [ext_resource type="Script" uid="uid://h4bal0cx1mfq" path="res://script/sit_spot.gd" id="17_sit"]
 [ext_resource type="Texture2D" uid="uid://bvisuwhtg6xpj" path="res://texture/door/notice_dont_open.png" id="25_notice_text"]
@@ -492,6 +493,8 @@ horizontal_alignment = 1
 [node name="Character" type="CharacterBody3D" parent="." unique_id=1321363321]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3.6)
 script = ExtResource("10_player")
+fall_voices = Array[AudioStream]([ExtResource("15_fall_01"), ExtResource("26_fall_02")])
+fall_cue_paths = PackedStringArray("res://audio/voice/fall_01.json", "res://audio/voice/fall_02.json")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Character" unique_id=744380879]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
@@ -499,7 +502,6 @@ visible = false
 shape = SubResource("CapsuleShape3D_body")
 
 [node name="FallVoice" type="AudioStreamPlayer" parent="Character" unique_id=1321540066]
-stream = ExtResource("15_fall_01")
 
 [node name="Camera3D" type="Camera3D" parent="Character" unique_id=1550534383]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5999999, 0)

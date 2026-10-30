@@ -32,7 +32,7 @@
   - 纸上的字是 `texture/door/notice_dont_open.png`——用 Bradley Hand 手写体渲染的「Don't open!」，带轻微倾斜和墨迹扩散，透明背景叠在纸面上
   - 门与墙体碰撞都拆好了，门开后人可以走出去；**门外没有地面**，走出去会直接掉下去
   - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**（没挂语音时等 6 秒）再黑屏复位到出生点，复位时位置、朝向、俯仰和蹲姿全部重置
-- **旁白与字幕**：`Character/FallVoice` 播 `audio/voice/fall_01.mp3`（24 秒），字幕时间轴在 `audio/voice/fall_01.json`，按秒数逐句推到 `HUD/UIRoot/Subtitle`
+- **旁白与字幕**：`Character/FallVoice` 按**第几次掉下去**依次播 `fall_voices` 里的音频——第 1 次 `fall_01.mp3`（24 秒）、第 2 次起 `fall_02.mp3`（12 秒），再往后重复最后一条；每条的字幕时间轴在同名 JSON 里，按秒数逐句推到 `HUD/UIRoot/Subtitle`
 - **转场**：`ScreenFade`（autoload）用 `shaders/iris_fade.gdshader` 做睁眼式黑幕——开场自动张开一次，掉出世界回来时再播一次；**黑幕完全退开之前不能移动、不能交互、不能转视角**（`ScreenFade.is_busy()` 统一判断，只保留 ESC 放光标）
 - **顶灯**：吊顶灯罩 + `SpotLight3D`，灯罩内侧有自发光表面
 - **开关音效**：`lamp_switch.gd` 在运行时给每个开关挂一个 `AudioStreamPlayer3D`，**开灯放 `switch_on`、关灯放 `switch_off`**，与初始状态无关（开局同步状态时不发声）
@@ -102,8 +102,10 @@ escape-02/
 │   ├── iris_fade.gdshader # 转场用：从中心张开的椭圆黑幕
 │   └── crt_static.gdshader # 显示器雪花屏
 ├── audio/voice/
-│   ├── fall_01.mp3        # 坠落旁白（由 m4a 转码而来）
-│   └── fall_01.json       # 字幕时间轴：每句的起止秒数
+│   ├── fall_01.mp3        # 第 1 次坠落的旁白
+│   ├── fall_01.json       # 对应字幕时间轴
+│   ├── fall_02.mp3        # 第 2 次起的旁白
+│   └── fall_02.json       # 对应字幕时间轴
 ├── audio/sfx/
 │   ├── switch_on.mp3      # 灯亮音效（CC0）
 │   ├── switch_off.mp3     # 灯灭音效（CC0）

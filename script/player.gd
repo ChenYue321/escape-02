@@ -25,8 +25,10 @@ extends CharacterBody3D
 @export var fall_threshold: float = -8.0
 ## 没有挂语音时，掉落后多久复位；挂了语音则以语音播放完毕为准
 @export var respawn_delay: float = 6.0
-## 旁白字幕时间轴（JSON，和音频同名放一起）
-@export var subtitle_cues_path: String = "res://audio/voice/fall_01.json"
+## 坠落旁白：按"第几次掉下去"依次取用，超出后一直用最后一条
+@export var fall_voices: Array[AudioStream] = []
+## 每条旁白对应的字幕时间轴（JSON），与 fall_voices 一一对应
+@export var fall_cue_paths: PackedStringArray = []
 
 @export_group("视角")
 ## 鼠标灵敏度，弧度/像素
@@ -63,6 +65,8 @@ var _spawn_position: Vector3
 var _spawn_rotation_y: float = 0.0
 ## 是否已经触发过掉落（避免每帧重复触发）
 var _falling: bool = false
+## 掉下去过几次，用来决定播哪一条旁白
+var _fall_count: int = 0
 
 ## 站立时的胶囊高度 / 眼高，下蹲结束后要还原
 var _stand_capsule_height: float = 1.8
@@ -314,9 +318,16 @@ func _try_interact() -> void:
 	_focus.call("interact", self)
 
 
+## 这一次掉下去该播第几条：第一次播 0，第二次播 1……用完后就停在最后一条
+func _current_fall_line() -> int:
+	if fall_voices.is_empty():
+		return -1
+	return mini(_fall_count, fall_voices.size() - 1)
+
+
 ## 按 JSON 里的时间轴把字幕一句句推给 HUD
-func _run_subtitles() -> void:
-	var cues := _load_cues()
+func _run_subtitles(cues_path: String) -> void:
+	var cues := _load_cues(cues_path)
 	if cues.is_empty():
 		return
 
@@ -334,10 +345,10 @@ func _run_subtitles() -> void:
 	_set_subtitle("")
 
 
-func _load_cues() -> Array:
-	if subtitle_cues_path.is_empty() or not FileAccess.file_exists(subtitle_cues_path):
+func _load_cues(cues_path: String) -> Array:
+	if cues_path.is_empty() or not FileAccess.file_exists(cues_path):
 		return []
-	var parsed = JSON.parse_string(FileAccess.get_file_as_string(subtitle_cues_path))
+	var parsed = JSON.parse_string(FileAccess.get_file_as_string(cues_path))
 	return parsed if parsed is Array else []
 
 
@@ -346,10 +357,12 @@ func _load_cues() -> Array:
 func _start_fall() -> void:
 	_falling = true
 
+	var line := _current_fall_line()
 	var voice := get_node_or_null("FallVoice") as AudioStreamPlayer
-	if voice != null and voice.stream != null:
+	if voice != null and line != null and line >= 0:
+		voice.stream = fall_voices[line]
 		voice.play()
-		_run_subtitles()
+		_run_subtitles(fall_cue_paths[line] if line < fall_cue_paths.size() else "")
 
 	fell_out_of_world.emit()
 
@@ -372,6 +385,7 @@ func _start_fall() -> void:
 	_camera.position.y = _stand_eye_height
 	_falling = false
 	respawned.emit()
+	_fall_count += 1
 
 	if fade != null:
 		await fade.fade_from_black(1.4)
