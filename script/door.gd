@@ -25,7 +25,7 @@ extends StaticBody3D
 ## 转动把手的音效（已剪掉开头的空白，按下 E 的瞬间就发声）
 @export var sound_handle: AudioStream
 ## 音量（dB）
-@export var sound_volume_db: float = -3.0
+@export var sound_volume_db: float = -8.0
 
 @export_group("时长")
 @export var handle_duration: float = 0.22

@@ -18,7 +18,7 @@ extends StaticBody3D
 ## 灯被关掉时播放
 @export var sound_off: AudioStream
 ## 播放音量（dB）
-@export var sound_volume_db: float = -4.0
+@export var sound_volume_db: float = -11.0
 
 ## 当前是否开着
 var _on: bool = true
