@@ -42,3 +42,9 @@ ffmpeg -hide_banner -loglevel error -y -i "$IN" \
 echo "输出: $OUT"
 ffprobe -v error -show_entries format=duration -of csv=p=0 "$OUT" | awk '{printf "时长: %.2fs\n", $1}'
 ffmpeg -hide_banner -i "$OUT" -af loudnorm=print_format=json -f null - 2>&1 | grep -E 'input_i|input_tp' | tr -d '\t'
+
+# 处理链会让时长有千分之几的伸缩；按【原始录音】量的字幕时间需要乘这个比例
+SRC_DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$IN")
+OUT_DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$OUT")
+awk -v a="$SRC_DUR" -v b="$OUT_DUR" \
+	'BEGIN{printf "时长比(处理后/原文件): %.5f —— 按原文件量的字幕时间要乘这个数\n", b/a}'
