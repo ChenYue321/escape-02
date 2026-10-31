@@ -94,6 +94,15 @@ var _current_page: Control
 var _listening_action: String = ""
 var _listening_button: Button
 var _key_buttons: Dictionary = {}
+## 当前显示 › 箭头的那个按钮（同一时刻只允许一个）
+var _arrow_owner: Control
+## 焦点对应到哪一项（按钮或滑条行的标签）/ 鼠标悬停在哪一项
+var _focus_button: Control
+var _hover_button: Button
+## 最近一次输入是鼠标吗（决定箭头跟鼠标还是跟键盘）
+var _mouse_recent: bool = false
+## 每个可选按钮的原始文字
+var _base_texts: Dictionary = {}
 var _back_keys_button: Button
 
 ## 每个滑条的数值标签，改值时刷新
@@ -210,8 +219,8 @@ func _make_page(title: String) -> Control:
 	scroll.name = "Scroll"
 	scroll.anchor_left = 0.12
 	scroll.anchor_top = 0.26
-	scroll.anchor_right = 0.9
-	scroll.anchor_bottom = 0.9
+	scroll.anchor_right = 0.88
+	scroll.anchor_bottom = 0.855
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	page.add_child(scroll)
 	_style_scroll(scroll)
@@ -278,7 +287,8 @@ func _row_label(parent: HBoxContainer, text: String) -> Label:
 
 func _add_slider_row(parent: VBoxContainer, spec: Dictionary) -> void:
 	var row := _row_box(parent)
-	_row_label(row, spec.label)
+	var label := _row_label(row, spec.label)
+	_base_texts[label] = label.text
 
 	var slider := HSlider.new()
 	slider.custom_minimum_size = Vector2(360, 0)
@@ -298,6 +308,11 @@ func _add_slider_row(parent: VBoxContainer, spec: Dictionary) -> void:
 	value.text = _format(spec, slider.value)
 	row.add_child(value)
 	_value_labels[spec.prop] = value
+
+	# 键盘焦点落在滑条上时，箭头标到这一行的标题上
+	slider.focus_entered.connect(func() -> void:
+		_focus_button = label
+		_refresh_arrow())
 
 	slider.value_changed.connect(func(v: float) -> void:
 		_settings().set(spec.prop, v)
@@ -323,6 +338,7 @@ func _add_option_row(parent: VBoxContainer, spec: Dictionary, options: Array, la
 	button.add_theme_color_override("font_focus_color", Color(1, 1, 1))
 	button.text = _option_text(spec, options, labels)
 	row.add_child(button)
+	_add_focus_marker(button)
 
 	button.pressed.connect(func() -> void:
 		var current: Variant = _settings().get(spec.prop)
@@ -333,7 +349,7 @@ func _add_option_row(parent: VBoxContainer, spec: Dictionary, options: Array, la
 		_settings().set(spec.prop, options[index])
 		_apply_prop(spec.prop)
 		_settings().save_settings()
-		button.text = _option_text(spec, options, labels)
+		_set_button_text(button, _option_text(spec, options, labels))
 	)
 
 
@@ -361,9 +377,9 @@ func _add_back_button(page: Control, target: Control, focus: Control = null) -> 
 	divider.name = "Divider"
 	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	divider.anchor_left = 0.12
-	divider.anchor_top = 0.885
+	divider.anchor_top = 0.88
 	divider.anchor_right = 0.88
-	divider.anchor_bottom = 0.885
+	divider.anchor_bottom = 0.88
 	divider.offset_bottom = 1.0
 	var line := StyleBoxFlat.new()
 	line.bg_color = Color(0.3, 0.34, 0.4, 0.55)
@@ -374,11 +390,9 @@ func _add_back_button(page: Control, target: Control, focus: Control = null) -> 
 	button.text = "BACK"
 	button.name = "BackButton"
 	button.anchor_left = 0.135
-	button.anchor_top = 1.0
+	button.anchor_top = 0.9
 	button.anchor_right = 0.135
-	button.anchor_bottom = 1.0
-	button.offset_top = -104.0
-	button.offset_bottom = -38.0
+	button.anchor_bottom = 0.97
 	button.offset_right = 600.0
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.flat = true
@@ -399,17 +413,31 @@ func _add_back_button(page: Control, target: Control, focus: Control = null) -> 
 	_add_focus_marker(button)
 
 
-## 把焦点放到某个页面的第一个可聚焦控件上
+## 把焦点放到某个页面的第一个可操作控件上：
+## 优先按钮，没有按钮就退到第一个滑条，最后退到 BACK
 func _focus_first(page: Control) -> void:
+	var rows: Node = null
 	for child in page.get_children():
-		var rows: Node = null
 		if child is ScrollContainer:
 			rows = child.get_node_or_null("Rows")
 		elif child is VBoxContainer:
 			rows = child
-		if rows != null and rows.get_child_count() > 0:
-			(rows.get_child(0) as Control).grab_focus()
-			return
+
+	if rows != null:
+		for node in rows.find_children("*", "Button", true, false):
+			var button := node as Control
+			if button.focus_mode != Control.FOCUS_NONE and button.is_visible_in_tree():
+				button.grab_focus()
+				return
+		for node in rows.find_children("*", "Control", true, false):
+			var control := node as Control
+			if control.focus_mode != Control.FOCUS_NONE and control.is_visible_in_tree():
+				control.grab_focus()
+				return
+
+	var back := page.get_node_or_null("BackButton") as Control
+	if back != null:
+		back.grab_focus()
 
 
 # --- 值的显示与生效 ---
@@ -469,8 +497,7 @@ func _open_page(page_id: String) -> void:
 	if target == null:
 		return
 	_switch_page(_current_page, target)
-	if page_id == "keys" and _back_keys_button != null:
-		_back_keys_button.grab_focus()
+	_focus_first(target)
 
 
 func _switch_page(from_page: Control, to_page: Control) -> void:
@@ -479,6 +506,8 @@ func _switch_page(from_page: Control, to_page: Control) -> void:
 	from_page.visible = false
 	to_page.visible = true
 	_current_page = to_page
+	_hover_button = null
+	_mouse_recent = false
 	to_page.modulate.a = 0.0
 	var tween := create_tween()
 	tween.tween_property(to_page, "modulate:a", 1.0, 0.18) \
@@ -531,6 +560,7 @@ func _build_keys_page() -> void:
 		button.text = _key_text(action)
 		button.pressed.connect(_start_listening.bind(action, button))
 		row_box.add_child(button)
+		_add_focus_marker(button)
 		_key_buttons[action] = button
 
 	var reset := Button.new()
@@ -572,7 +602,7 @@ func _cancel_listening() -> void:
 	if _listening_action.is_empty():
 		return
 	if _listening_button != null:
-		_listening_button.text = _key_text(_listening_action)
+		_set_button_text(_listening_button, _key_text(_listening_action))
 		_listening_button.add_theme_color_override("font_color", Color(0.62, 0.67, 0.74))
 	_listening_action = ""
 	_listening_button = null
@@ -582,11 +612,23 @@ func _restore_default_bindings() -> void:
 	_cancel_listening()
 	_settings().reset_bindings()
 	for action: String in _key_buttons:
-		(_key_buttons[action] as Button).text = _key_text(action)
+		_set_button_text(_key_buttons[action], _key_text(action))
 
 
-## 监听时用 _input 而不是 _unhandled_input：方向键、空格会被按钮的焦点导航先吃掉
 func _input(event: InputEvent) -> void:
+	# 鼠标一动，箭头就交还给鼠标悬停的那个
+	if event is InputEventMouseMotion:
+		_mouse_recent = true
+		_refresh_arrow()
+		return
+
+	# 按上下键时，箭头交给键盘，直到鼠标再动
+	if event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down"):
+		_mouse_recent = false
+		call_deferred("_refresh_arrow")
+		return
+
+	# 监听时用 _input 而不是 _unhandled_input：方向键、空格会被按钮的焦点导航先吃掉
 	if _listening_action.is_empty():
 		return
 	var key := event as InputEventKey
@@ -605,17 +647,74 @@ func _input(event: InputEvent) -> void:
 
 # --- 时钟 ---
 
-## 选中（键盘焦点）和鼠标悬停都显示同一个 › 箭头，行为统一
+## 注册一个"可选中"的按钮：统一它的样式，并接上箭头逻辑
 func _add_focus_marker(button: Button) -> void:
-	var base_text := button.text
-	button.focus_entered.connect(func() -> void: button.text = "› " + base_text)
-	button.focus_exited.connect(func() -> void:
-		if not button.is_hovered():
-			button.text = base_text)
-	button.mouse_entered.connect(func() -> void: button.text = "› " + base_text)
+	_base_texts[button] = button.text
+	_style_selectable(button)
+
+	button.focus_entered.connect(func() -> void:
+		_focus_button = button
+		_refresh_arrow())
+	button.mouse_entered.connect(func() -> void:
+		_hover_button = button
+		_mouse_recent = true
+		_refresh_arrow())
 	button.mouse_exited.connect(func() -> void:
-		if not button.has_focus():
-			button.text = base_text)
+		if _hover_button == button:
+			_hover_button = null
+		_refresh_arrow())
+
+
+## 重新决定箭头该落在谁身上：
+## 最近动过鼠标且鼠标停在某个按钮上 → 给那个按钮；否则给键盘焦点
+func _refresh_arrow() -> void:
+	var target: Control = null
+	if _mouse_recent and _hover_button != null:
+		target = _hover_button
+	else:
+		target = _focus_button
+	_set_arrow(target)
+
+
+## 改一个按钮的文字：同步它的 base text，如果箭头在它身上就补上箭头
+func _set_button_text(button: Button, text: String) -> void:
+	_base_texts[button] = text
+	button.text = ("› " + text) if _arrow_owner == button else text
+
+
+func _set_arrow(button: Control) -> void:
+	if _arrow_owner == button:
+		return
+	if _arrow_owner != null and is_instance_valid(_arrow_owner):
+		_arrow_owner.set("text", _base_texts.get(_arrow_owner, ""))
+	_arrow_owner = button
+	if button != null and _base_texts.has(button):
+		button.set("text", "› " + String(_base_texts[button]))
+
+
+## 统一的按钮样式：透明内边距 + 贴边的 1px 焦点框（不再用会超出矩形的默认焦点样式，
+## 那样在滚动容器边缘会被裁掉，看起来上边和左边变细）
+func _style_selectable(button: Button) -> void:
+	var pad := StyleBoxFlat.new()
+	pad.bg_color = Color(0, 0, 0, 0)
+	pad.content_margin_left = 10
+	pad.content_margin_right = 10
+	pad.content_margin_top = 4
+	pad.content_margin_bottom = 4
+
+	var focus := StyleBoxFlat.new()
+	focus.draw_center = false
+	focus.border_width_left = 1
+	focus.border_width_top = 1
+	focus.border_width_right = 1
+	focus.border_width_bottom = 1
+	focus.border_color = Color(0.66, 0.73, 0.84, 0.9)
+
+	button.flat = false
+	button.add_theme_stylebox_override("normal", pad)
+	button.add_theme_stylebox_override("hover", pad)
+	button.add_theme_stylebox_override("pressed", pad)
+	button.add_theme_stylebox_override("focus", focus)
 
 
 func _ui_font() -> Font:
