@@ -27,8 +27,31 @@ const FADE_IN := 1.0
 @onready var _sensitivity_value: Label = $SettingsPage/Rows/SensitivityRow/Value
 @onready var _volume_value: Label = $SettingsPage/Rows/VolumeRow/Value
 @onready var _back: Button = $SettingsPage/Rows/BackButton
+@onready var _keys_button: Button = $SettingsPage/Rows/KeysButton
+@onready var _keys_page: Control = $KeysPage
+@onready var _keys_rows: VBoxContainer = $KeysPage/Rows
+
+## 正在等待玩家按键的 action（空 = 没在监听）
+var _listening_action: String = ""
+## 每个 action 对应的那个按钮，改完键位要回写显示
+var _key_buttons: Dictionary = {}
+## 监听中的那个按钮原始文字，取消时恢复
+var _listening_button: Button
+
+## 按键绑定页里列出的动作，顺序就是显示顺序
+const BINDINGS := [
+	["move_forward", "MOVE FORWARD"],
+	["move_back", "MOVE BACK"],
+	["move_left", "MOVE LEFT"],
+	["move_right", "MOVE RIGHT"],
+	["jump", "JUMP"],
+	["interact", "INTERACT"],
+	["crouch", "CROUCH"],
+]
 
 var _leaving: bool = false
+## 按键页的 BACK 按钮（代码里生成的）
+var _back_keys_button: Button
 
 
 func _ready() -> void:
@@ -41,6 +64,8 @@ func _ready() -> void:
 	_settings_button.pressed.connect(_open_settings)
 	_quit.pressed.connect(_on_quit_pressed)
 	_back.pressed.connect(_close_settings)
+	_keys_button.pressed.connect(_open_keys)
+	_build_keys_page()
 
 	_sensitivity.value_changed.connect(_on_sensitivity_changed)
 	_volume.value_changed.connect(_on_volume_changed)
@@ -51,7 +76,7 @@ func _ready() -> void:
 		_volume.value = settings.volume
 	_sync_labels()
 
-	for button in [_start, _settings_button, _quit, _back]:
+	for button in [_start, _settings_button, _quit, _back, _keys_button]:
 		_add_focus_marker(button)
 
 	_start.grab_focus()
@@ -101,7 +126,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _leaving:
 		return
 	if event.is_action_pressed("ui_cancel"):
-		if _settings_page.visible:
+		if _keys_page.visible:
+			_close_keys()
+		elif _settings_page.visible:
 			_close_settings()
 		else:
 			_on_quit_pressed()
@@ -125,6 +152,114 @@ func _switch_page(from_page: Control, to_page: Control) -> void:
 	var tween := create_tween()
 	tween.tween_property(to_page, "modulate:a", 1.0, 0.18) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+## 按键绑定页：每一行是「动作名 + 当前按键」，按键是个按钮，点了开始监听
+func _build_keys_page() -> void:
+	for row in BINDINGS:
+		var action: String = row[0]
+		var label_text: String = row[1]
+
+		var row_box := HBoxContainer.new()
+		row_box.add_theme_constant_override("separation", 24)
+		_keys_rows.add_child(row_box)
+
+		var label := Label.new()
+		label.text = label_text
+		label.custom_minimum_size = Vector2(300, 0)
+		label.add_theme_color_override("font_color", Color(0.8, 0.84, 0.9))
+		label.add_theme_font_override("font", _start.get_theme_font("font"))
+		label.add_theme_font_size_override("font_size", 30)
+		row_box.add_child(label)
+
+		var button := Button.new()
+		button.custom_minimum_size = Vector2(220, 46)
+		button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.flat = true
+		button.add_theme_font_size_override("font_size", 22)
+		button.add_theme_color_override("font_color", Color(0.62, 0.67, 0.74))
+		button.add_theme_color_override("font_hover_color", Color(1, 1, 1))
+		button.add_theme_color_override("font_focus_color", Color(1, 1, 1))
+		button.text = _key_text(action)
+		button.pressed.connect(_start_listening.bind(action, button))
+		row_box.add_child(button)
+		_key_buttons[action] = button
+
+	var back := Button.new()
+	back.text = "BACK"
+	back.custom_minimum_size = Vector2(380, 64)
+	back.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	back.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	back.flat = true
+	back.add_theme_font_override("font", _start.get_theme_font("font"))
+	back.add_theme_font_size_override("font_size", 40)
+	back.add_theme_color_override("font_color", Color(0.78, 0.81, 0.86))
+	back.add_theme_color_override("font_hover_color", Color(1, 1, 1))
+	back.add_theme_color_override("font_focus_color", Color(1, 1, 1))
+	back.pressed.connect(_close_keys)
+	_keys_rows.add_child(back)
+	_back_keys_button = back
+	_add_focus_marker(back)
+
+
+func _key_text(action: String) -> String:
+	var settings := get_node_or_null("/root/Settings")
+	var keycode: int = settings.keycode_for(action) if settings != null else 0
+	if keycode == 0:
+		return "—"
+	return OS.get_keycode_string(keycode)
+
+
+func _open_keys() -> void:
+	_switch_page(_settings_page, _keys_page)
+	if _back_keys_button != null:
+		_back_keys_button.grab_focus()
+
+
+func _close_keys() -> void:
+	_cancel_listening()
+	_switch_page(_keys_page, _settings_page)
+	_keys_button.grab_focus()
+
+
+func _start_listening(action: String, button: Button) -> void:
+	_cancel_listening()
+	_listening_action = action
+	_listening_button = button
+	button.text = "PRESS A KEY…"
+	button.add_theme_color_override("font_color", Color(1, 0.85, 0.4))
+
+
+func _cancel_listening() -> void:
+	if _listening_action.is_empty():
+		return
+	if _listening_button != null:
+		_listening_button.text = _key_text(_listening_action)
+		_listening_button.add_theme_color_override("font_color", Color(0.62, 0.67, 0.74))
+	_listening_action = ""
+	_listening_button = null
+
+
+## 监听时用 _input 而不是 _unhandled_input：方向键、空格这些会被按钮的焦点
+## 导航先吃掉，走 unhandled 就永远收不到
+func _input(event: InputEvent) -> void:
+	if _listening_action.is_empty():
+		return
+	var key := event as InputEventKey
+	if key == null or not key.pressed or key.echo:
+		return
+	get_viewport().set_input_as_handled()
+
+	if key.keycode == KEY_ESCAPE:
+		_cancel_listening()
+		return
+
+	var action := _listening_action
+	var settings := get_node_or_null("/root/Settings")
+	if settings != null:
+		settings.rebind(action, key.physical_keycode)
+	_cancel_listening()
 
 
 func _on_sensitivity_changed(value: float) -> void:

@@ -39,6 +39,7 @@
   - 字体用 `SystemFont` 请求系统里的 Bradley Hand（回退 Chalkboard / Marker Felt / Comic Sans / 默认）
   - `SETTING` 是**整页切换**（不是弹出小窗）：标题换成 `SETTING`，下面是 `SENSITIVITY` / `VOLUME` 两个滑条和 `BACK`，背景还是那片黑暗里的显示器；页面切换时新旧两页交叉淡入 0.18 秒
   - 两个设置即时生效，并写进 `user://settings.cfg`
+  - `KEY BINDING` 再进一页：`MOVE FORWARD / BACK / LEFT / RIGHT / JUMP / INTERACT / CROUCH` 七个动作各占一行，点当前按键开始监听，按下新键立刻生效并落盘；监听时按 Esc 撤销。用的是**物理键码**（`physical_keycode`），换键盘布局不会错位
   - 相机取景由 `menu.gd` 的导出参数控制：`camera_position` / `camera_target` / `camera_fov`
 - **彩蛋房间**：第二次坠落时玩家会被送进 `Scenes/escape01_room.tscn`。房间实例化在 `(2000, 0, 0)` 的独立空间里，不与主场景重叠；18 个网格全部生成了凸包碰撞体
   - **睁眼之后**才开始播放 `audio/voice/easter_01.mp3`（旁白吐槽这个房间），**说完之后**房间中央才升起展台：金色底座 + 黑漆柱 + 发光红环 + 红色亮面按钮
