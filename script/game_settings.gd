@@ -12,11 +12,21 @@ var volume: float = 1.0
 ## 按键绑定：action 名 → 物理键码（空字典 = 用项目里配的默认键位）
 var bindings: Dictionary = {}
 
+## 最大帧率（0 = 不限）
+var max_fps: int = 0
+## 垂直同步
+var vsync: bool = true
+
+## 项目里原始键位，用于"恢复默认"（启动时抓一次快照）
+var _default_bindings: Dictionary = {}
+
 
 func _ready() -> void:
+	_capture_default_bindings()
 	load_settings()
 	apply()
 	apply_bindings()
+	apply_display()
 
 
 ## 立刻作用到引擎：主音量走 Master 总线
@@ -26,12 +36,32 @@ func apply() -> void:
 	AudioServer.set_bus_volume_db(bus, db)
 
 
+## 帧率上限与垂直同步
+func apply_display() -> void:
+	Engine.max_fps = max_fps
+	var mode := DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED
+	DisplayServer.window_set_vsync_mode(mode)
+
+
+## 记录每个 action 的项目默认键位（必须在 apply_bindings 之前跑）
+func _capture_default_bindings() -> void:
+	_default_bindings.clear()
+	for action in InputMap.get_actions():
+		for event in InputMap.action_get_events(action):
+			var key := event as InputEventKey
+			if key != null:
+				_default_bindings[action] = key.physical_keycode
+				break
+
+
 func load_settings() -> void:
 	var cfg := ConfigFile.new()
 	if cfg.load(PATH) != OK:
 		return
 	mouse_scale = clampf(float(cfg.get_value("input", "mouse_scale", mouse_scale)), 0.1, 5.0)
 	volume = clampf(float(cfg.get_value("audio", "volume", volume)), 0.0, 1.0)
+	max_fps = maxi(0, int(cfg.get_value("display", "max_fps", max_fps)))
+	vsync = bool(cfg.get_value("display", "vsync", vsync))
 	var saved: Variant = cfg.get_value("input", "bindings", {})
 	if saved is Dictionary:
 		bindings = (saved as Dictionary).duplicate()
@@ -42,6 +72,8 @@ func save_settings() -> void:
 	cfg.set_value("input", "mouse_scale", mouse_scale)
 	cfg.set_value("audio", "volume", volume)
 	cfg.set_value("input", "bindings", bindings)
+	cfg.set_value("display", "max_fps", max_fps)
+	cfg.set_value("display", "vsync", vsync)
 	cfg.save(PATH)
 
 
@@ -82,3 +114,20 @@ func rebind(action: String, keycode: int) -> void:
 	event.physical_keycode = keycode
 	InputMap.action_add_event(action, event)
 	save_settings()
+
+
+## 把所有键位恢复成项目默认
+func reset_bindings() -> void:
+	bindings.clear()
+	for action: String in _default_bindings:
+		_apply_key(action, int(_default_bindings[action]))
+	save_settings()
+
+
+func _apply_key(action: String, keycode: int) -> void:
+	if not InputMap.has_action(action) or keycode == 0:
+		return
+	InputMap.action_erase_events(action)
+	var event := InputEventKey.new()
+	event.physical_keycode = keycode
+	InputMap.action_add_event(action, event)

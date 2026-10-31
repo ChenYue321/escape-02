@@ -213,6 +213,21 @@ horizontal_alignment = 2
 custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
 
+[node name="DisplayButton" type="Button" parent="SettingsPage/Rows"]
+custom_minimum_size = Vector2(380, 64)
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.81, 0.86, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = SubResource("SystemFont_hand")
+theme_override_font_sizes/font_size = 40
+alignment = 0
+flat = true
+text = "DISPLAY"
+
 [node name="KeysButton" type="Button" parent="SettingsPage/Rows"]
 custom_minimum_size = Vector2(380, 64)
 layout_mode = 2
@@ -307,3 +322,54 @@ grow_horizontal = 1
 theme_override_colors/font_color = Color(0.32, 0.35, 0.41, 1)
 theme_override_font_sizes/font_size = 14
 text = "点击某个键位后按下新按键      Esc 撤销 / 返回"
+
+[node name="DisplayPage" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="DisplayPage"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.115
+anchor_top = 0.135
+anchor_right = 0.115
+anchor_bottom = 0.135
+offset_right = 800.0
+offset_bottom = 130.0
+grow_horizontal = 1
+theme_override_colors/font_color = Color(0.93, 0.95, 0.98, 1)
+theme_override_fonts/font = SubResource("SystemFont_hand")
+theme_override_font_sizes/font_size = 96
+text = "DISPLAY"
+vertical_alignment = 1
+
+[node name="Rows" type="VBoxContainer" parent="DisplayPage"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.12
+anchor_top = 0.44
+anchor_right = 0.12
+anchor_bottom = 0.44
+offset_right = 900.0
+offset_bottom = 320.0
+grow_horizontal = 1
+theme_override_constants/separation = 18
+
+[node name="Hint" type="Label" parent="DisplayPage"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.12
+anchor_top = 0.86
+anchor_right = 0.12
+anchor_bottom = 0.86
+offset_right = 900.0
+offset_bottom = 30.0
+grow_horizontal = 1
+theme_override_colors/font_color = Color(0.32, 0.35, 0.41, 1)
+theme_override_font_sizes/font_size = 14
+text = "点击数值切换      Esc 返回"

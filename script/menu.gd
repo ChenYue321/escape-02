@@ -30,6 +30,9 @@ const FADE_IN := 1.0
 @onready var _keys_button: Button = $SettingsPage/Rows/KeysButton
 @onready var _keys_page: Control = $KeysPage
 @onready var _keys_rows: VBoxContainer = $KeysPage/Rows
+@onready var _display_button: Button = $SettingsPage/Rows/DisplayButton
+@onready var _display_page: Control = $DisplayPage
+@onready var _display_rows: VBoxContainer = $DisplayPage/Rows
 
 ## 正在等待玩家按键的 action（空 = 没在监听）
 var _listening_action: String = ""
@@ -37,6 +40,9 @@ var _listening_action: String = ""
 var _key_buttons: Dictionary = {}
 ## 监听中的那个按钮原始文字，取消时恢复
 var _listening_button: Button
+
+## MAX FPS 的可选档位（0 = 不限）
+const FPS_OPTIONS := [0, 30, 60, 120, 144]
 
 ## 按键绑定页里列出的动作，顺序就是显示顺序
 const BINDINGS := [
@@ -50,8 +56,11 @@ const BINDINGS := [
 ]
 
 var _leaving: bool = false
-## 按键页的 BACK 按钮（代码里生成的）
+## 代码里生成的按钮
 var _back_keys_button: Button
+var _back_display_button: Button
+var _fps_button: Button
+var _vsync_button: Button
 
 
 func _ready() -> void:
@@ -65,7 +74,9 @@ func _ready() -> void:
 	_quit.pressed.connect(_on_quit_pressed)
 	_back.pressed.connect(_close_settings)
 	_keys_button.pressed.connect(_open_keys)
+	_display_button.pressed.connect(_open_display)
 	_build_keys_page()
+	_build_display_page()
 
 	_sensitivity.value_changed.connect(_on_sensitivity_changed)
 	_volume.value_changed.connect(_on_volume_changed)
@@ -76,7 +87,7 @@ func _ready() -> void:
 		_volume.value = settings.volume
 	_sync_labels()
 
-	for button in [_start, _settings_button, _quit, _back, _keys_button]:
+	for button in [_start, _settings_button, _quit, _back, _keys_button, _display_button]:
 		_add_focus_marker(button)
 
 	_start.grab_focus()
@@ -126,7 +137,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _leaving:
 		return
 	if event.is_action_pressed("ui_cancel"):
-		if _keys_page.visible:
+		if _display_page.visible:
+			_close_display()
+		elif _keys_page.visible:
 			_close_keys()
 		elif _settings_page.visible:
 			_close_settings()
@@ -185,6 +198,20 @@ func _build_keys_page() -> void:
 		button.pressed.connect(_start_listening.bind(action, button))
 		row_box.add_child(button)
 		_key_buttons[action] = button
+
+	var reset := Button.new()
+	reset.text = "RESTORE DEFAULTS"
+	reset.custom_minimum_size = Vector2(380, 52)
+	reset.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	reset.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	reset.flat = true
+	reset.add_theme_font_override("font", _start.get_theme_font("font"))
+	reset.add_theme_font_size_override("font_size", 30)
+	reset.add_theme_color_override("font_color", Color(0.55, 0.6, 0.68))
+	reset.add_theme_color_override("font_hover_color", Color(1, 0.85, 0.4))
+	reset.add_theme_color_override("font_focus_color", Color(1, 0.85, 0.4))
+	reset.pressed.connect(_restore_default_bindings)
+	_keys_rows.add_child(reset)
 
 	var back := Button.new()
 	back.text = "BACK"
@@ -260,6 +287,117 @@ func _input(event: InputEvent) -> void:
 	if settings != null:
 		settings.rebind(action, key.physical_keycode)
 	_cancel_listening()
+
+
+## DISPLAY 页：MAX FPS 点一下换一档，V-SYNC 开关
+func _build_display_page() -> void:
+	_fps_button = _add_value_row("MAX FPS", _fps_text())
+	_fps_button.pressed.connect(_cycle_fps)
+
+	_vsync_button = _add_value_row("V-SYNC", _vsync_text())
+	_vsync_button.pressed.connect(_toggle_vsync)
+
+	var back := Button.new()
+	back.text = "BACK"
+	back.custom_minimum_size = Vector2(380, 64)
+	back.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	back.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	back.flat = true
+	back.add_theme_font_override("font", _start.get_theme_font("font"))
+	back.add_theme_font_size_override("font_size", 40)
+	back.add_theme_color_override("font_color", Color(0.78, 0.81, 0.86))
+	back.add_theme_color_override("font_hover_color", Color(1, 1, 1))
+	back.add_theme_color_override("font_focus_color", Color(1, 1, 1))
+	back.pressed.connect(_close_display)
+	_display_rows.add_child(back)
+	_back_display_button = back
+	_add_focus_marker(back)
+
+
+## 一行「标题 + 可点的值」，返回值那个按钮
+func _add_value_row(label_text: String, value_text: String) -> Button:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 24)
+	_display_rows.add_child(row)
+
+	var label := Label.new()
+	label.text = label_text
+	label.custom_minimum_size = Vector2(300, 0)
+	label.add_theme_color_override("font_color", Color(0.8, 0.84, 0.9))
+	label.add_theme_font_override("font", _start.get_theme_font("font"))
+	label.add_theme_font_size_override("font_size", 34)
+	row.add_child(label)
+
+	var button := Button.new()
+	button.text = value_text
+	button.custom_minimum_size = Vector2(240, 54)
+	button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.flat = true
+	button.add_theme_font_override("font", _start.get_theme_font("font"))
+	button.add_theme_font_size_override("font_size", 34)
+	button.add_theme_color_override("font_color", Color(0.62, 0.67, 0.74))
+	button.add_theme_color_override("font_hover_color", Color(1, 1, 1))
+	button.add_theme_color_override("font_focus_color", Color(1, 1, 1))
+	row.add_child(button)
+	return button
+
+
+func _fps_text() -> String:
+	var settings := get_node_or_null("/root/Settings")
+	var value: int = settings.max_fps if settings != null else 0
+	return "UNLIMITED" if value <= 0 else "%d" % value
+
+
+func _vsync_text() -> String:
+	var settings := get_node_or_null("/root/Settings")
+	var on: bool = settings.vsync if settings != null else true
+	return "ON" if on else "OFF"
+
+
+func _cycle_fps() -> void:
+	var settings := get_node_or_null("/root/Settings")
+	if settings == null:
+		return
+	var index: int = FPS_OPTIONS.find(settings.max_fps)
+	if index < 0:
+		index = 0
+	settings.max_fps = FPS_OPTIONS[(index + 1) % FPS_OPTIONS.size()]
+	settings.apply_display()
+	settings.save_settings()
+	_fps_button.text = _fps_text()
+
+
+func _toggle_vsync() -> void:
+	var settings := get_node_or_null("/root/Settings")
+	if settings == null:
+		return
+	settings.vsync = not settings.vsync
+	settings.apply_display()
+	settings.save_settings()
+	_vsync_button.text = _vsync_text()
+
+
+func _open_display() -> void:
+	_switch_page(_settings_page, _display_page)
+	if _back_display_button != null:
+		_back_display_button.grab_focus()
+
+
+func _close_display() -> void:
+	_switch_page(_display_page, _settings_page)
+	_display_button.grab_focus()
+
+
+## 恢复默认键位
+func _restore_default_bindings() -> void:
+	var settings := get_node_or_null("/root/Settings")
+	if settings == null:
+		return
+	_cancel_listening()
+	settings.reset_bindings()
+	for action: String in _key_buttons:
+		(_key_buttons[action] as Button).text = _key_text(action)
 
 
 func _on_sensitivity_changed(value: float) -> void:
