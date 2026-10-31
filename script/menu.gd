@@ -160,7 +160,7 @@ func _build_hub() -> void:
 	for entry in PAGES:
 		_add_link(_settings_rows, entry.title, entry.id)
 	_add_link(_settings_rows, "KEY BINDING", "keys")
-	_add_back_button(_settings_rows, _settings_page)
+	_add_back_button(_settings_rows, _menu_page, _settings_button)
 
 
 func _build_setting_pages() -> void:
@@ -317,7 +317,8 @@ func _add_link(parent: VBoxContainer, text: String, page_id: String) -> void:
 	_add_focus_marker(button)
 
 
-func _add_back_button(parent: VBoxContainer, target: Control) -> void:
+## target = 返回哪一页；focus = 回去之后把焦点放在哪个按钮上
+func _add_back_button(parent: VBoxContainer, target: Control, focus: Control = null) -> void:
 	var button := Button.new()
 	button.text = "BACK"
 	button.custom_minimum_size = Vector2(380, 62)
@@ -331,13 +332,21 @@ func _add_back_button(parent: VBoxContainer, target: Control) -> void:
 	button.add_theme_color_override("font_focus_color", Color(1, 1, 1))
 	button.pressed.connect(func() -> void:
 		_switch_page(_current_page, target)
-		for child in target.get_children():
-			if child is VBoxContainer and child.get_child_count() > 0:
-				(child.get_child(0) as Control).grab_focus()
-				break
+		if focus != null:
+			focus.grab_focus()
+		else:
+			_focus_first(target)
 	)
 	parent.add_child(button)
 	_add_focus_marker(button)
+
+
+## 把焦点放到某个页面的第一个可聚焦控件上
+func _focus_first(page: Control) -> void:
+	for child in page.get_children():
+		if child is VBoxContainer and child.get_child_count() > 0:
+			(child.get_child(0) as Control).grab_focus()
+			return
 
 
 # --- 值的显示与生效 ---
