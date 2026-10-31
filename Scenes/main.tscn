@@ -431,12 +431,12 @@ metallic = 0.05
 roughness = 0.46
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_shade"]
-albedo_color = Color(0.5, 0.51, 0.54, 1)
+albedo_color = Color(0.54, 0.55, 0.58, 1)
 metallic = 0.05
 roughness = 0.52
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_base"]
-albedo_color = Color(0.46, 0.47, 0.5, 1)
+albedo_color = Color(0.53, 0.54, 0.57, 1)
 metallic = 0.05
 roughness = 0.55
 
