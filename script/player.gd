@@ -340,14 +340,23 @@ func _current_fall_line() -> int:
 	return _fall_count
 
 
-## 播一条旁白并推它的字幕
+## 播一条旁白并推它的字幕。
+## 没显式给字幕路径时，按约定找同名 JSON（xxx.mp3 → xxx.json）
 func _play_voice(stream: AudioStream, cues_path: String) -> void:
 	var voice := get_node_or_null("FallVoice") as AudioStreamPlayer
 	if voice == null or stream == null:
 		return
+
+	var path := cues_path
+	if path.is_empty():
+		path = stream.resource_path.get_basename() + ".json"
+	if not FileAccess.file_exists(path):
+		push_warning("旁白字幕文件不存在: " + path)
+		path = ""
+
 	voice.stream = stream
 	voice.play()
-	_run_subtitles(cues_path)
+	_run_subtitles(path)
 
 
 ## 按 JSON 里的时间轴把字幕一句句推给 HUD
