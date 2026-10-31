@@ -393,7 +393,7 @@ func _add_back_button(page: Control, target: Control, focus: Control = null) -> 
 	button.anchor_top = 0.9
 	button.anchor_right = 0.135
 	button.anchor_bottom = 0.97
-	button.offset_right = 600.0
+	button.offset_right = 240.0
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.flat = true
 	button.add_theme_font_override("font", _hand_font())
@@ -411,6 +411,28 @@ func _add_back_button(page: Control, target: Control, focus: Control = null) -> 
 	)
 	page.add_child(button)
 	_add_focus_marker(button)
+
+
+## 在底部 footer 上放一个动作按钮（和 BACK 同一行，只是靠右一点）
+func _add_footer_button(page: Control, text: String, anchor_left: float, callback: Callable) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.name = text.capitalize().replace(" ", "") + "Button"
+	button.anchor_left = anchor_left
+	button.anchor_top = 0.9
+	button.anchor_right = anchor_left
+	button.anchor_bottom = 0.97
+	button.offset_right = 460.0
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.add_theme_font_override("font", _hand_font())
+	button.add_theme_font_size_override("font_size", 32)
+	button.add_theme_color_override("font_color", Color(0.58, 0.63, 0.7))
+	button.add_theme_color_override("font_hover_color", Color(1, 0.85, 0.4))
+	button.add_theme_color_override("font_focus_color", Color(1, 0.85, 0.4))
+	button.pressed.connect(callback)
+	page.add_child(button)
+	_add_focus_marker(button)
+	return button
 
 
 ## 把焦点放到某个页面的第一个可操作控件上：
@@ -563,23 +585,9 @@ func _build_keys_page() -> void:
 		_add_focus_marker(button)
 		_key_buttons[action] = button
 
-	var reset := Button.new()
-	reset.text = "RESTORE DEFAULTS"
-	reset.custom_minimum_size = Vector2(380, 52)
-	reset.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	reset.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	reset.flat = true
-	reset.add_theme_font_override("font", _hand_font())
-	reset.add_theme_font_size_override("font_size", 28)
-	reset.add_theme_color_override("font_color", Color(0.55, 0.6, 0.68))
-	reset.add_theme_color_override("font_hover_color", Color(1, 0.85, 0.4))
-	reset.add_theme_color_override("font_focus_color", Color(1, 0.85, 0.4))
-	reset.pressed.connect(_restore_default_bindings)
-	_keys_rows.add_child(reset)
-
 	_add_back_button(_keys_page, _settings_page)
 	_back_keys_button = _keys_page.get_node("BackButton")
-	_add_focus_marker(reset)
+	_add_footer_button(_keys_page, "RESTORE DEFAULTS", 0.37, _restore_default_bindings)
 
 
 func _key_text(action: String) -> String:
