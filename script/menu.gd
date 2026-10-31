@@ -11,8 +11,8 @@ const FADE_OUT := 0.7
 const FADE_IN := 1.0
 
 @export_group("背景取景")
-@export var camera_position: Vector3 = Vector3(-0.54, 1.06, -1.70)
-@export var camera_target: Vector3 = Vector3(-0.28, 0.76, -2.55)
+@export var camera_position: Vector3 = Vector3(-0.52, 1.10, -1.65)
+@export var camera_target: Vector3 = Vector3(-0.30, 0.86, -2.55)
 @export var camera_fov: float = 46.0
 
 ## 设置页里要生成哪些行
