@@ -11,9 +11,9 @@ const FADE_OUT := 0.7
 const FADE_IN := 1.0
 
 @export_group("背景取景")
-@export var camera_position: Vector3 = Vector3(-0.60, 1.06, -1.78)
-@export var camera_target: Vector3 = Vector3(-0.35, 0.82, -2.55)
-@export var camera_fov: float = 62.0
+@export var camera_position: Vector3 = Vector3(-0.54, 1.06, -1.70)
+@export var camera_target: Vector3 = Vector3(-0.28, 0.76, -2.55)
+@export var camera_fov: float = 46.0
 
 ## 设置页里要生成哪些行
 const PAGES := [
@@ -357,7 +357,7 @@ func _add_option_row(parent: VBoxContainer, spec: Dictionary, options: Array, la
 func _add_link(parent: VBoxContainer, text: String, page_id: String) -> void:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(600, 62)
+	button.custom_minimum_size = Vector2(360, 62)
 	button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.flat = true
