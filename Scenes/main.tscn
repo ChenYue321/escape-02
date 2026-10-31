@@ -401,6 +401,40 @@ size = Vector3(0.44, 0.022, 0.16)
 [sub_resource type="BoxMesh" id="BoxMesh_kb_keys"]
 size = Vector3(0.4, 0.008, 0.125)
 
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_arm_a"]
+top_radius = 0.007
+bottom_radius = 0.007
+height = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_arm_b"]
+top_radius = 0.007
+bottom_radius = 0.007
+height = 0.2
+
+[sub_resource type="SphereMesh" id="SphereMesh_lamp_joint"]
+radius = 0.016
+height = 0.032
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_collar"]
+top_radius = 0.03
+bottom_radius = 0.048
+height = 0.05
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_rim"]
+top_radius = 0.063
+bottom_radius = 0.063
+height = 0.006
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_metal"]
+albedo_color = Color(0.13, 0.135, 0.15, 1)
+metallic = 0.8
+roughness = 0.34
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_shade"]
+albedo_color = Color(0.16, 0.17, 0.185, 1)
+metallic = 0.7
+roughness = 0.42
+
 [sub_resource type="CylinderMesh" id="CylinderMesh_344ge"]
 top_radius = 0.02
 bottom_radius = 0.02
@@ -1042,7 +1076,7 @@ material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_kb_keys")
 
 [node name="Lamp" type="Node3D" parent="Desk" unique_id=1249673965]
-transform = Transform3D(0.39872718, 0, -0.9170696, 0, 1, 0, 0.9170696, 0, 0.39872718, 0.58769476, 0.029999971, 0.20499468)
+transform = Transform3D(0.3890401, 0, -0.9212208, 0, 1, 0, 0.9212208, 0, 0.3890401, 0.58769476, 0.029999971, 0.22208929)
 
 [node name="Lampshade" type="Node3D" parent="Desk/Lamp" unique_id=305833023]
 transform = Transform3D(0.8301945, 0.39278173, -0.39560038, 0.012588946, 0.69624037, 0.71769816, 0.55733204, -0.60080934, 0.57307005, -0.06726992, 0.4187225, 0.100144625)
@@ -1050,11 +1084,13 @@ transform = Transform3D(0.8301945, 0.39278173, -0.39560038, 0.012588946, 0.69624
 [node name="Lampshade Part1" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=1474303448]
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, 0, 0)
 cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_lamp_shade")
 mesh = SubResource("CylinderMesh_344ge")
 
 [node name="Lampshade Part2" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=760010785]
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, -0.09945917, 1.1920929e-07)
 cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_lamp_shade")
 mesh = SubResource("SphereMesh_ynf5e")
 
 [node name="Lampshade Part3" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=479128957]
@@ -1064,7 +1100,7 @@ mesh = SubResource("CylinderMesh_hptm8")
 surface_material_override/0 = SubResource("StandardMaterial3D_d1ilt")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="Desk/Lamp/Lampshade" unique_id=1110801615]
-transform = Transform3D(0.991899, -0.099430, 0.079059, -0.060621, 0.176421, 0.982446, 0.111633, 0.979280, -0.168964, 0, 0, 0)
+transform = Transform3D(0.991899, -0.09943, 0.079059, -0.060621, 0.176421, 0.982446, 0.111633, 0.97928, -0.168964, 0, 0, 0)
 visible = false
 light_energy = 1.5
 light_size = 0.06
@@ -1084,15 +1120,34 @@ sound_off = ExtResource("19_switch_off")
 visible = false
 shape = SubResource("SphereShape3D_switch")
 
+[node name="Joint" type="MeshInstance3D" parent="Desk/Lamp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+mesh = SubResource("SphereMesh_lamp_joint")
+
+[node name="Stem Collar" type="MeshInstance3D" parent="Desk/Lamp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.035, 0)
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+mesh = SubResource("CylinderMesh_lamp_collar")
+
+[node name="Shade Rim" type="MeshInstance3D" parent="Desk/Lamp/Lampshade"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.09945917, 0)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+mesh = SubResource("CylinderMesh_lamp_rim")
+
 [node name="Stand Part1" type="MeshInstance3D" parent="Desk/Lamp" unique_id=1342424676]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
-mesh = SubResource("BoxMesh_tb8k4")
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+mesh = SubResource("CylinderMesh_lamp_arm_a")
 
 [node name="Stand Part2" type="MeshInstance3D" parent="Desk/Lamp" unique_id=800982904]
 transform = Transform3D(0.8303243, -0.4679693, -0.30259916, 0, 0.5429926, -0.8397375, 0.5572805, 0.6972544, 0.45085993, -0.02028192, 0.37263346, 0.030219205)
-mesh = SubResource("BoxMesh_6bp64")
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+mesh = SubResource("CylinderMesh_lamp_arm_b")
 
 [node name="Base" type="MeshInstance3D" parent="Desk/Lamp" unique_id=1645553618]
+material_override = SubResource("StandardMaterial3D_lamp_metal")
 mesh = SubResource("CylinderMesh_3xxii")
 
 [node name="Stool" type="Node3D" parent="." unique_id=417310115]
