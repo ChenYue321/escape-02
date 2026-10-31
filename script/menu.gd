@@ -103,6 +103,8 @@ var _option_buttons: Dictionary = {}
 
 func _ready() -> void:
 	_build_background()
+	_style_scroll($SettingsPage/Scroll)
+	_style_scroll($KeysPage/Scroll)
 	_build_hub()
 	_build_setting_pages()
 	_build_keys_page()
@@ -160,7 +162,7 @@ func _build_hub() -> void:
 	for entry in PAGES:
 		_add_link(_settings_rows, entry.title, entry.id)
 	_add_link(_settings_rows, "KEY BINDING", "keys")
-	_add_back_button(_settings_rows, _menu_page, _settings_button)
+	_add_back_button(_settings_page, _menu_page, _settings_button)
 
 
 func _build_setting_pages() -> void:
@@ -179,7 +181,7 @@ func _build_setting_pages() -> void:
 					_add_option_row(rows, row, row.options, row.labels)
 				"link":
 					_add_link(rows, row.label, row.page)
-		_add_back_button(rows, _settings_page)
+		_add_back_button(page, _settings_page)
 
 
 func _make_page(title: String) -> Control:
@@ -212,6 +214,7 @@ func _make_page(title: String) -> Control:
 	scroll.anchor_bottom = 0.9
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	page.add_child(scroll)
+	_style_scroll(scroll)
 
 	var rows := VBoxContainer.new()
 	rows.name = "Rows"
@@ -222,6 +225,34 @@ func _make_page(title: String) -> Control:
 
 
 # --- 各种行 ---
+
+## 把滚动条改成一条细线，别抢界面的风格
+func _style_scroll(scroll: ScrollContainer) -> void:
+	var bar := scroll.get_v_scroll_bar()
+	bar.custom_minimum_size = Vector2(3, 0)
+
+	var track := StyleBoxFlat.new()
+	track.bg_color = Color(0.14, 0.16, 0.2, 0.22)
+
+	var grabber := StyleBoxFlat.new()
+	grabber.bg_color = Color(0.52, 0.57, 0.65, 0.75)
+	grabber.corner_radius_top_left = 2
+	grabber.corner_radius_top_right = 2
+	grabber.corner_radius_bottom_left = 2
+	grabber.corner_radius_bottom_right = 2
+
+	var grabber_hot := StyleBoxFlat.new()
+	grabber_hot.bg_color = Color(0.85, 0.89, 0.95, 0.9)
+	grabber_hot.corner_radius_top_left = 2
+	grabber_hot.corner_radius_top_right = 2
+	grabber_hot.corner_radius_bottom_left = 2
+	grabber_hot.corner_radius_bottom_right = 2
+
+	bar.add_theme_stylebox_override("scroll", track)
+	bar.add_theme_stylebox_override("grabber", grabber)
+	bar.add_theme_stylebox_override("grabber_highlight", grabber_hot)
+	bar.add_theme_stylebox_override("grabber_pressed", grabber_hot)
+
 
 func _hand_font() -> Font:
 	return _start.get_theme_font("font")
@@ -323,12 +354,32 @@ func _add_link(parent: VBoxContainer, text: String, page_id: String) -> void:
 	_add_focus_marker(button)
 
 
+## BACK 固定在页面底部（滚动区之外），上面压一条分界线把它和内容分开。
 ## target = 返回哪一页；focus = 回去之后把焦点放在哪个按钮上
-func _add_back_button(parent: VBoxContainer, target: Control, focus: Control = null) -> void:
+func _add_back_button(page: Control, target: Control, focus: Control = null) -> void:
+	var divider := Panel.new()
+	divider.name = "Divider"
+	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	divider.anchor_left = 0.12
+	divider.anchor_top = 0.885
+	divider.anchor_right = 0.88
+	divider.anchor_bottom = 0.885
+	divider.offset_bottom = 1.0
+	var line := StyleBoxFlat.new()
+	line.bg_color = Color(0.3, 0.34, 0.4, 0.55)
+	divider.add_theme_stylebox_override("panel", line)
+	page.add_child(divider)
+
 	var button := Button.new()
 	button.text = "BACK"
-	button.custom_minimum_size = Vector2(380, 62)
-	button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	button.name = "BackButton"
+	button.anchor_left = 0.135
+	button.anchor_top = 1.0
+	button.anchor_right = 0.135
+	button.anchor_bottom = 1.0
+	button.offset_top = -104.0
+	button.offset_bottom = -38.0
+	button.offset_right = 600.0
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.flat = true
 	button.add_theme_font_override("font", _hand_font())
@@ -337,13 +388,14 @@ func _add_back_button(parent: VBoxContainer, target: Control, focus: Control = n
 	button.add_theme_color_override("font_hover_color", Color(1, 1, 1))
 	button.add_theme_color_override("font_focus_color", Color(1, 1, 1))
 	button.pressed.connect(func() -> void:
+		_cancel_listening()
 		_switch_page(_current_page, target)
 		if focus != null:
 			focus.grab_focus()
 		else:
 			_focus_first(target)
 	)
-	parent.add_child(button)
+	page.add_child(button)
 	_add_focus_marker(button)
 
 
@@ -495,24 +547,8 @@ func _build_keys_page() -> void:
 	reset.pressed.connect(_restore_default_bindings)
 	_keys_rows.add_child(reset)
 
-	var back := Button.new()
-	back.text = "BACK"
-	back.custom_minimum_size = Vector2(380, 62)
-	back.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	back.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	back.flat = true
-	back.add_theme_font_override("font", _hand_font())
-	back.add_theme_font_size_override("font_size", 40)
-	back.add_theme_color_override("font_color", Color(0.78, 0.81, 0.86))
-	back.add_theme_color_override("font_hover_color", Color(1, 1, 1))
-	back.add_theme_color_override("font_focus_color", Color(1, 1, 1))
-	back.pressed.connect(func() -> void:
-		_cancel_listening()
-		_back_page()
-	)
-	_keys_rows.add_child(back)
-	_back_keys_button = back
-	_add_focus_marker(back)
+	_add_back_button(_keys_page, _settings_page)
+	_back_keys_button = _keys_page.get_node("BackButton")
 	_add_focus_marker(reset)
 
 
@@ -569,10 +605,17 @@ func _input(event: InputEvent) -> void:
 
 # --- 时钟 ---
 
+## 选中（键盘焦点）和鼠标悬停都显示同一个 › 箭头，行为统一
 func _add_focus_marker(button: Button) -> void:
 	var base_text := button.text
 	button.focus_entered.connect(func() -> void: button.text = "› " + base_text)
-	button.focus_exited.connect(func() -> void: button.text = base_text)
+	button.focus_exited.connect(func() -> void:
+		if not button.is_hovered():
+			button.text = base_text)
+	button.mouse_entered.connect(func() -> void: button.text = "› " + base_text)
+	button.mouse_exited.connect(func() -> void:
+		if not button.has_focus():
+			button.text = base_text)
 
 
 func _ui_font() -> Font:
