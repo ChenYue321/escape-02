@@ -74,8 +74,8 @@ const BINDINGS := [
 @onready var _menu_page: Control = $MenuPage
 @onready var _settings_page: Control = $SettingsPage
 @onready var _keys_page: Control = $KeysPage
-@onready var _settings_rows: VBoxContainer = $SettingsPage/Rows
-@onready var _keys_rows: VBoxContainer = $KeysPage/Rows
+@onready var _settings_rows: VBoxContainer = $SettingsPage/Scroll/Rows
+@onready var _keys_rows: VBoxContainer = $KeysPage/Scroll/Rows
 
 @onready var _start: Button = $MenuPage/Items/StartButton
 @onready var _settings_button: Button = $MenuPage/Items/SettingsButton
@@ -167,7 +167,7 @@ func _build_setting_pages() -> void:
 	for entry in PAGES:
 		var page := _make_page(entry.title)
 		_pages[entry.id] = page
-		var rows: VBoxContainer = page.get_node("Rows")
+		var rows: VBoxContainer = page.get_node("Scroll/Rows")
 
 		for row in entry.rows:
 			match row.kind:
@@ -190,28 +190,34 @@ func _make_page(title: String) -> Control:
 	add_child(page)
 
 	var title_label := Label.new()
+	title_label.name = "Title"
 	title_label.text = title
 	title_label.add_theme_font_override("font", _hand_font())
 	title_label.add_theme_font_size_override("font_size", 76)
 	title_label.add_theme_color_override("font_color", Color(0.93, 0.95, 0.98))
-	title_label.anchor_left = 0.115
+	title_label.anchor_left = 0.135
 	title_label.anchor_top = 0.1
-	title_label.anchor_right = 0.115
+	title_label.anchor_right = 0.135
 	title_label.anchor_bottom = 0.1
 	title_label.offset_right = 1000.0
 	title_label.offset_bottom = 110.0
 	page.add_child(title_label)
 
+	# 内容装进滚动容器，项目多了也不会被屏幕底边切掉
+	var scroll := ScrollContainer.new()
+	scroll.name = "Scroll"
+	scroll.anchor_left = 0.12
+	scroll.anchor_top = 0.26
+	scroll.anchor_right = 0.9
+	scroll.anchor_bottom = 0.9
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	page.add_child(scroll)
+
 	var rows := VBoxContainer.new()
 	rows.name = "Rows"
-	rows.add_theme_constant_override("separation", 14)
-	rows.anchor_left = 0.12
-	rows.anchor_top = 0.32
-	rows.anchor_right = 0.12
-	rows.anchor_bottom = 0.32
-	rows.offset_right = 1000.0
-	rows.offset_bottom = 560.0
-	page.add_child(rows)
+	rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rows.add_theme_constant_override("separation", 10)
+	scroll.add_child(rows)
 	return page
 
 
@@ -233,7 +239,7 @@ func _row_label(parent: HBoxContainer, text: String) -> Label:
 	label.text = text
 	label.custom_minimum_size = Vector2(300, 0)
 	label.add_theme_font_override("font", _hand_font())
-	label.add_theme_font_size_override("font_size", 32)
+	label.add_theme_font_size_override("font_size", 28)
 	label.add_theme_color_override("font_color", Color(0.8, 0.84, 0.9))
 	parent.add_child(label)
 	return label
@@ -280,7 +286,7 @@ func _add_option_row(parent: VBoxContainer, spec: Dictionary, options: Array, la
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.flat = true
 	button.add_theme_font_override("font", _hand_font())
-	button.add_theme_font_size_override("font_size", 32)
+	button.add_theme_font_size_override("font_size", 28)
 	button.add_theme_color_override("font_color", Color(0.62, 0.67, 0.74))
 	button.add_theme_color_override("font_hover_color", Color(1, 1, 1))
 	button.add_theme_color_override("font_focus_color", Color(1, 1, 1))
@@ -308,7 +314,7 @@ func _add_link(parent: VBoxContainer, text: String, page_id: String) -> void:
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.flat = true
 	button.add_theme_font_override("font", _hand_font())
-	button.add_theme_font_size_override("font_size", 40)
+	button.add_theme_font_size_override("font_size", 34)
 	button.add_theme_color_override("font_color", Color(0.78, 0.81, 0.86))
 	button.add_theme_color_override("font_hover_color", Color(1, 1, 1))
 	button.add_theme_color_override("font_focus_color", Color(1, 1, 1))
@@ -326,7 +332,7 @@ func _add_back_button(parent: VBoxContainer, target: Control, focus: Control = n
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.flat = true
 	button.add_theme_font_override("font", _hand_font())
-	button.add_theme_font_size_override("font_size", 40)
+	button.add_theme_font_size_override("font_size", 32)
 	button.add_theme_color_override("font_color", Color(0.78, 0.81, 0.86))
 	button.add_theme_color_override("font_hover_color", Color(1, 1, 1))
 	button.add_theme_color_override("font_focus_color", Color(1, 1, 1))
@@ -344,8 +350,13 @@ func _add_back_button(parent: VBoxContainer, target: Control, focus: Control = n
 ## 把焦点放到某个页面的第一个可聚焦控件上
 func _focus_first(page: Control) -> void:
 	for child in page.get_children():
-		if child is VBoxContainer and child.get_child_count() > 0:
-			(child.get_child(0) as Control).grab_focus()
+		var rows: Node = null
+		if child is ScrollContainer:
+			rows = child.get_node_or_null("Rows")
+		elif child is VBoxContainer:
+			rows = child
+		if rows != null and rows.get_child_count() > 0:
+			(rows.get_child(0) as Control).grab_focus()
 			return
 
 
@@ -395,7 +406,7 @@ func _apply_prop(prop: String) -> void:
 
 func _open_settings() -> void:
 	_switch_page(_menu_page, _settings_page)
-	(_settings_page.get_node("Rows").get_child(0) as Control).grab_focus()
+	(_settings_page.get_node("Scroll/Rows").get_child(0) as Control).grab_focus()
 
 
 func _open_page(page_id: String) -> void:
