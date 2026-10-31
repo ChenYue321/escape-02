@@ -17,15 +17,16 @@ const FADE_IN := 1.0
 @export var camera_target: Vector3 = Vector3(-0.02, 0.86, -2.55)
 @export var camera_fov: float = 62.0
 
-@onready var _start: Button = $Items/StartButton
-@onready var _settings_button: Button = $Items/SettingsButton
-@onready var _quit: Button = $Items/QuitButton
-@onready var _panel: Control = $SettingsPanel
-@onready var _sensitivity: HSlider = $SettingsPanel/Margin/Rows/SensitivityRow/Slider
-@onready var _volume: HSlider = $SettingsPanel/Margin/Rows/VolumeRow/Slider
-@onready var _sensitivity_value: Label = $SettingsPanel/Margin/Rows/SensitivityRow/Value
-@onready var _volume_value: Label = $SettingsPanel/Margin/Rows/VolumeRow/Value
-@onready var _back: Button = $SettingsPanel/Margin/Rows/BackButton
+@onready var _menu_page: Control = $MenuPage
+@onready var _settings_page: Control = $SettingsPage
+@onready var _start: Button = $MenuPage/Items/StartButton
+@onready var _settings_button: Button = $MenuPage/Items/SettingsButton
+@onready var _quit: Button = $MenuPage/Items/QuitButton
+@onready var _sensitivity: HSlider = $SettingsPage/Rows/SensitivityRow/Slider
+@onready var _volume: HSlider = $SettingsPage/Rows/VolumeRow/Slider
+@onready var _sensitivity_value: Label = $SettingsPage/Rows/SensitivityRow/Value
+@onready var _volume_value: Label = $SettingsPage/Rows/VolumeRow/Value
+@onready var _back: Button = $SettingsPage/Rows/BackButton
 
 var _leaving: bool = false
 
@@ -34,7 +35,7 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 	_build_background()
-	_panel.visible = false
+	_settings_page.visible = false
 
 	_start.pressed.connect(_on_start_pressed)
 	_settings_button.pressed.connect(_open_settings)
@@ -100,20 +101,30 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _leaving:
 		return
 	if event.is_action_pressed("ui_cancel"):
-		if _panel.visible:
+		if _settings_page.visible:
 			_close_settings()
 		else:
 			_on_quit_pressed()
 
 
 func _open_settings() -> void:
-	_panel.visible = true
+	_switch_page(_menu_page, _settings_page)
 	_sensitivity.grab_focus()
 
 
 func _close_settings() -> void:
-	_panel.visible = false
+	_switch_page(_settings_page, _menu_page)
 	_settings_button.grab_focus()
+
+
+## 整页切换：旧页淡出、新页淡入，不做弹出小窗
+func _switch_page(from_page: Control, to_page: Control) -> void:
+	from_page.visible = false
+	to_page.visible = true
+	to_page.modulate.a = 0.0
+	var tween := create_tween()
+	tween.tween_property(to_page, "modulate:a", 1.0, 0.18) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 
 func _on_sensitivity_changed(value: float) -> void:

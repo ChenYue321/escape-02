@@ -37,7 +37,8 @@
 - **主菜单**：`Scenes/menu.tscn` 是项目启动场景。背景不是图片，而是把 `main.tscn` 整个实例化进来——删掉玩家和 HUD、关掉房间所有灯，只留显示器在黑暗里闪，所以背景是活的
   - 布局按参考图：左上角手写体标题 `ESCAPE-02`，下面 `START / SETTING / EXIT` 三行左对齐，选中项前面加 `›`
   - 字体用 `SystemFont` 请求系统里的 Bradley Hand（回退 Chalkboard / Marker Felt / Comic Sans / 默认）
-  - `SETTING` 打开面板调鼠标灵敏度（0.3~2.0×）和音量，即时生效并写进 `user://settings.cfg`
+  - `SETTING` 是**整页切换**（不是弹出小窗）：标题换成 `SETTING`，下面是 `SENSITIVITY` / `VOLUME` 两个滑条和 `BACK`，背景还是那片黑暗里的显示器；页面切换时新旧两页交叉淡入 0.18 秒
+  - 两个设置即时生效，并写进 `user://settings.cfg`
   - 相机取景由 `menu.gd` 的导出参数控制：`camera_position` / `camera_target` / `camera_fov`
 - **彩蛋房间**：第二次坠落时玩家会被送进 `Scenes/escape01_room.tscn`。房间实例化在 `(2000, 0, 0)` 的独立空间里，不与主场景重叠；18 个网格全部生成了凸包碰撞体
   - **睁眼之后**才开始播放 `audio/voice/easter_01.mp3`（旁白吐槽这个房间），**说完之后**房间中央才升起展台：金色底座 + 黑漆柱 + 发光红环 + 红色亮面按钮
