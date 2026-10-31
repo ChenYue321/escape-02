@@ -34,7 +34,11 @@
   - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**再黑屏复位到出生点，复位时位置、朝向、俯仰和蹲姿全部重置
   - 旁白只有前两次坠落有；**第三次起没有语音，掉落 4 秒后直接送回**
 - **旁白与字幕**：`Character/FallVoice` 按**第几次掉下去**依次播 `fall_voices` 里的音频——第 1 次 `fall_01.mp3`（24 秒）、第 2 次起 `fall_02.mp3`（12 秒），再往后重复最后一条；每条的字幕时间轴在同名 JSON 里，按秒数逐句推到 `HUD/UIRoot/Subtitle`
-- **主菜单**：`Scenes/menu.tscn` 是项目启动场景——标题、开始游戏、退出。支持 ↑↓ 选择、Enter 确认、鼠标点击、Esc 退出；按开始后黑幕转场加载 `main.tscn`（进入游戏时自动捕获鼠标）
+- **主菜单**：`Scenes/menu.tscn` 是项目启动场景。背景不是图片，而是把 `main.tscn` 整个实例化进来——删掉玩家和 HUD、关掉房间所有灯，只留显示器在黑暗里闪，所以背景是活的
+  - 布局按参考图：左上角手写体标题 `ESCAPE-02`，下面 `START / SETTING / EXIT` 三行左对齐，选中项前面加 `›`
+  - 字体用 `SystemFont` 请求系统里的 Bradley Hand（回退 Chalkboard / Marker Felt / Comic Sans / 默认）
+  - `SETTING` 打开面板调鼠标灵敏度（0.3~2.0×）和音量，即时生效并写进 `user://settings.cfg`
+  - 相机取景由 `menu.gd` 的导出参数控制：`camera_position` / `camera_target` / `camera_fov`
 - **彩蛋房间**：第二次坠落时玩家会被送进 `Scenes/escape01_room.tscn`。房间实例化在 `(2000, 0, 0)` 的独立空间里，不与主场景重叠；18 个网格全部生成了凸包碰撞体
   - **睁眼之后**才开始播放 `audio/voice/easter_01.mp3`（旁白吐槽这个房间），**说完之后**房间中央才升起展台：金色底座 + 黑漆柱 + 发光红环 + 红色亮面按钮
   - 展台和按钮都有实体碰撞（底座 / 柱身 / 按钮球三个形状，层 1），玩家撞得到；按钮另有层 2 的交互球
@@ -47,7 +51,8 @@
   - 外壳材质用面粉微距贴图冒充老塑料——diffuse 做 albedo、GL 法线做表面颗粒、roughness 做哑光，世界坐标三平面映射（2.5 次/米），所以机箱、显示器、键盘的颗粒粗细一致
   - 两档泛黄：`pc_plastic.tres`（显示器/键盘，轻微氧化）与 `pc_plastic_aged.tres`（机箱本体与前面板，更黄的旧塑料）；泛黄靠 `albedo_color` 乘在贴图上实现
   - 屏幕底噪 `Static Noise`：6 秒无缝循环的雪花声，以显示器为球心，半径 = 到门那面墙的垂直距离（6.43 m），球内用 Godot 内置的**反比衰减**（`unit_size` 1 m），超出半径即静音
-  - 屏幕是**无信号雪花屏**：`shaders/crt_static.gdshader` 程序化生成噪点 + 扫描线 + 滚动亮带 + 暗角，屏幕前另有一盏冷光把桌面照亮
+  - 屏幕是**无信号雪花屏**：`shaders/crt_static.gdshader` 程序化生成噪点 + 扫描线 + 滚动亮带 + 暗角
+  - **会不定时抽一下**：`Desk/Computer/Monitor` 挂 `crt_flicker.gd`，同一个系数同时驱动屏幕着色器的 `brightness` 和朝外打的平行光 `Screen Glow`——所以「屏幕变暗」和「房间里的光变暗」是同一件事
 - **台灯**：灯罩、支架、底座 + `SpotLight3D`
 - **第一人称控制器**：`Character`（`CharacterBody3D`）+ 胶囊碰撞体 + `script/player.gd`，相机位于 1.6 m 眼高
 - **凳子**：`Stool`（紧贴桌前，凳沿与桌沿相距 10 cm，人挤不过去）——凳面用桌面木纹材质、凳腿用桌腿材质，无靠背；按 `E` 平滑坐下，坐着时只能转视角（仍可对别的东西按 `E`），按 `Shift` 平滑起身
@@ -103,7 +108,9 @@ escape-02/
 │   ├── crosshair.gd       # 屏幕准星：用 _draw() 画的圆点与短线
 │   ├── screen_fade.gd     # autoload：睁眼式全屏转场
 │   ├── door.gd            # 门把手交互：先转把手，再推开门
-│   ├── menu.gd            # 主菜单：开始 / 退出 + 黑幕转场
+│   ├── menu.gd            # 主菜单：3D 背景 + 开始 / 设置 / 退出
+│   ├── game_settings.gd   # autoload Settings：灵敏度倍率 + 音量，存 user://settings.cfg
+│   ├── crt_flicker.gd     # 显示器闪烁：屏幕亮度与朝外的平行光同步抖动
 │   └── wire.gd            # @tool 脚本：把 Path3D 曲线生成为管状网格
 ├── environment/
 │   └── room_env.tres      # 环境资源：环境光、色调映射、SSAO、辉光
