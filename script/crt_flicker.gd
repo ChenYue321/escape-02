@@ -1,13 +1,13 @@
 extends Node3D
 
-## 让显示器像台快坏掉的老 CRT：屏幕亮度、朝外打的平行光、以及它们共同的
-## 不定时闪烁。屏幕着色器是 unshaded 的，所以"发光"和"照亮周围"是两套通道，
-## 这里用同一个系数同时驱动，看起来才是同一块屏幕在闪。
+## 让显示器像台快坏掉的老 CRT：屏幕自身亮度不定时地抽一下。
+## 如果 light_path 指了一盏灯，那盏灯会跟着一起暗——同一条系数，
+## 保证「屏幕变暗」和「周围变暗」是同一件事。
 
 ## 屏幕节点（用它的材质参数调亮度）
 @export var screen_path: NodePath = ^"Screen"
-## 朝外打的平行光
-@export var light_path: NodePath = ^"Screen Glow"
+## 可选：朝外打的光（留空就只让屏幕自己闪）
+@export var light_path: NodePath
 ## 屏幕的基准亮度（对应着色器里的 brightness）
 @export var base_brightness: float = 0.5
 ## 平行光的基准强度

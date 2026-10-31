@@ -995,7 +995,6 @@ surface_material_override/0 = SubResource("StandardMaterial3D_ukihg")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.097, -0.02)
 script = ExtResource("29_crt_flicker")
 screen_path = NodePath("Screen")
-light_path = NodePath("Screen Glow")
 
 [node name="Base" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=175331020]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, 0)
@@ -1037,9 +1036,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17125, 0.209, 0.145)
 material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_crt_bezel_side")
 
-[node name="Screen Glow" type="DirectionalLight3D" parent="Desk/Computer/Monitor"]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.219, 0.02)
-light_color = Color(0.72, 0.82, 1, 1)
 [node name="Screen" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=295117719]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.224, 0.15)
 material_override = SubResource("ShaderMaterial_crt_static")

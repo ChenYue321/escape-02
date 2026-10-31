@@ -52,7 +52,7 @@
   - 两档泛黄：`pc_plastic.tres`（显示器/键盘，轻微氧化）与 `pc_plastic_aged.tres`（机箱本体与前面板，更黄的旧塑料）；泛黄靠 `albedo_color` 乘在贴图上实现
   - 屏幕底噪 `Static Noise`：6 秒无缝循环的雪花声，以显示器为球心，半径 = 到门那面墙的垂直距离（6.43 m），球内用 Godot 内置的**反比衰减**（`unit_size` 1 m），超出半径即静音
   - 屏幕是**无信号雪花屏**：`shaders/crt_static.gdshader` 程序化生成噪点 + 扫描线 + 滚动亮带 + 暗角
-  - **会不定时抽一下**：`Desk/Computer/Monitor` 挂 `crt_flicker.gd`，同一个系数同时驱动屏幕着色器的 `brightness` 和朝外打的平行光 `Screen Glow`——所以「屏幕变暗」和「房间里的光变暗」是同一件事
+  - **会不定时抽一下**：`Desk/Computer/Monitor` 挂 `crt_flicker.gd`，只驱动屏幕着色器的 `brightness`（不照亮周围）。脚本里还留了可选的 `light_path`，指一盏灯就能连它一起闪
 - **台灯**：灯罩、支架、底座 + `SpotLight3D`
 - **第一人称控制器**：`Character`（`CharacterBody3D`）+ 胶囊碰撞体 + `script/player.gd`，相机位于 1.6 m 眼高
 - **凳子**：`Stool`（紧贴桌前，凳沿与桌沿相距 10 cm，人挤不过去）——凳面用桌面木纹材质、凳腿用桌腿材质，无靠背；按 `E` 平滑坐下，坐着时只能转视角（仍可对别的东西按 `E`），按 `Shift` 平滑起身

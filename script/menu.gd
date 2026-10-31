@@ -83,9 +83,9 @@ func _build_background() -> void:
 	add_child(world)
 	move_child(world, 0)
 
+	# 菜单里把所有灯都关掉：只剩显示器自己在黑暗里亮着
 	for light in world.find_children("*", "Light3D", true, false):
-		if not str(light.get_path()).contains("Screen Glow"):
-			(light as Light3D).visible = false
+		(light as Light3D).visible = false
 
 	var camera := Camera3D.new()
 	camera.name = "MenuCamera"
