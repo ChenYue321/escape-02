@@ -297,8 +297,9 @@ func _apply_look(motion: InputEventMouseMotion) -> void:
 	# 开场"睁眼"还没结束时，鼠标不平移视角
 	if _screen_fade != null and _screen_fade.is_busy():
 		return
-	rotate_y(-motion.relative.x * mouse_sensitivity)
-	var pitch: float = _camera.rotation.x - motion.relative.y * mouse_sensitivity
+	var sens := _sensitivity()
+	rotate_y(-motion.relative.x * sens)
+	var pitch: float = _camera.rotation.x - motion.relative.y * sens
 	_camera.rotation.x = clampf(pitch, -deg_to_rad(pitch_limit), deg_to_rad(pitch_limit))
 
 
@@ -516,3 +517,11 @@ func _run_easter_egg_sequence() -> void:
 func leave_easter_egg() -> void:
 	if _in_easter_egg:
 		await _leave_easter_egg()
+
+
+## 鼠标灵敏度 = 脚本里的默认值 × 设置里的倍率
+func _sensitivity() -> float:
+	var settings := get_node_or_null("/root/Settings")
+	if settings == null:
+		return mouse_sensitivity
+	return mouse_sensitivity * float(settings.mouse_scale)

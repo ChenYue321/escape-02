@@ -1,6 +1,7 @@
 [gd_scene format=4 uid="uid://kkc5foqf1t6f"]
 
 [ext_resource type="Texture2D" uid="uid://d1d58poev6wch" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_nor_gl_1k.jpg" id="1_21xkr"]
+[ext_resource type="Script" path="res://script/crt_flicker.gd" id="29_crt_flicker"]
 [ext_resource type="Script" uid="uid://dnbeuh1k5xa1u" path="res://script/wire.gd" id="1_jjgbg"]
 [ext_resource type="Texture2D" uid="uid://ciobpku1sjrx6" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_rough_1k.jpg" id="2_6bp64"]
 [ext_resource type="Material" uid="uid://elgtnjxkcj27" path="res://texture/new_standard_material_3d.tres" id="3_344ge"]
@@ -992,6 +993,9 @@ surface_material_override/0 = SubResource("StandardMaterial3D_ukihg")
 
 [node name="Monitor" type="Node3D" parent="Desk/Computer" unique_id=1787699531]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.097, -0.02)
+script = ExtResource("29_crt_flicker")
+screen_path = NodePath("Screen")
+light_path = NodePath("Screen Glow")
 
 [node name="Base" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=175331020]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, 0)
@@ -1033,6 +1037,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17125, 0.209, 0.145)
 material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_crt_bezel_side")
 
+[node name="Screen Glow" type="DirectionalLight3D" parent="Desk/Computer/Monitor"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.219, 0.02)
+light_color = Color(0.72, 0.82, 1, 1)
 [node name="Screen" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=295117719]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.224, 0.15)
 material_override = SubResource("ShaderMaterial_crt_static")
