@@ -426,14 +426,14 @@ bottom_radius = 0.063
 height = 0.006
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_metal"]
-albedo_color = Color(0.13, 0.135, 0.15, 1)
-metallic = 0.8
-roughness = 0.34
+albedo_color = Color(0.62, 0.63, 0.66, 1)
+metallic = 0.05
+roughness = 0.48
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_shade"]
-albedo_color = Color(0.16, 0.17, 0.185, 1)
-metallic = 0.7
-roughness = 0.42
+albedo_color = Color(0.57, 0.58, 0.61, 1)
+metallic = 0.05
+roughness = 0.52
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_344ge"]
 top_radius = 0.02
