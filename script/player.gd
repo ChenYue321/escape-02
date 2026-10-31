@@ -124,6 +124,11 @@ func _ready() -> void:
 	_camera.current = true
 	_capture_mouse()
 
+	# 进场睁眼（菜单转场已经把屏幕压黑了）
+	var fade := get_node_or_null("/root/ScreenFade")
+	if fade != null:
+		fade.fade_from_black(1.2)
+
 
 ## 转场（睁眼/闭眼）期间"啥都干不了"：不移动、不交互、不转视角
 func _is_frozen() -> bool:

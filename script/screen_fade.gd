@@ -2,7 +2,8 @@ extends CanvasLayer
 
 ## 全屏转场（autoload：ScreenFade）。
 ## 用 shaders/iris_fade.gdshader 做一圈从中心张开的黑幕，模仿睁开眼睛。
-## 开场自动播放一次；掉出世界时由 player.gd 调用。
+## 黑幕初始是合上的（progress = 1），由每个场景自己在 _ready 里睁眼：
+## 菜单调 fade_from_black()，游戏场景由 player.gd 调。
 
 const SHADER_PATH := "res://shaders/iris_fade.gdshader"
 const LAYER_ABOVE_EVERYTHING := 128
@@ -29,9 +30,6 @@ func _ready() -> void:
 	add_child(_rect)
 	_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
-	# 进入游戏：从全黑睁开
-	fade_from_black(1.2)
-
 
 ## 转场是否还在进行，玩家在这一段时间里不该能转视角
 func is_busy() -> bool:
@@ -49,6 +47,14 @@ func fade_to_black(duration: float = 0.6) -> void:
 
 
 func _animate_to(target: float, duration: float) -> void:
+	# 场景可能在 autoload 的 _ready 之前就来调（比如菜单在 _init 里被加进树）
+	# 这种情况下先等一帧，别让 _material 还是 null
+	if not is_node_ready():
+		await ready
+
+	if _material == null:
+		return
+
 	if _tween != null and _tween.is_valid():
 		_tween.kill()
 

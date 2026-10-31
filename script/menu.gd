@@ -55,6 +55,8 @@ func _ready() -> void:
 
 	_start.grab_focus()
 
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
 	var fade := get_node_or_null("/root/ScreenFade")
 	if fade != null:
 		fade.fade_from_black(FADE_IN)
@@ -71,13 +73,15 @@ func _add_focus_marker(button: Button) -> void:
 func _build_background() -> void:
 	var world := GAME_SCENE.instantiate()
 	world.name = "MenuWorld"
-	add_child(world)
-	move_child(world, 0)
 
+	# 还没进场景树就删掉：玩家的 _ready 会捕获鼠标，等它跑完就晚了
 	for path in ["Character", "HUD"]:
 		var node := world.get_node_or_null(path)
 		if node != null:
-			node.queue_free()
+			node.free()
+
+	add_child(world)
+	move_child(world, 0)
 
 	for light in world.find_children("*", "Light3D", true, false):
 		if not str(light.get_path()).contains("Screen Glow"):
