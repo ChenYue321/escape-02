@@ -37,11 +37,13 @@
 - **主菜单**：`Scenes/menu.tscn` 是项目启动场景。背景不是图片，而是把 `main.tscn` 整个实例化进来——删掉玩家和 HUD、关掉房间所有灯，只留显示器在黑暗里闪，所以背景是活的
   - 布局按参考图：左上角手写体标题 `ESCAPE-02`，下面 `START / SETTING / EXIT` 三行左对齐，选中项前面加 `›`
   - 字体用 `SystemFont` 请求系统里的 Bradley Hand（回退 Chalkboard / Marker Felt / Comic Sans / 默认）
-  - `SETTING` 是**整页切换**（不是弹出小窗）：标题换成 `SETTING`，下面是 `SENSITIVITY` / `VOLUME` 两个滑条和 `BACK`，背景还是那片黑暗里的显示器；页面切换时新旧两页交叉淡入 0.18 秒
-  - 两个设置即时生效，并写进 `user://settings.cfg`
-  - `DISPLAY` 一页放性能选项：`MAX FPS`（点一下在 UNLIMITED / 30 / 60 / 120 / 144 之间循环）和 `V-SYNC`（ON / OFF），改完立刻写进 `Engine.max_fps` 与 `DisplayServer.window_set_vsync_mode()`
-  - `KEY BINDING` 再进一页：`MOVE FORWARD / BACK / LEFT / RIGHT / JUMP / INTERACT / CROUCH` 七个动作各占一行，点当前按键开始监听，按下新键立刻生效并落盘；监听时按 Esc 撤销。用的是**物理键码**（`physical_keycode`），换键盘布局不会错位
-  - 这一页底部还有 `RESTORE DEFAULTS`：清空保存的绑定，把七个动作还原成 `project.godot` 里的原始键位（默认值在 `Settings` 启动时快照下来）
+  - `SETTING` 是**整页切换**（不是弹出小窗），里面是一组入口：`AUDIO` / `DISPLAY` / `CONTROLS` / `ACCESSIBILITY` / `KEY BINDING` / `BACK`；页面切换时交叉淡入 0.18 秒。这些页的行全部由 `menu.gd` 顶部的 `PAGES` 表驱动生成，加一项设置只要往表里加一行
+  - **AUDIO**：`MASTER` / `VOICE` / `SFX` / `AMBIENCE` 四条滑条。后三条总线在运行时由 `Settings` 创建（`AudioServer.add_bus`），旁白走 Voice、开关和门走 SFX、雪花底噪走 Ambience
+  - **DISPLAY**：`BRIGHTNESS`（相机曝光 0.6~1.8，菜单背景会实时预览）、`FOV`（65~100）、`MAX FPS`（UNLIMITED / 30 / 60 / 120 / 144 循环）、`V-SYNC`、`FULLSCREEN`
+  - **CONTROLS**：`SENSITIVITY`、`INVERT Y`、`CROUCH`（HOLD / TOGGLE）、以及通往 `KEY BINDING` 的入口
+  - **ACCESSIBILITY**：`REDUCE FLICKER`（把 CRT 闪烁最低亮度抬到 75% 并禁用连闪，对光敏人群更安全）、`SUBTITLE BG`（字幕底衬不透明度，0 = 不加底）
+  - `KEY BINDING`：`MOVE FORWARD / BACK / LEFT / RIGHT / JUMP / INTERACT / CROUCH` 七个动作各占一行，点当前按键开始监听，按下新键立刻生效并落盘；监听时按 Esc 撤销。用的是**物理键码**（`physical_keycode`），换键盘布局不会错位。底部有 `RESTORE DEFAULTS`，把所有动作还原成 `project.godot` 里的原始键位（默认值在 `Settings` 启动时快照下来）
+  - 所有设置即时生效并写进 `user://settings.cfg`；相机 FOV / 曝光 / 反转 Y / 蹲下方式在进入游戏时由 `player.gd` 读取，字幕底衬由 `hud.gd` 读取
   - 相机取景由 `menu.gd` 的导出参数控制：`camera_position` / `camera_target` / `camera_fov`
 - **彩蛋房间**：第二次坠落时玩家会被送进 `Scenes/escape01_room.tscn`。房间实例化在 `(2000, 0, 0)` 的独立空间里，不与主场景重叠；18 个网格全部生成了凸包碰撞体
   - **睁眼之后**才开始播放 `audio/voice/easter_01.mp3`（旁白吐槽这个房间），**说完之后**房间中央才升起展台：金色底座 + 黑漆柱 + 发光红环 + 红色亮面按钮

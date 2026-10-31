@@ -15,6 +15,8 @@ extends Node3D
 
 ## 闪烁时亮度最低能掉到基准的多少倍
 @export var dip_min: float = 0.2
+## 辅助功能：减弱闪烁时，最低亮度抬到这里，并且不再连闪
+@export var dip_min_reduced: float = 0.75
 ## 偶尔窜亮时最高到多少倍
 @export var spike_max: float = 1.3
 
@@ -28,9 +30,15 @@ var _target: float = 1.0
 var _timer: float = 0.0
 ## 连闪计数：一次抽动之后可能连着再抽几下
 var _burst: int = 0
+## 辅助功能开关（从 Settings 读）
+var _reduced: bool = false
 
 
 func _ready() -> void:
+	var settings := get_node_or_null("/root/Settings")
+	if settings != null:
+		_reduced = settings.reduce_flicker
+
 	_screen = get_node_or_null(screen_path) as MeshInstance3D
 	_light = get_node_or_null(light_path) as DirectionalLight3D
 	if _screen != null:
@@ -51,6 +59,16 @@ func _process(delta: float) -> void:
 
 
 func _choose_next() -> void:
+	if _reduced:
+		# 减弱模式：偶尔轻微变暗，永不连闪
+		if randf() < 0.06:
+			_target = randf_range(dip_min_reduced, 0.95)
+			_timer = randf_range(0.12, 0.3)
+		else:
+			_target = 1.0
+			_timer = randf_range(0.4, 1.6)
+		return
+
 	if _burst > 0:
 		_burst -= 1
 		_target = randf_range(dip_min, 0.6)

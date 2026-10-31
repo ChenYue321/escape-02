@@ -129,7 +129,7 @@ anchor_left = 0.115
 anchor_top = 0.135
 anchor_right = 0.115
 anchor_bottom = 0.135
-offset_right = 800.0
+offset_right = 900.0
 offset_bottom = 130.0
 grow_horizontal = 1
 theme_override_colors/font_color = Color(0.93, 0.95, 0.98, 1)
@@ -142,121 +142,13 @@ vertical_alignment = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.12
-anchor_top = 0.46
+anchor_top = 0.4
 anchor_right = 0.12
-anchor_bottom = 0.46
-offset_right = 820.0
-offset_bottom = 320.0
+anchor_bottom = 0.4
+offset_right = 900.0
+offset_bottom = 500.0
 grow_horizontal = 1
-theme_override_constants/separation = 26
-
-[node name="SensitivityRow" type="HBoxContainer" parent="SettingsPage/Rows"]
-layout_mode = 2
-theme_override_constants/separation = 24
-
-[node name="Label" type="Label" parent="SettingsPage/Rows/SensitivityRow"]
-custom_minimum_size = Vector2(220, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.84, 0.9, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
-theme_override_font_sizes/font_size = 34
-text = "SENSITIVITY"
-
-[node name="Slider" type="HSlider" parent="SettingsPage/Rows/SensitivityRow"]
-custom_minimum_size = Vector2(420, 0)
-layout_mode = 2
-size_flags_vertical = 4
-min_value = 0.3
-max_value = 2.0
-step = 0.05
-value = 1.0
-
-[node name="Value" type="Label" parent="SettingsPage/Rows/SensitivityRow"]
-custom_minimum_size = Vector2(110, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.62, 0.67, 0.74, 1)
-theme_override_fonts/font = SubResource("SystemFont_ui")
-theme_override_font_sizes/font_size = 20
-text = "1.00×"
-horizontal_alignment = 2
-
-[node name="VolumeRow" type="HBoxContainer" parent="SettingsPage/Rows"]
-layout_mode = 2
-theme_override_constants/separation = 24
-
-[node name="Label" type="Label" parent="SettingsPage/Rows/VolumeRow"]
-custom_minimum_size = Vector2(220, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.84, 0.9, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
-theme_override_font_sizes/font_size = 34
-text = "VOLUME"
-
-[node name="Slider" type="HSlider" parent="SettingsPage/Rows/VolumeRow"]
-custom_minimum_size = Vector2(420, 0)
-layout_mode = 2
-size_flags_vertical = 4
-max_value = 1.0
-step = 0.01
-value = 1.0
-
-[node name="Value" type="Label" parent="SettingsPage/Rows/VolumeRow"]
-custom_minimum_size = Vector2(110, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.62, 0.67, 0.74, 1)
-theme_override_fonts/font = SubResource("SystemFont_ui")
-theme_override_font_sizes/font_size = 20
-text = "100%"
-horizontal_alignment = 2
-
-[node name="Spacer" type="Control" parent="SettingsPage/Rows"]
-custom_minimum_size = Vector2(0, 18)
-layout_mode = 2
-
-[node name="DisplayButton" type="Button" parent="SettingsPage/Rows"]
-custom_minimum_size = Vector2(380, 64)
-layout_mode = 2
-size_flags_horizontal = 0
-focus_mode = 2
-theme_override_colors/font_color = Color(0.78, 0.81, 0.86, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
-theme_override_font_sizes/font_size = 40
-alignment = 0
-flat = true
-text = "DISPLAY"
-
-[node name="KeysButton" type="Button" parent="SettingsPage/Rows"]
-custom_minimum_size = Vector2(380, 64)
-layout_mode = 2
-size_flags_horizontal = 0
-focus_mode = 2
-theme_override_colors/font_color = Color(0.78, 0.81, 0.86, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
-theme_override_font_sizes/font_size = 40
-alignment = 0
-flat = true
-text = "KEY BINDING"
-
-[node name="BackButton" type="Button" parent="SettingsPage/Rows"]
-custom_minimum_size = Vector2(380, 76)
-layout_mode = 2
-size_flags_horizontal = 0
-focus_mode = 2
-theme_override_colors/font_color = Color(0.78, 0.81, 0.86, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
-theme_override_font_sizes/font_size = 46
-alignment = 0
-flat = true
-text = "BACK"
+theme_override_constants/separation = 4
 
 [node name="Hint" type="Label" parent="SettingsPage"]
 layout_mode = 1
@@ -265,7 +157,7 @@ anchor_left = 0.12
 anchor_top = 0.86
 anchor_right = 0.12
 anchor_bottom = 0.86
-offset_right = 700.0
+offset_right = 800.0
 offset_bottom = 30.0
 grow_horizontal = 1
 theme_override_colors/font_color = Color(0.32, 0.35, 0.41, 1)
@@ -285,9 +177,9 @@ grow_vertical = 2
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.115
-anchor_top = 0.1
+anchor_top = 0.08
 anchor_right = 0.115
-anchor_bottom = 0.1
+anchor_bottom = 0.08
 offset_right = 900.0
 offset_bottom = 110.0
 grow_horizontal = 1
@@ -301,75 +193,24 @@ vertical_alignment = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.12
-anchor_top = 0.3
+anchor_top = 0.26
 anchor_right = 0.12
-anchor_bottom = 0.3
+anchor_bottom = 0.26
 offset_right = 900.0
-offset_bottom = 420.0
+offset_bottom = 500.0
 grow_horizontal = 1
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="Hint" type="Label" parent="KeysPage"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.12
-anchor_top = 0.86
+anchor_top = 0.88
 anchor_right = 0.12
-anchor_bottom = 0.86
+anchor_bottom = 0.88
 offset_right = 800.0
 offset_bottom = 30.0
 grow_horizontal = 1
 theme_override_colors/font_color = Color(0.32, 0.35, 0.41, 1)
 theme_override_font_sizes/font_size = 14
 text = "点击某个键位后按下新按键      Esc 撤销 / 返回"
-
-[node name="DisplayPage" type="Control" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Title" type="Label" parent="DisplayPage"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.115
-anchor_top = 0.135
-anchor_right = 0.115
-anchor_bottom = 0.135
-offset_right = 800.0
-offset_bottom = 130.0
-grow_horizontal = 1
-theme_override_colors/font_color = Color(0.93, 0.95, 0.98, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
-theme_override_font_sizes/font_size = 96
-text = "DISPLAY"
-vertical_alignment = 1
-
-[node name="Rows" type="VBoxContainer" parent="DisplayPage"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.12
-anchor_top = 0.44
-anchor_right = 0.12
-anchor_bottom = 0.44
-offset_right = 900.0
-offset_bottom = 320.0
-grow_horizontal = 1
-theme_override_constants/separation = 18
-
-[node name="Hint" type="Label" parent="DisplayPage"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.12
-anchor_top = 0.86
-anchor_right = 0.12
-anchor_bottom = 0.86
-offset_right = 900.0
-offset_bottom = 30.0
-grow_horizontal = 1
-theme_override_colors/font_color = Color(0.32, 0.35, 0.41, 1)
-theme_override_font_sizes/font_size = 14
-text = "点击数值切换      Esc 返回"

@@ -122,6 +122,13 @@ func _ready() -> void:
 	_stand_capsule_height = (_collision.shape as CapsuleShape3D).height
 	_stand_eye_height = _camera.position.y
 	_camera.current = true
+
+	# 从设置里读显示相关的项（菜单里改的在这里生效）
+	var settings := get_node_or_null("/root/Settings")
+	if settings != null:
+		_camera.fov = settings.fov
+		settings.apply_exposure(get_parent())
+
 	_capture_mouse()
 
 	# 进场睁眼（菜单转场已经把屏幕压黑了）
@@ -201,11 +208,29 @@ func _update_crouch(delta: float) -> void:
 		_crouching = false
 		target_eye = _seated_eye_height
 	else:
-		var want_crouch := Input.is_action_pressed("crouch")
-		if _suppress_crouch_until_release:
-			if not want_crouch:
-				_suppress_crouch_until_release = false
-			want_crouch = false
+		var settings := get_node_or_null("/root/Settings")
+		var toggle_mode: bool = settings != null and settings.crouch_toggle
+
+		var want_crouch: bool
+		if toggle_mode:
+			# 切换式：按一下蹲、再按一下站（没头顶空间就站着不动）
+			if _suppress_crouch_until_release:
+				if Input.is_action_just_released("crouch"):
+					_suppress_crouch_until_release = false
+			elif Input.is_action_just_pressed("crouch"):
+				if _crouching:
+					if _has_headroom():
+						_crouching = false
+				else:
+					_crouching = true
+			want_crouch = _crouching
+		else:
+			# 按住式
+			want_crouch = Input.is_action_pressed("crouch")
+			if _suppress_crouch_until_release:
+				if not want_crouch:
+					_suppress_crouch_until_release = false
+				want_crouch = false
 
 		if want_crouch:
 			_crouching = true
@@ -303,8 +328,10 @@ func _apply_look(motion: InputEventMouseMotion) -> void:
 	if _screen_fade != null and _screen_fade.is_busy():
 		return
 	var sens := _sensitivity()
+	var settings := get_node_or_null("/root/Settings")
+	var invert: float = -1.0 if settings != null and settings.invert_y else 1.0
 	rotate_y(-motion.relative.x * sens)
-	var pitch: float = _camera.rotation.x - motion.relative.y * sens
+	var pitch: float = _camera.rotation.x - motion.relative.y * sens * invert
 	_camera.rotation.x = clampf(pitch, -deg_to_rad(pitch_limit), deg_to_rad(pitch_limit))
 
 

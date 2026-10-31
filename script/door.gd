@@ -42,6 +42,7 @@ var _audio: AudioStreamPlayer3D
 
 func _ready() -> void:
 	_audio = AudioStreamPlayer3D.new()
+	_audio.bus = &"SFX"
 	_audio.name = "DoorSound"
 	_audio.volume_db = sound_volume_db
 	_audio.max_distance = 20.0
