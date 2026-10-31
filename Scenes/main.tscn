@@ -1017,7 +1017,7 @@ mesh = SubResource("BoxMesh_crt_knob")
 [node name="Monitor Light" type="OmniLight3D" parent="Desk/Computer/Monitor" unique_id=1484748390]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.219, 0.24)
 light_color = Color(0.72, 0.82, 1, 1)
-light_energy = 0.22
+light_energy = 0.0
 light_size = 0.15
 omni_range = 1.6
 
