@@ -1042,10 +1042,10 @@ material_override = ExtResource("21_plastic")
 mesh = SubResource("BoxMesh_kb_keys")
 
 [node name="Lamp" type="Node3D" parent="Desk" unique_id=1249673965]
-transform = Transform3D(0.42605484, 0, -0.9046974, 0, 1, 0, 0.9046974, 0, 0.42605484, 0.58769476, 0.029999971, 0.14836192)
+transform = Transform3D(0.39872718, 0, -0.9170696, 0, 1, 0, 0.9170696, 0, 0.39872718, 0.58769476, 0.029999971, 0.20499468)
 
 [node name="Lampshade" type="Node3D" parent="Desk/Lamp" unique_id=305833023]
-transform = Transform3D(0.83005923, 0.38247603, -0.4058495, 0.0060166307, 0.72156805, 0.69231725, 0.5576431, -0.5771062, 0.5966428, -0.0672698, 0.4187225, 0.100144625)
+transform = Transform3D(0.8301945, 0.39278173, -0.39560038, 0.012588946, 0.69624037, 0.71769816, 0.55733204, -0.60080934, 0.57307005, -0.06726992, 0.4187225, 0.100144625)
 
 [node name="Lampshade Part1" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=1474303448]
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, 0, 0)
@@ -1062,11 +1062,14 @@ mesh = SubResource("CylinderMesh_hptm8")
 surface_material_override/0 = SubResource("StandardMaterial3D_d1ilt")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="Desk/Lamp/Lampshade" unique_id=1110801615]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+transform = Transform3D(0.991899, -0.099430, 0.079059, -0.060621, 0.176421, 0.982446, 0.111633, 0.979280, -0.168964, 0, 0, 0)
 visible = false
-light_size = 0.12
+light_energy = 1.5
+light_size = 0.06
 shadow_enabled = true
-spot_angle = 29.85
+spot_range = 4.5
+spot_attenuation = 1.1
+spot_angle = 70.0
 
 [node name="LampSwitch" type="StaticBody3D" parent="Desk/Lamp/Lampshade" unique_id=1674171989]
 collision_layer = 2
