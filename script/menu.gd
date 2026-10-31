@@ -312,7 +312,8 @@ func _add_slider_row(parent: VBoxContainer, spec: Dictionary) -> void:
 	# 键盘焦点落在滑条上时，箭头标到这一行的标题上
 	slider.focus_entered.connect(func() -> void:
 		_focus_button = label
-		_refresh_arrow())
+		if not _mouse_recent:
+			_set_arrow(label))
 
 	slider.value_changed.connect(func(v: float) -> void:
 		_settings().set(spec.prop, v)
@@ -624,16 +625,15 @@ func _restore_default_bindings() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	# 鼠标一动，箭头就交还给鼠标悬停的那个
+	# 鼠标在某个按钮上动：箭头跟着它；在空白处动则什么都不变
 	if event is InputEventMouseMotion:
 		_mouse_recent = true
 		_refresh_arrow()
 		return
 
-	# 按上下键时，箭头交给键盘，直到鼠标再动
+	# 按上下键时，箭头交给键盘，直到鼠标再挪到某个按钮上
 	if event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down"):
 		_mouse_recent = false
-		call_deferred("_refresh_arrow")
 		return
 
 	# 监听时用 _input 而不是 _unhandled_input：方向键、空格会被按钮的焦点导航先吃掉
@@ -662,26 +662,23 @@ func _add_focus_marker(button: Button) -> void:
 
 	button.focus_entered.connect(func() -> void:
 		_focus_button = button
-		_refresh_arrow())
+		# 键盘刚操作过才把箭头交给焦点；鼠标模式下不动它
+		if not _mouse_recent:
+			_set_arrow(button))
 	button.mouse_entered.connect(func() -> void:
 		_hover_button = button
 		_mouse_recent = true
-		_refresh_arrow())
+		_set_arrow(button))
 	button.mouse_exited.connect(func() -> void:
+		# 鼠标移开时箭头留在原地，不回跳
 		if _hover_button == button:
-			_hover_button = null
-		_refresh_arrow())
+			_hover_button = null)
 
 
-## 重新决定箭头该落在谁身上：
-## 最近动过鼠标且鼠标停在某个按钮上 → 给那个按钮；否则给键盘焦点
+## 鼠标在按钮上动来动去时，箭头始终跟着鼠标下那一个
 func _refresh_arrow() -> void:
-	var target: Control = null
-	if _mouse_recent and _hover_button != null:
-		target = _hover_button
-	else:
-		target = _focus_button
-	_set_arrow(target)
+	if _hover_button != null:
+		_set_arrow(_hover_button)
 
 
 ## 改一个按钮的文字：同步它的 base text，如果箭头在它身上就补上箭头
