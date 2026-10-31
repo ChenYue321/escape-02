@@ -1049,10 +1049,12 @@ transform = Transform3D(0.8301945, 0.39278173, -0.39560038, 0.012588946, 0.69624
 
 [node name="Lampshade Part1" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=1474303448]
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, 0, 0)
+cast_shadow = 0
 mesh = SubResource("CylinderMesh_344ge")
 
 [node name="Lampshade Part2" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=760010785]
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, -0.09945917, 1.1920929e-07)
+cast_shadow = 0
 mesh = SubResource("SphereMesh_ynf5e")
 
 [node name="Lampshade Part3" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=479128957]
