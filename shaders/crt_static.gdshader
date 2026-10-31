@@ -30,8 +30,11 @@ float hash(vec2 p) {
 void fragment() {
 	vec2 uv = UV;
 
-	// 每帧换一组随机
-	float t = floor(TIME * speed);
+	// 每帧换一组随机。
+	// 用 mod 把序号圈在 512 以内：hash 里要算 sin(dot(p, ...))，p 一旦涨到
+	// 1e6 量级，GPU 上 float32 的 sin 精度就会崩掉，画面会退化成一片死色。
+	// 512 帧 ≈ 25 秒才循环一次，肉眼分辨不出重复。
+	float t = mod(floor(TIME * speed), 512.0);
 
 	// 两层次像素噪声叠加，避免颗粒过于规整
 	vec2 cell = floor(uv * grain);
@@ -53,5 +56,7 @@ void fragment() {
 	float fl = 1.0 - flicker * hash(vec2(t, 1.0));
 
 	float value = noise * scan * band * max(vig, 0.0) * fl * brightness;
+	// 兜底：无论噪声怎么退化，屏幕都不会变成纯黑
+	value = max(value, 0.05);
 	ALBEDO = tint * value;
 }
