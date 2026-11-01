@@ -668,6 +668,8 @@ func _add_focus_marker(button: Button) -> void:
 	button.mouse_entered.connect(func() -> void:
 		_hover_button = button
 		_mouse_recent = true
+		# 焦点跟着鼠标走：这样焦点框和箭头永远是同一个东西
+		button.grab_focus()
 		_set_arrow(button))
 	button.mouse_exited.connect(func() -> void:
 		# 鼠标移开时箭头留在原地，不回跳
