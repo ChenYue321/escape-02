@@ -421,10 +421,9 @@ top_radius = 0.03
 bottom_radius = 0.048
 height = 0.05
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_rim"]
-top_radius = 0.063
-bottom_radius = 0.063
-height = 0.006
+[sub_resource type="TorusMesh" id="TorusMesh_lamp_rim"]
+inner_radius = 0.058
+outer_radius = 0.068
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_metal"]
 albedo_color = Color(0.7, 0.71, 0.73, 1)
@@ -1104,7 +1103,7 @@ material_override = SubResource("StandardMaterial3D_lamp_shade")
 mesh = SubResource("SphereMesh_ynf5e")
 
 [node name="Lampshade Part3" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=479128957]
-transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, -0.09945917, 1.1920929e-07)
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, -0.1025, 1.1920929e-07)
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_hptm8")
 surface_material_override/0 = SubResource("StandardMaterial3D_d1ilt")
@@ -1144,7 +1143,7 @@ mesh = SubResource("CylinderMesh_lamp_collar")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.09945917, 0)
 cast_shadow = 0
 material_override = SubResource("StandardMaterial3D_lamp_metal")
-mesh = SubResource("CylinderMesh_lamp_rim")
+mesh = SubResource("TorusMesh_lamp_rim")
 
 [node name="Stand Part1" type="MeshInstance3D" parent="Desk/Lamp" unique_id=1342424676]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
