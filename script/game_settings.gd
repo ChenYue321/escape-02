@@ -35,6 +35,9 @@ var exposure: float = 1.02
 var fov: float = 75.0
 ## 全屏
 var fullscreen: bool = false
+## 3D 质量：0 = 省电（720p）、1 = 平衡（1080p）、2 = 清晰（1440p）
+## 只影响 3D 内部分辨率，HUD/字幕仍是原生分辨率
+var render_quality: int = 1
 
 # --- 辅助功能 ---
 ## 减弱 CRT 闪烁
@@ -96,13 +99,14 @@ func apply_display() -> void:
 		DisplayServer.window_set_mode(mode)
 
 
-## 3D 内部渲染分辨率上限：不管窗口/全屏多大，3D 最多渲染到约 1150p，
-## 再用 FSR 放大到窗口大小。2D HUD 仍然是原生分辨率，所以字不会糊。
-## 小窗口保持 1.0，不会为了省性能把画面变糊。
+## 3D 质量档位 → 内部渲染高度上限（物理像素）。
+## 不管窗口/全屏多大，3D 最多渲染到这个高度，再用 FSR 放大到窗口大小。
+## 2D HUD 仍然是原生分辨率，所以字不会糊。
 ## 参考值用「窗口逻辑高度 × 屏幕缩放」算物理高度，避免 macOS 全屏下
 ## get_texture().get_size() 给出异常大的值。
-const TARGET_3D_HEIGHT := 1152.0
-const MIN_3D_SCALE := 0.34
+const RENDER_QUALITY_HEIGHTS := [720.0, 1080.0, 1440.0]
+## 下限放低到 0.2，让省电档在 4K/高 DPI 全屏下也能真的降下来
+const MIN_3D_SCALE := 0.2
 
 
 func _setup_3d_scaling() -> void:
@@ -128,8 +132,14 @@ func _refresh_3d_scale() -> void:
 	var physical_h := float(DisplayServer.window_get_size().y) * DisplayServer.screen_get_scale(screen)
 	if physical_h <= 0.0:
 		return
-	var target := clampf(TARGET_3D_HEIGHT / physical_h, MIN_3D_SCALE, 1.0)
+	var height: float = RENDER_QUALITY_HEIGHTS[clampi(render_quality, 0, 2)]
+	var target := clampf(height / physical_h, MIN_3D_SCALE, 1.0)
 	win.scaling_3d_scale = snappedf(target, 0.01)
+
+
+## 玩家在设置里改 3D 质量后调用：重新算内部渲染分辨率
+func apply_render_quality() -> void:
+	_refresh_3d_scale_delayed()
 
 
 ## 曝光是场景里的 WorldEnvironment 属性，所以要把场景传进来
@@ -164,6 +174,7 @@ func load_settings() -> void:
 	exposure = clampf(float(cfg.get_value("display", "exposure", exposure)), 0.6, 1.8)
 	fov = clampf(float(cfg.get_value("display", "fov", fov)), 60.0, 110.0)
 	fullscreen = bool(cfg.get_value("display", "fullscreen", fullscreen))
+	render_quality = clampi(int(cfg.get_value("display", "render_quality", render_quality)), 0, 2)
 
 	reduce_flicker = bool(cfg.get_value("access", "reduce_flicker", reduce_flicker))
 	subtitle_bg = clampf(float(cfg.get_value("access", "subtitle_bg", subtitle_bg)), 0.0, 1.0)
@@ -186,6 +197,7 @@ func save_settings() -> void:
 	cfg.set_value("display", "exposure", exposure)
 	cfg.set_value("display", "fov", fov)
 	cfg.set_value("display", "fullscreen", fullscreen)
+	cfg.set_value("display", "render_quality", render_quality)
 
 	cfg.set_value("access", "reduce_flicker", reduce_flicker)
 	cfg.set_value("access", "subtitle_bg", subtitle_bg)

@@ -33,6 +33,8 @@ const PAGES := [
 		"rows": [
 			{"kind": "slider", "label": "BRIGHTNESS", "prop": "exposure", "min": 0.6, "max": 1.8, "step": 0.02, "fmt": "times"},
 			{"kind": "slider", "label": "FOV", "prop": "fov", "min": 65.0, "max": 100.0, "step": 1.0, "fmt": "int"},
+			{"kind": "option", "label": "3D QUALITY", "prop": "render_quality", "options": [0, 1, 2],
+				"labels": ["PERFORMANCE", "BALANCED", "SHARP"]},
 			{"kind": "option", "label": "MAX FPS", "prop": "max_fps", "options": [0, 30, 60, 120, 144],
 				"labels": ["UNLIMITED", "30", "60", "120", "144"]},
 			{"kind": "toggle", "label": "V-SYNC", "prop": "vsync"},
@@ -496,6 +498,8 @@ func _apply_prop(prop: String) -> void:
 			settings.apply_audio()
 		"max_fps", "vsync", "fullscreen":
 			settings.apply_display()
+		"render_quality":
+			settings.apply_render_quality()
 		"exposure":
 			settings.apply_exposure(_world)
 		"fov":
