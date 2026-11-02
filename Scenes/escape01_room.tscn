@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://script/pedestal.gd" id="1_pedestal"]
 [ext_resource type="Script" path="res://script/easter_button.gd" id="2_button"]
+[ext_resource type="AudioStream" path="res://audio/sfx/switch_on.mp3" id="3_press"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_tb8k4"]
 size = Vector3(0.5, 0.4, 0.3)
@@ -136,35 +137,51 @@ height = 0.05
 inner_radius = 0.22
 outer_radius = 0.27
 
-[sub_resource type="SphereMesh" id="SphereMesh_ped_dome"]
-radius = 0.17
-height = 0.34
+[sub_resource type="CylinderMesh" id="CylinderMesh_ped_body"]
+top_radius = 0.155
+bottom_radius = 0.165
+height = 0.085
+
+[sub_resource type="SphereMesh" id="SphereMesh_ped_cap"]
+radius = 0.155
+height = 0.07
+is_hemisphere = true
+
+[sub_resource type="TorusMesh" id="TorusMesh_ped_seat"]
+inner_radius = 0.172
+outer_radius = 0.215
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_ped_button"]
 radius = 0.24
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ped_gold"]
-albedo_color = Color(0.9, 0.68, 0.24, 1)
-metallic = 1.0
-roughness = 0.18
+albedo_color = Color(0.86, 0.65, 0.24, 1)
+metallic = 0.55
+roughness = 0.3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ped_dark"]
-albedo_color = Color(0.02, 0.02, 0.025, 1)
-metallic = 0.35
-roughness = 0.1
+albedo_color = Color(0.12, 0.12, 0.135, 1)
+metallic = 0.1
+roughness = 0.45
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ped_red"]
-albedo_color = Color(0.6, 0.02, 0.03, 1)
+albedo_color = Color(0.52, 0.015, 0.02, 1)
 metallic = 0.15
-roughness = 0.06
+roughness = 0.28
+clearcoat_enabled = true
+clearcoat = 0.6
+clearcoat_roughness = 0.18
 emission_enabled = true
-emission = Color(1, 0.06, 0.04, 1)
-emission_energy_multiplier = 0.9
+emission = Color(1, 0.05, 0.03, 1)
+emission_energy_multiplier = 0.3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ped_glow"]
+albedo_color = Color(0.22, 0.01, 0.008, 1)
+metallic = 0.1
+roughness = 0.35
 emission_enabled = true
-emission = Color(1, 0.12, 0.08, 1)
-emission_energy_multiplier = 3.0
+emission = Color(1, 0.07, 0.035, 1)
+emission_energy_multiplier = 1.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ped_base"]
 radius = 0.45
@@ -376,16 +393,47 @@ cast_shadow = 0
 material_override = SubResource("StandardMaterial3D_ped_glow")
 mesh = SubResource("TorusMesh_ped_ring")
 
-[node name="Button Dome" type="MeshInstance3D" parent="Pedestal"]
-transform = Transform3D(1, 0, 0, 0, 0.62, 0, 0, 0, 1, 0, 1.13, 0)
+[node name="Button Seat" type="MeshInstance3D" parent="Pedestal"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.02, 0)
+material_override = SubResource("StandardMaterial3D_ped_dark")
+mesh = SubResource("TorusMesh_ped_seat")
+
+[node name="ButtonMoving" type="Node3D" parent="Pedestal"]
+
+[node name="Button Body" type="MeshInstance3D" parent="Pedestal/ButtonMoving"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0775, 0)
 material_override = SubResource("StandardMaterial3D_ped_red")
-mesh = SubResource("SphereMesh_ped_dome")
+mesh = SubResource("CylinderMesh_ped_body")
+
+[node name="Button Cap" type="MeshInstance3D" parent="Pedestal/ButtonMoving"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.12, 0)
+material_override = SubResource("StandardMaterial3D_ped_red")
+mesh = SubResource("SphereMesh_ped_cap")
+
+[node name="Fill Left" type="OmniLight3D" parent="Pedestal"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 1.05, 0.55)
+light_color = Color(0.78, 0.84, 1, 1)
+light_energy = 1.8
+omni_range = 1.6
+
+[node name="Fill Right" type="OmniLight3D" parent="Pedestal"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.95, 0.5)
+light_color = Color(1, 0.85, 0.7, 1)
+light_energy = 1.1
+omni_range = 1.4
+
+[node name="Ring Light" type="OmniLight3D" parent="Pedestal"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, 0)
+light_color = Color(1, 0.1, 0.05, 1)
+light_energy = 0.7
+omni_range = 0.7
 
 [node name="ButtonHit" type="StaticBody3D" parent="Pedestal"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.12, 0)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("2_button")
+press_sound = ExtResource("3_press")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Pedestal/ButtonHit"]
 shape = SubResource("SphereShape3D_ped_button")
