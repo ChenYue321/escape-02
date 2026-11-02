@@ -25,7 +25,6 @@ var _buttons: Array[Button] = []
 var _base_texts: Dictionary = {}
 var _arrow_owner: Button
 var _font: Font
-var _ui_font: Font
 
 
 func _ready() -> void:
@@ -35,8 +34,6 @@ func _ready() -> void:
 
 	_font = SystemFont.new()
 	_font.font_names = PackedStringArray(["Bradley Hand", "Chalkboard SE", "Marker Felt", "Comic Sans MS"])
-	_ui_font = SystemFont.new()
-	_ui_font.font_names = PackedStringArray(["Helvetica Neue", "Helvetica", "Arial"])
 
 	_build_pause_ui()
 	_build_settings()
@@ -45,18 +42,20 @@ func _ready() -> void:
 # --- 搭界面 ---
 
 func _build_pause_ui() -> void:
-	_root = Control.new()
-	_root.name = "PauseUI"
-	_root.mouse_filter = Control.MOUSE_FILTER_STOP
-	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(_root)
-
+	# 灰罩挂在 CanvasLayer 上，不属于 PauseUI：打开设置时 PauseUI 隐藏，
+	# 灰罩仍然要在，否则设置页背后会变成纯黑（和暂停页不统一）。
 	var dim := ColorRect.new()
 	dim.name = "Dim"
 	dim.color = Color(0.18, 0.19, 0.22, 0.55)
 	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_root.add_child(dim)
+	add_child(dim)
+
+	_root = Control.new()
+	_root.name = "PauseUI"
+	_root.mouse_filter = Control.MOUSE_FILTER_STOP
+	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(_root)
 
 	var title := Label.new()
 	title.text = "PAUSE"
@@ -90,18 +89,6 @@ func _build_pause_ui() -> void:
 		box.add_child(button)
 		_buttons.append(button)
 
-	var hint := Label.new()
-	hint.text = "ESC  RESUME"
-	hint.add_theme_font_override("font", _ui_font)
-	hint.add_theme_font_size_override("font_size", 16)
-	hint.add_theme_color_override("font_color", Color(0.55, 0.6, 0.68))
-	hint.anchor_left = 0.12
-	hint.anchor_top = 0.86
-	hint.anchor_right = 0.12
-	hint.anchor_bottom = 0.86
-	hint.offset_right = 400.0
-	hint.offset_bottom = 26.0
-	_root.add_child(hint)
 
 
 func _make_button(text: String, callback: Callable) -> Button:
