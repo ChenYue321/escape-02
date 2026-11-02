@@ -170,7 +170,7 @@ func _build_background() -> void:
 func _build_hub() -> void:
 	for entry in PAGES:
 		_add_link(_settings_rows, entry.title, entry.id)
-	_add_link(_settings_rows, "KEY BINDING", "keys")
+	# KEY BINDING 只在 CONTROLS 里出现一次（它是控制设置的一部分）
 	_add_back_button(_settings_page, _menu_page, _settings_button)
 
 
