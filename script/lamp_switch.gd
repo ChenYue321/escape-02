@@ -22,8 +22,8 @@ extends StaticBody3D
 
 ## 当前是否开着
 var _on: bool = true
-## 记录自发光强度原始值，关灯时归零、开灯时还原
-var _emission_energy: float = 0.0
+## 每个自发光材质各自的原始强度：关灯时归零，开灯时还原各自的值
+var _emission_energies: Dictionary = {}
 ## 开关音效的播放器，运行时创建（跟着开关节点的位置发声）
 var _audio: AudioStreamPlayer3D
 
@@ -38,7 +38,7 @@ func _ready() -> void:
 
 	# 先记住"开灯时"的自发光强度，再按场景里的灯节点状态同步一次，
 	# 这样默认关着的灯在开局时灯片也不会亮
-	_emission_energy = _find_emission_energy()
+	_collect_emission_materials()
 	_on = _is_lit()
 	_apply(_on)
 
@@ -66,10 +66,8 @@ func _apply(on: bool) -> void:
 	for light in root.find_children("*", "SpotLight3D", true, false):
 		light.visible = on
 
-	for mesh in root.find_children("*", "MeshInstance3D", true, false):
-		var material := _emission_material(mesh)
-		if material != null:
-			material.emission_energy_multiplier = _emission_energy if on else 0.0
+	for material: StandardMaterial3D in _emission_energies:
+		material.emission_energy_multiplier = float(_emission_energies[material]) if on else 0.0
 
 
 ## 以场景里灯的 visible 为准，决定开关初始状态
@@ -95,10 +93,10 @@ func _emission_material(mesh: MeshInstance3D) -> StandardMaterial3D:
 	return null
 
 
-func _find_emission_energy() -> float:
-	var root := _lamp_root()
-	for mesh in root.find_children("*", "MeshInstance3D", true, false):
+## 记下每个自发光材质（灯片、灯罩内衬……）各自的强度
+func _collect_emission_materials() -> void:
+	_emission_energies.clear()
+	for mesh in _lamp_root().find_children("*", "MeshInstance3D", true, false):
 		var material := _emission_material(mesh)
 		if material != null:
-			return material.emission_energy_multiplier
-	return 0.0
+			_emission_energies[material] = material.emission_energy_multiplier

@@ -1,7 +1,6 @@
 [gd_scene format=4 uid="uid://kkc5foqf1t6f"]
 
 [ext_resource type="Texture2D" uid="uid://d1d58poev6wch" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_nor_gl_1k.jpg" id="1_21xkr"]
-[ext_resource type="Script" path="res://script/crt_flicker.gd" id="29_crt_flicker"]
 [ext_resource type="Script" uid="uid://dnbeuh1k5xa1u" path="res://script/wire.gd" id="1_jjgbg"]
 [ext_resource type="Texture2D" uid="uid://ciobpku1sjrx6" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_rough_1k.jpg" id="2_6bp64"]
 [ext_resource type="Material" uid="uid://elgtnjxkcj27" path="res://texture/new_standard_material_3d.tres" id="3_344ge"]
@@ -32,6 +31,7 @@
 [ext_resource type="AudioStream" uid="uid://476c11cqkj11" path="res://audio/voice/fall_02.mp3" id="26_fall_02"]
 [ext_resource type="PackedScene" path="res://Scenes/escape01_room.tscn" id="27_easter_egg"]
 [ext_resource type="AudioStream" uid="uid://bf4vt45gro54l" path="res://audio/voice/easter_01.mp3" id="28_easter_voice"]
+[ext_resource type="Script" uid="uid://cjrivwuscwy3q" path="res://script/crt_flicker.gd" id="29_crt_flicker"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.3
@@ -232,7 +232,7 @@ albedo_color = Color(0.028, 0.028, 0.031, 1)
 metallic_specular = 0.22
 roughness = 0.92
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_hpc6h"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_kltya"]
 _surfaces = [{
 "aabb": AABB(-0.3, 1.6599267, -0.027992532, 0.3004961, 0.06371403, 0.029163968),
 "format": 34359742471,
@@ -251,7 +251,7 @@ _data = {
 }
 point_count = 3
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_kltya"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_e08e2"]
 _surfaces = [{
 "aabb": AABB(-0.00049607735, 1.6599267, -0.027992532, 0.3004961, 0.06371403, 0.029163968),
 "format": 34359742471,
@@ -317,7 +317,7 @@ _data = {
 }
 point_count = 10
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_e08e2"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_neg2b"]
 _surfaces = [{
 "aabb": AABB(-0.19347723, -0.055, -0.0049604173, 0.27184463, 0.059961036, 0.31877378),
 "format": 34359742471,
@@ -336,7 +336,7 @@ _data = {
 }
 point_count = 11
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_neg2b"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_r33sp"]
 _surfaces = [{
 "aabb": AABB(-0.0099948, -0.61257005, -1.334069, 0.25991905, 0.62251544, 1.3351121),
 "format": 34359742471,
@@ -402,43 +402,10 @@ size = Vector3(0.44, 0.022, 0.16)
 [sub_resource type="BoxMesh" id="BoxMesh_kb_keys"]
 size = Vector3(0.4, 0.008, 0.125)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_arm_a"]
-top_radius = 0.007
-bottom_radius = 0.007
-height = 0.4
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_arm_b"]
-top_radius = 0.007
-bottom_radius = 0.007
-height = 0.2
-
-[sub_resource type="SphereMesh" id="SphereMesh_lamp_joint"]
-radius = 0.016
-height = 0.032
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_collar"]
-top_radius = 0.03
-bottom_radius = 0.048
-height = 0.05
-
-[sub_resource type="TorusMesh" id="TorusMesh_lamp_rim"]
-inner_radius = 0.058
-outer_radius = 0.068
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_metal"]
-albedo_color = Color(0.7, 0.71, 0.73, 1)
-metallic = 0.05
-roughness = 0.46
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_shade"]
 albedo_color = Color(0.54, 0.55, 0.58, 1)
 metallic = 0.05
 roughness = 0.52
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_base"]
-albedo_color = Color(0.53, 0.54, 0.57, 1)
-metallic = 0.05
-roughness = 0.55
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_344ge"]
 top_radius = 0.02
@@ -463,11 +430,55 @@ emission_energy_multiplier = 2.5
 [sub_resource type="SphereShape3D" id="SphereShape3D_switch"]
 radius = 0.16
 
-[sub_resource type="BoxMesh" id="BoxMesh_tb8k4"]
-size = Vector3(0.01, 0.4, 0.01)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_metal"]
+albedo_color = Color(0.7, 0.71, 0.73, 1)
+metallic = 0.05
+roughness = 0.46
 
-[sub_resource type="BoxMesh" id="BoxMesh_6bp64"]
-size = Vector3(0.01, 0.2, 0.01)
+[sub_resource type="TorusMesh" id="TorusMesh_lamp_rim"]
+inner_radius = 0.058
+outer_radius = 0.068
+
+[sub_resource type="SphereMesh" id="SphereMesh_lamp_lens"]
+radius = 0.06
+height = 0.022
+is_hemisphere = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_lamp_inner"]
+radius = 0.0585
+height = 0.097
+is_hemisphere = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_inner"]
+cull_mode = 1
+albedo_color = Color(1, 0.97, 0.9, 1)
+emission_enabled = true
+emission = Color(1, 0.94, 0.82, 1)
+emission_energy_multiplier = 1.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_lamp_joint"]
+radius = 0.016
+height = 0.032
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_collar"]
+top_radius = 0.03
+bottom_radius = 0.048
+height = 0.05
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_arm_a"]
+top_radius = 0.007
+bottom_radius = 0.007
+height = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_arm_b"]
+top_radius = 0.007
+bottom_radius = 0.007
+height = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_base"]
+albedo_color = Color(0.53, 0.54, 0.57, 1)
+metallic = 0.05
+roughness = 0.55
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_3xxii"]
 top_radius = 0.15
@@ -567,7 +578,6 @@ visible = false
 shape = SubResource("CapsuleShape3D_body")
 
 [node name="FallVoice" type="AudioStreamPlayer" parent="Character" unique_id=1321540066]
-bus = &"Voice"
 
 [node name="Camera3D" type="Camera3D" parent="Character" unique_id=1550534383]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5999999, 0)
@@ -849,7 +859,7 @@ radius = 0.002
 
 [node name="WireMesh" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign/String L" unique_id=1565070579]
 material_override = SubResource("StandardMaterial3D_cable_rubber")
-mesh = SubResource("ArrayMesh_hpc6h")
+mesh = SubResource("ArrayMesh_kltya")
 
 [node name="String R" type="Path3D" parent="Room/Door/DoorPivot/Hanging Sign" unique_id=2031959086]
 curve = SubResource("Curve3D_string_r")
@@ -858,7 +868,7 @@ radius = 0.002
 
 [node name="WireMesh" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign/String R" unique_id=735714196]
 material_override = SubResource("StandardMaterial3D_cable_rubber")
-mesh = SubResource("ArrayMesh_kltya")
+mesh = SubResource("ArrayMesh_e08e2")
 
 [node name="Desk" type="Node3D" parent="." unique_id=1186838603]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, -2.5)
@@ -972,7 +982,7 @@ radius = 0.005
 
 [node name="WireMesh" type="MeshInstance3D" parent="Desk/Computer/Case/wire to keyboard" unique_id=1165869543]
 material_override = SubResource("StandardMaterial3D_cable_rubber")
-mesh = SubResource("ArrayMesh_e08e2")
+mesh = SubResource("ArrayMesh_neg2b")
 
 [node name="Power cord" type="Node3D" parent="Desk/Computer/Case" unique_id=540409664]
 
@@ -983,7 +993,7 @@ script = ExtResource("1_jjgbg")
 radius = 0.01
 
 [node name="WireMesh" type="MeshInstance3D" parent="Desk/Computer/Case/Power cord/Power cord wire" unique_id=264676649]
-mesh = SubResource("ArrayMesh_neg2b")
+mesh = SubResource("ArrayMesh_r33sp")
 surface_material_override/0 = SubResource("StandardMaterial3D_cable_rubber")
 
 [node name="plug" type="MeshInstance3D" parent="Desk/Computer/Case/Power cord" unique_id=1425464764]
@@ -994,7 +1004,6 @@ surface_material_override/0 = SubResource("StandardMaterial3D_ukihg")
 [node name="Monitor" type="Node3D" parent="Desk/Computer" unique_id=1787699531]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.097, -0.02)
 script = ExtResource("29_crt_flicker")
-screen_path = NodePath("Screen")
 
 [node name="Base" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=175331020]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, 0)
@@ -1065,7 +1074,6 @@ omni_range = 1.6
 
 [node name="Static Noise" type="AudioStreamPlayer3D" parent="Desk/Computer/Monitor" unique_id=1736014812]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.219, 0.05)
-bus = &"Ambience"
 stream = ExtResource("23_tv_static")
 volume_db = -3.0
 unit_size = 1.0
@@ -1092,20 +1100,20 @@ transform = Transform3D(0.8301945, 0.39278173, -0.39560038, 0.012588946, 0.69624
 
 [node name="Lampshade Part1" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=1474303448]
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, 0, 0)
-cast_shadow = 0
 material_override = SubResource("StandardMaterial3D_lamp_shade")
+cast_shadow = 0
 mesh = SubResource("CylinderMesh_344ge")
 
 [node name="Lampshade Part2" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=760010785]
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, -0.09945917, 1.1920929e-07)
-cast_shadow = 0
 material_override = SubResource("StandardMaterial3D_lamp_shade")
+cast_shadow = 0
 mesh = SubResource("SphereMesh_ynf5e")
 
 [node name="Lampshade Part3" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=479128957]
-transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, -0.1025, 1.1920929e-07)
+transform = Transform3D(1, 0, 0, 0, -1, -1.1920929e-07, 0, 1.1920929e-07, -1, 0, -0.0985, 0)
 cast_shadow = 0
-mesh = SubResource("CylinderMesh_hptm8")
+mesh = SubResource("SphereMesh_lamp_lens")
 surface_material_override/0 = SubResource("StandardMaterial3D_d1ilt")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="Desk/Lamp/Lampshade" unique_id=1110801615]
@@ -1129,21 +1137,27 @@ sound_off = ExtResource("19_switch_off")
 visible = false
 shape = SubResource("SphereShape3D_switch")
 
-[node name="Joint" type="MeshInstance3D" parent="Desk/Lamp"]
+[node name="Lampshade Inner" type="MeshInstance3D" parent="Desk/Lamp/Lampshade"]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, -0.09945917, 1.1920929e-07)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_lamp_inner")
+surface_material_override/0 = SubResource("StandardMaterial3D_lamp_inner")
+
+[node name="Shade Rim" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=408420568]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.09945917, 0)
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+cast_shadow = 0
+mesh = SubResource("TorusMesh_lamp_rim")
+
+[node name="Joint" type="MeshInstance3D" parent="Desk/Lamp" unique_id=1843501450]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 material_override = SubResource("StandardMaterial3D_lamp_metal")
 mesh = SubResource("SphereMesh_lamp_joint")
 
-[node name="Stem Collar" type="MeshInstance3D" parent="Desk/Lamp"]
+[node name="Stem Collar" type="MeshInstance3D" parent="Desk/Lamp" unique_id=279517845]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.035, 0)
 material_override = SubResource("StandardMaterial3D_lamp_metal")
 mesh = SubResource("CylinderMesh_lamp_collar")
-
-[node name="Shade Rim" type="MeshInstance3D" parent="Desk/Lamp/Lampshade"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.09945917, 0)
-cast_shadow = 0
-material_override = SubResource("StandardMaterial3D_lamp_metal")
-mesh = SubResource("TorusMesh_lamp_rim")
 
 [node name="Stand Part1" type="MeshInstance3D" parent="Desk/Lamp" unique_id=1342424676]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
