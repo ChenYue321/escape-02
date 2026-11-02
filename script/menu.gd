@@ -172,6 +172,11 @@ func _build_continue_button() -> void:
 	_start.get_parent().move_child(_continue_button, _start.get_index() + 1)
 	_continue_button.pressed.connect(_on_continue_pressed)
 
+	# 多一个选项会把整列往下撑；整列上移半个按钮高度，保持和三项时一样的视觉重心
+	var items := _start.get_parent() as Control
+	items.offset_top -= 39.0
+	items.offset_bottom -= 39.0
+
 
 ## 暂停菜单复用设置页时，把游戏世界和玩家相机传进来，亮度和 FOV 能即时预览
 func set_preview_context(world: Node3D, camera: Camera3D) -> void:
