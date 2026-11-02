@@ -32,6 +32,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/escape01_room.tscn" id="27_easter_egg"]
 [ext_resource type="AudioStream" uid="uid://bf4vt45gro54l" path="res://audio/voice/easter_01.mp3" id="28_easter_voice"]
 [ext_resource type="Script" uid="uid://cjrivwuscwy3q" path="res://script/crt_flicker.gd" id="29_crt_flicker"]
+[ext_resource type="ArrayMesh" path="res://Scenes/lamp_shade_open.tres" id="30_lamp_open"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.3
@@ -407,25 +408,28 @@ albedo_color = Color(0.54, 0.55, 0.58, 1)
 metallic = 0.05
 roughness = 0.52
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_inner"]
+cull_mode = 1
+albedo_color = Color(0.86, 0.8, 0.7, 1)
+metallic = 0.0
+roughness = 0.72
+
 [sub_resource type="CylinderMesh" id="CylinderMesh_344ge"]
 top_radius = 0.02
 bottom_radius = 0.02
 height = 0.05
 
-[sub_resource type="SphereMesh" id="SphereMesh_ynf5e"]
-radius = 0.06
-height = 0.1
-is_hemisphere = true
+[sub_resource type="SphereMesh" id="SphereMesh_lamp_bulb"]
+radius = 0.013
+height = 0.026
 
-[sub_resource type="SphereMesh" id="SphereMesh_lamp_lens"]
-radius = 0.06
-height = 0.03
-is_hemisphere = true
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d1ilt"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_bulb"]
+albedo_color = Color(1, 0.93, 0.8, 1)
+metallic = 0.0
+roughness = 0.4
 emission_enabled = true
-emission = Color(1, 1, 1, 1)
-emission_energy_multiplier = 2.5
+emission = Color(1, 0.8, 0.55, 1)
+emission_energy_multiplier = 3.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_switch"]
 radius = 0.16
@@ -1091,16 +1095,22 @@ mesh = SubResource("CylinderMesh_344ge")
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, -0.09945917, 1.1920929e-07)
 material_override = SubResource("StandardMaterial3D_lamp_shade")
 cast_shadow = 0
-mesh = SubResource("SphereMesh_ynf5e")
+mesh = ExtResource("30_lamp_open")
 
-[node name="Lampshade Part3" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=479128957]
-transform = Transform3D(1, 0, 0, 0, -1, -1.1920929e-07, 0, 1.1920929e-07, -1, 0, -0.0985, 0)
+[node name="Lampshade Inner" type="MeshInstance3D" parent="Desk/Lamp/Lampshade"]
+transform = Transform3D(0.972, 0, 0, 0, 0.972, 0, 0, 0, 0.972, 0, -0.09945917, 0)
 cast_shadow = 0
-mesh = SubResource("SphereMesh_lamp_lens")
-surface_material_override/0 = SubResource("StandardMaterial3D_d1ilt")
+mesh = ExtResource("30_lamp_open")
+material_override = SubResource("StandardMaterial3D_lamp_inner")
+
+[node name="Bulb" type="MeshInstance3D" parent="Desk/Lamp/Lampshade" unique_id=479128957]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.082, 0)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_lamp_bulb")
+material_override = SubResource("StandardMaterial3D_lamp_bulb")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="Desk/Lamp/Lampshade" unique_id=1110801615]
-transform = Transform3D(0.991899, -0.09943, 0.079059, -0.060621, 0.176421, 0.982446, 0.111633, 0.97928, -0.168964, 0, 0, 0)
+transform = Transform3D(0.991899, -0.09943, 0.079059, -0.060621, 0.176421, 0.982446, 0.111633, 0.97928, -0.168964, 0, -0.086, 0)
 visible = false
 light_energy = 1.5
 light_size = 0.06

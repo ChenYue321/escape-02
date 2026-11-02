@@ -65,8 +65,14 @@ func _find_parts() -> void:
 		var mesh := node as MeshInstance3D
 		if mesh.mesh == null:
 			continue
+		# 整块材质（material_override）和逐面材质都要看
+		var material = mesh.material_override
+		if material is StandardMaterial3D and (material as StandardMaterial3D).emission_enabled:
+			_glow_material = material
+			_glow_energy = _glow_material.emission_energy_multiplier
+			return
 		for i in mesh.mesh.get_surface_count():
-			var material = mesh.get_surface_override_material(i)
+			material = mesh.get_surface_override_material(i)
 			if material is StandardMaterial3D and (material as StandardMaterial3D).emission_enabled:
 				_glow_material = material
 				_glow_energy = _glow_material.emission_energy_multiplier
