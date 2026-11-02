@@ -94,6 +94,17 @@ func _apply() -> void:
 		mat.emission_energy_multiplier = float(_glow_energies[material]) if _on else 0.0
 
 
+## 存档用：开/关状态
+func is_on() -> bool:
+	return _on
+
+
+## 读档用：直接设成某个状态，不播声音
+func set_on(on: bool) -> void:
+	_on = on
+	_apply()
+
+
 func _play_sound(turning_on: bool) -> void:
 	var stream := sound_on if turning_on else sound_off
 	if stream == null:

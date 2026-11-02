@@ -10,6 +10,11 @@ const GAME_SCENE := preload("res://Scenes/main.tscn")
 const FADE_OUT := 0.7
 const FADE_IN := 1.0
 
+## 暂停菜单里只复用设置页：不建 3D 背景、不显示主菜单
+@export var settings_only: bool = false
+## settings_only 模式下，设置首页按 BACK 时发出
+signal settings_closed
+
 @export_group("背景取景")
 @export var camera_position: Vector3 = Vector3(-0.52, 1.10, -1.65)
 @export var camera_target: Vector3 = Vector3(-0.30, 0.86, -2.55)
@@ -106,6 +111,8 @@ var _mouse_recent: bool = false
 ## 每个可选按钮的原始文字
 var _base_texts: Dictionary = {}
 var _back_keys_button: Button
+## 标题页有存档时才出现
+var _continue_button: Button
 
 ## 每个滑条的数值标签，改值时刷新
 var _value_labels: Dictionary = {}
@@ -113,18 +120,35 @@ var _option_buttons: Dictionary = {}
 
 
 func _ready() -> void:
+	# 暂停菜单里的"设置页副本"：不建背景、不显示主菜单
+	if settings_only:
+		_style_scroll($SettingsPage/Scroll)
+		_style_scroll($KeysPage/Scroll)
+		_build_hub()
+		_build_setting_pages()
+		_build_keys_page()
+		_menu_page.visible = false
+		_settings_page.visible = true
+		_current_page = _settings_page
+		# 这里不要动鼠标/焦点：实例是在游戏开始时建好的，暂停菜单打开时再处理
+		return
+
 	_build_background()
 	_style_scroll($SettingsPage/Scroll)
 	_style_scroll($KeysPage/Scroll)
 	_build_hub()
 	_build_setting_pages()
 	_build_keys_page()
+	_build_continue_button()
 
 	_start.pressed.connect(_on_start_pressed)
 	_settings_button.pressed.connect(_open_settings)
 	_quit.pressed.connect(_on_quit_pressed)
 
-	for button in [_start, _settings_button, _quit]:
+	var buttons: Array[Button] = [_start, _settings_button, _quit]
+	if _continue_button != null:
+		buttons.insert(1, _continue_button)
+	for button in buttons:
 		_add_focus_marker(button)
 
 	_current_page = _menu_page
@@ -136,14 +160,50 @@ func _ready() -> void:
 		fade.fade_from_black(FADE_IN)
 
 
+## 标题页：有存档才加 CONTINUE，插在 START 下面
+func _build_continue_button() -> void:
+	var save := get_node_or_null("/root/SaveGame")
+	if save == null or not save.has_save():
+		return
+	_continue_button = _start.duplicate() as Button
+	_continue_button.name = "ContinueButton"
+	_continue_button.text = "CONTINUE"
+	_start.get_parent().add_child(_continue_button)
+	_start.get_parent().move_child(_continue_button, _start.get_index() + 1)
+	_continue_button.pressed.connect(_on_continue_pressed)
+
+
+## 暂停菜单复用设置页时，把游戏世界和玩家相机传进来，亮度和 FOV 能即时预览
+func set_preview_context(world: Node3D, camera: Camera3D) -> void:
+	_world = world
+	_camera = camera
+
+
+## 暂停菜单每次打开设置都回到首页
+func open_settings() -> void:
+	_cancel_listening()
+	for page: Control in _pages.values():
+		page.visible = false
+	_keys_page.visible = false
+	_menu_page.visible = false
+	_settings_page.visible = true
+	_settings_page.modulate.a = 1.0
+	_current_page = _settings_page
+	_hover_button = null
+	_mouse_recent = false
+	_focus_first(_settings_page)
+
+
 # --- 背景 ---
 
 func _build_background() -> void:
 	_world = GAME_SCENE.instantiate() as Node3D
 	_world.name = "MenuWorld"
 
-	# 还没进场景树就删掉：玩家的 _ready 会捕获鼠标，等它跑完就晚了
-	for path in ["Character", "HUD"]:
+	# 还没进场景树就删掉：玩家的 _ready 会捕获鼠标，等它跑完就晚了。
+	# PauseMenu/WorldState 也必须删：否则菜单背景里按 Esc 会弹出暂停界面，
+	# WorldState 还可能把 CONTINUE 的待读档标记吃掉。
+	for path in ["Character", "HUD", "PauseMenu", "WorldState"]:
 		var node := _world.get_node_or_null(path)
 		if node != null:
 			node.free()
@@ -173,7 +233,11 @@ func _build_hub() -> void:
 	for entry in PAGES:
 		_add_link(_settings_rows, entry.title, entry.id)
 	# KEY BINDING 只在 CONTROLS 里出现一次（它是控制设置的一部分）
-	_add_back_button(_settings_page, _menu_page, _settings_button)
+	if settings_only:
+		_add_back_button(_settings_page, _menu_page, _settings_button,
+			func() -> void: settings_closed.emit())
+	else:
+		_add_back_button(_settings_page, _menu_page, _settings_button)
 
 
 func _build_setting_pages() -> void:
@@ -375,7 +439,7 @@ func _add_link(parent: VBoxContainer, text: String, page_id: String) -> void:
 
 ## BACK 固定在页面底部（滚动区之外），上面压一条分界线把它和内容分开。
 ## target = 返回哪一页；focus = 回去之后把焦点放在哪个按钮上
-func _add_back_button(page: Control, target: Control, focus: Control = null) -> void:
+func _add_back_button(page: Control, target: Control, focus: Control = null, on_back: Callable = Callable()) -> void:
 	var divider := Panel.new()
 	divider.name = "Divider"
 	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -406,6 +470,9 @@ func _add_back_button(page: Control, target: Control, focus: Control = null) -> 
 	button.add_theme_color_override("font_focus_color", Color(1, 1, 1))
 	button.pressed.connect(func() -> void:
 		_cancel_listening()
+		if on_back.is_valid():
+			on_back.call()
+			return
 		_switch_page(_current_page, target)
 		if focus != null:
 			focus.grab_focus()
@@ -546,6 +613,8 @@ func _back_page() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if settings_only:
+		return
 	if _leaving:
 		return
 	if not event.is_action_pressed("ui_cancel"):
@@ -740,6 +809,28 @@ func _on_start_pressed() -> void:
 	_leaving = true
 	_set_buttons_disabled(true)
 
+	# 新游戏：把旧存档删掉
+	var save := get_node_or_null("/root/SaveGame")
+	if save != null:
+		save.clear()
+
+	var fade := get_node_or_null("/root/ScreenFade")
+	if fade != null:
+		await fade.fade_to_black(FADE_OUT)
+
+	get_tree().change_scene_to_file(GAME_SCENE.resource_path)
+
+
+func _on_continue_pressed() -> void:
+	if _leaving:
+		return
+	_leaving = true
+	_set_buttons_disabled(true)
+
+	var save := get_node_or_null("/root/SaveGame")
+	if save != null:
+		save.request_load()
+
 	var fade := get_node_or_null("/root/ScreenFade")
 	if fade != null:
 		await fade.fade_to_black(FADE_OUT)
@@ -762,5 +853,7 @@ func _on_quit_pressed() -> void:
 
 func _set_buttons_disabled(disabled: bool) -> void:
 	_start.disabled = disabled
+	if _continue_button != null:
+		_continue_button.disabled = disabled
 	_settings_button.disabled = disabled
 	_quit.disabled = disabled

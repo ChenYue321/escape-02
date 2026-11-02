@@ -551,6 +551,44 @@ func leave_easter_egg() -> void:
 		await _leave_easter_egg()
 
 
+## 存档：把当前位姿交给 SaveGame。彩蛋房间里保存的是主房间出生点，
+## 坐在凳子上时保存坐下前的位置，避免读档后卡在凳子高度。
+func capture_save() -> Dictionary:
+	var pos := global_position
+	var yaw := rotation.y
+	var pitch := _camera.rotation.x
+	if _in_easter_egg:
+		pos = _spawn_position
+		yaw = _spawn_rotation_y
+		pitch = 0.0
+	elif _seated:
+		pos = _saved_position
+		yaw = _saved_rotation_y
+	return {"position": pos, "yaw": yaw, "pitch": pitch}
+
+
+## 读档：站直、恢复位姿，并把复活点也挪到这里
+func apply_save(data: Dictionary) -> void:
+	_in_easter_egg = false
+	_falling = false
+	_seated = false
+	_crouching = false
+
+	if _collision.shape is CapsuleShape3D:
+		var capsule := _collision.shape as CapsuleShape3D
+		capsule.height = _stand_capsule_height
+		_collision.position.y = _stand_capsule_height * 0.5
+
+	_camera.position.y = _stand_eye_height
+	global_position = data.get("position", _spawn_position)
+	rotation.y = float(data.get("yaw", _spawn_rotation_y))
+	_camera.rotation.x = clampf(float(data.get("pitch", 0.0)), -deg_to_rad(pitch_limit), deg_to_rad(pitch_limit))
+	velocity = Vector3.ZERO
+
+	_spawn_position = global_position
+	_spawn_rotation_y = rotation.y
+
+
 ## 鼠标灵敏度 = 脚本里的默认值 × 设置里的倍率
 func _sensitivity() -> float:
 	var settings := get_node_or_null("/root/Settings")

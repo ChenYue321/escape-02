@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 ScreenFade="*res://script/screen_fade.gd"
 Settings="*res://script/game_settings.gd"
+SaveGame="*res://script/save_game.gd"
 
 [display]
 

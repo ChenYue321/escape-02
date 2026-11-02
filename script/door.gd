@@ -74,6 +74,28 @@ func interact(_user: Node3D) -> void:
 	collision_layer = 0
 
 
+## 存档用：门是不是开着
+func is_open() -> bool:
+	return _open
+
+
+## 读档用：直接把门摆到开/关状态，不播动画、不发声
+func set_open(open: bool) -> void:
+	if _tween != null and _tween.is_valid():
+		_tween.kill()
+
+	_open = open
+	_busy = false
+
+	if handle_pivot != null:
+		handle_pivot.rotation.z = deg_to_rad(handle_angle_deg) if open else 0.0
+	if door_pivot != null:
+		door_pivot.rotation.y = -deg_to_rad(door_angle_deg) if open else 0.0
+
+	# 门开着就不再作为交互目标
+	collision_layer = 2 if not open else 0
+
+
 func _play_handle_sound() -> void:
 	if sound_handle == null:
 		return
