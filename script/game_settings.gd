@@ -25,8 +25,8 @@ var invert_y: bool = false
 var crouch_toggle: bool = false
 
 # --- 显示 ---
-## 最大帧率（0 = 不限）
-var max_fps: int = 0
+## 最大帧率（0 = 不限）；默认 60，避免高刷屏白烧一倍功耗
+var max_fps: int = 60
 ## 垂直同步
 var vsync: bool = true
 ## 相机曝光（越亮越能看清黑房间）
@@ -55,6 +55,7 @@ func _ready() -> void:
 	apply_audio()
 	apply_bindings()
 	apply_display()
+	_setup_3d_scaling()
 
 
 ## 让 Voice / SFX / Ambience 三条总线存在（没有就建，发送到 Master）
@@ -93,6 +94,42 @@ func apply_display() -> void:
 	var mode := DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
 	if DisplayServer.window_get_mode() != mode:
 		DisplayServer.window_set_mode(mode)
+
+
+## 3D 内部渲染分辨率上限：不管窗口/全屏多大，3D 最多渲染到约 1150p，
+## 再用 FSR 放大到窗口大小。2D HUD 仍然是原生分辨率，所以字不会糊。
+## 小窗口保持 1.0，不会为了省性能把画面变糊。
+## 参考值用「窗口逻辑高度 × 屏幕缩放」算物理高度，避免 macOS 全屏下
+## get_texture().get_size() 给出异常大的值。
+const TARGET_3D_HEIGHT := 1152.0
+const MIN_3D_SCALE := 0.34
+
+
+func _setup_3d_scaling() -> void:
+	var win := get_window()
+	win.scaling_3d_mode = Viewport.SCALING_3D_MODE_FSR
+	win.size_changed.connect(_on_window_size_changed)
+	_refresh_3d_scale_delayed()
+
+
+func _on_window_size_changed() -> void:
+	_refresh_3d_scale_delayed()
+
+
+func _refresh_3d_scale_delayed() -> void:
+	# 窗口尺寸刚变时，交换链还是旧的；等一帧再读实际像素尺寸
+	await get_tree().process_frame
+	_refresh_3d_scale()
+
+
+func _refresh_3d_scale() -> void:
+	var win := get_window()
+	var screen := DisplayServer.window_get_current_screen()
+	var physical_h := float(DisplayServer.window_get_size().y) * DisplayServer.screen_get_scale(screen)
+	if physical_h <= 0.0:
+		return
+	var target := clampf(TARGET_3D_HEIGHT / physical_h, MIN_3D_SCALE, 1.0)
+	win.scaling_3d_scale = snappedf(target, 0.01)
 
 
 ## 曝光是场景里的 WorldEnvironment 属性，所以要把场景传进来
