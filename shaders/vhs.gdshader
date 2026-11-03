@@ -13,8 +13,8 @@ uniform float noise_strength : hint_range(0.0, 0.2) = 0.05;
 uniform float wobble_strength : hint_range(0.0, 5.0) = 1.0;
 uniform float tracking_strength : hint_range(0.0, 20.0) = 4.0;
 uniform float vignette_strength : hint_range(0.0, 1.5) = 0.42;
-// 轻微鱼眼；0 = 关，0.15 已经很明显但不夸张
-uniform float fisheye : hint_range(0.0, 0.5) = 0.15;
+// 轻微鱼眼；0 = 关，0.12 比较克制
+uniform float fisheye : hint_range(0.0, 0.5) = 0.12;
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -24,11 +24,11 @@ void fragment() {
 	vec2 screen_uv = SCREEN_UV;
 	float t = TIME;
 
-	// 轻微桶形畸变（鱼眼）：中心保持 1:1，越靠边越往外拉。
-	// 四角会稍微采到画面外，clamp 住，再交给暗角盖掉。
+	// 轻微桶形畸变（鱼眼）。四角固定回四角，内部按半径往里收一点，
+	// 所以采样永远不会跑到画面外，不会在边缘露出黑边。
 	vec2 d = screen_uv - 0.5;
 	float r2 = dot(d, d);
-	vec2 uv = clamp(0.5 + d * (1.0 + fisheye * r2 * 2.0), vec2(0.002), vec2(0.998));
+	vec2 uv = 0.5 + d * (1.0 + fisheye * r2) / (1.0 + fisheye * 0.5);
 
 	vec2 px = SCREEN_PIXEL_SIZE;
 
