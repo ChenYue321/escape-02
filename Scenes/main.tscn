@@ -35,6 +35,7 @@
 [ext_resource type="ArrayMesh" path="res://Scenes/lamp_shade_open.tres" id="30_lamp_open"]
 [ext_resource type="PackedScene" path="res://Scenes/pause_menu.tscn" id="31_pause"]
 [ext_resource type="Script" path="res://script/world_state.gd" id="32_world_state"]
+[ext_resource type="Shader" path="res://shaders/vhs.gdshader" id="33_vhs"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.3
@@ -490,6 +491,16 @@ size = Vector3(0.42, 0.55, 0.42)
 [sub_resource type="BoxShape3D" id="BoxShape3D_stool_solid"]
 size = Vector3(0.34, 0.5, 0.34)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vhs"]
+shader = ExtResource("33_vhs")
+shader_parameter/strength = 0.85
+shader_parameter/aberration = 2.5
+shader_parameter/scanline_strength = 0.16
+shader_parameter/noise_strength = 0.05
+shader_parameter/wobble_strength = 1.0
+shader_parameter/tracking_strength = 4.0
+shader_parameter/vignette_strength = 0.42
+
 [node name="Main" type="Node3D" unique_id=2012244315]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1404679818]
@@ -497,6 +508,15 @@ environment = ExtResource("9_env")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=131436494]
 script = ExtResource("12_hud")
+
+[node name="VHS" type="ColorRect" parent="HUD"]
+material = SubResource("ShaderMaterial_vhs")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="UIRoot" type="Control" parent="HUD" unique_id=1797128438]
 layout_mode = 3
