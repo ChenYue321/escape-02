@@ -573,7 +573,8 @@ func _apply_prop(prop: String) -> void:
 		"render_quality":
 			settings.apply_render_quality()
 		"exposure":
-			settings.apply_exposure(_world)
+			if _world != null:
+				settings.apply_exposure(_world)
 		"fov":
 			if _camera != null:
 				_camera.fov = settings.fov

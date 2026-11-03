@@ -39,11 +39,15 @@ func save_from(world: Node) -> void:
 	if world == null:
 		return
 
+	var player := world.get_node_or_null("Character")
+	if player == null:
+		# 2D 过场等没有角色的场景：不要用空数据覆盖正常存档
+		return
+
 	var cfg := ConfigFile.new()
 	cfg.set_value("meta", "version", VERSION)
 
-	var player := world.get_node_or_null("Character")
-	if player != null and player.has_method("capture_save"):
+	if player.has_method("capture_save"):
 		var data: Dictionary = player.capture_save()
 		cfg.set_value("player", "position", data["position"])
 		cfg.set_value("player", "yaw", data["yaw"])

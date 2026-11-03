@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://script/screen_void.gd" id="1_void"]
 [ext_resource type="Shader" path="res://shaders/snow_2d.gdshader" id="2_snow"]
 [ext_resource type="AudioStream" path="res://audio/sfx/tv_static.wav" id="3_static"]
+[ext_resource type="PackedScene" path="res://Scenes/pause_menu.tscn" id="4_pause"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_snow"]
 shader = ExtResource("2_snow")
@@ -41,3 +42,5 @@ color = Color(0, 0, 0, 1)
 stream = ExtResource("3_static")
 volume_db = -6.0
 autoplay = true
+
+[node name="PauseMenu" parent="." instance=ExtResource("4_pause")]
