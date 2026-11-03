@@ -1,14 +1,12 @@
 extends Node
 
 ## 坐在凳子上 + 准星对准显示器屏幕：
-## 前 3 秒是"充能"——画面轻微 glitch、相机缓慢往前推；
-## 中途移开目光 / 站起来，0.25 秒内退回正常（glitch 消失、相机回到角色头部）；
-## 连续满 3 秒后升级成全屏 glitch + 推进到雪花屏，再切到 2D 场景。
+## 前 3 秒只叠 Glitch，画面不放大；中途移开目光 / 站起来，0.25 秒内 Glitch 消失。
+## 连续满 3 秒后 Glitch 升级，同时相机才慢慢推进到屏幕，最后切到 2D 场景。
 
 const HOLD_SECONDS := 3.0
-const PUSH_SECONDS := 1.6
+const PUSH_SECONDS := 2.8
 const CANCEL_SECONDS := 0.25
-const CHARGE_PUSH := 0.35
 const CHARGE_GLITCH_MIN := 0.1
 const CHARGE_GLITCH_MAX := 0.35
 const VOID_SCENE := "res://Scenes/screen_void.tscn"
@@ -24,7 +22,6 @@ var _vhs_mat: ShaderMaterial
 var _vhs_base: Dictionary = {}
 
 var _hold: float = 0.0
-var _current_push: float = 0.0
 var _current_glitch: float = 0.0
 var _charging: bool = false
 var _canceling: bool = false
@@ -117,65 +114,34 @@ func _physics_process(delta: float) -> void:
 		_play()
 
 
-## 充能时相机跟着玩家头部，但沿视线往前推一点
-func _process(_delta: float) -> void:
-	if _charging and not _canceling:
-		_set_gaze_camera(_current_push)
-
-
 func _begin_charge() -> void:
 	_charging = true
 	_hold = 0.0
 
-	if _build_cam == null:
-		_build_cam = Camera3D.new()
-		_build_cam.name = "GazeCamera"
-		_build_cam.fov = _player_cam.fov
-		_build_cam.near = 0.02
-		_world.add_child(_build_cam)
 
-	_set_gaze_camera(0.0)
-	_build_cam.current = true
-
-
+## 前 3 秒：只推 VHS 参数，相机原地不动
 func _update_charge() -> void:
 	var t := clampf(_hold / HOLD_SECONDS, 0.0, 1.0)
-	_current_push = CHARGE_PUSH * t
 	_current_glitch = lerpf(CHARGE_GLITCH_MIN, CHARGE_GLITCH_MAX, t)
 	_apply_glitch(_current_glitch)
 
 
-func _set_gaze_camera(push: float) -> void:
-	if _build_cam == null or _player_cam == null:
-		return
-	_build_cam.global_transform = _player_cam.global_transform
-	_build_cam.global_position += -_build_cam.global_transform.basis.z * push
-
-
-## 取消：0.25 秒内把相机推回头部、VHS 参数退回原值
+## 取消：0.25 秒内把 Glitch 退回原值；相机本来就没推，屏幕一直是正常大小
 func _cancel_charge() -> void:
 	if not _charging:
 		return
 	_charging = false
 	_canceling = true
 
-	var push_from := _current_push
-	var glitch_from := _current_glitch
+	var from := _current_glitch
 	_hold = 0.0
-	_current_push = 0.0
 	_current_glitch = 0.0
 
 	var t := create_tween()
-	t.set_parallel(true)
-	t.tween_method(_set_gaze_camera, push_from, 0.0, CANCEL_SECONDS)
-	t.tween_method(_apply_glitch, glitch_from, 0.0, CANCEL_SECONDS)
+	t.tween_method(_apply_glitch, from, 0.0, CANCEL_SECONDS)
 	await t.finished
 
 	_apply_glitch(0.0)
-	if _player_cam != null:
-		_player_cam.current = true
-	if _build_cam != null:
-		_build_cam.current = false
 	_canceling = false
 
 
@@ -206,14 +172,14 @@ func _play() -> void:
 		pause.process_mode = Node.PROCESS_MODE_DISABLED
 
 	var tg := create_tween()
-	tg.tween_method(_apply_glitch, _current_glitch, 1.0, 1.2)
+	tg.tween_method(_apply_glitch, _current_glitch, 1.0, 1.5)
 
 	await _push_camera()
 
 
-## 相机从充能位置推到屏幕正前方 0.1 m，屏幕塞满画面
+## 满 3 秒后才创建推进相机：从头部慢慢推到屏幕前 0.1 m
 func _push_camera() -> void:
-	if _player_cam == null or _screen == null or _build_cam == null:
+	if _player_cam == null or _screen == null:
 		return
 
 	var center: Vector3 = _screen.global_transform * _screen.get_aabb().get_center()
@@ -223,9 +189,18 @@ func _push_camera() -> void:
 
 	var target := center + normal * 0.1
 	var target_xf := Transform3D(Basis(), target).looking_at(center, Vector3.UP)
+
+	if _build_cam == null:
+		_build_cam = Camera3D.new()
+		_build_cam.name = "TranceCamera"
+		_build_cam.fov = _player_cam.fov
+		_build_cam.near = 0.02
+		_world.add_child(_build_cam)
+
+	_build_cam.global_transform = _player_cam.global_transform
+	_build_cam.current = true
 	var start: Transform3D = _build_cam.global_transform
 
-	_build_cam.current = true
 	var t := create_tween()
 	t.tween_method(_apply_camera.bind(_build_cam, start, target_xf), 0.0, 1.0, PUSH_SECONDS) \
 		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)

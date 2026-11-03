@@ -1,10 +1,9 @@
 extends Control
 
-## 被屏幕吞进去之后的 2D 场景：雪花在 1 秒内淡出成纯黑。
+## 被屏幕吞进去之后的 2D 场景：雪花在 1 秒内淡出成纯黑，然后停在这里。
+## 黑屏之后的具体内容待定，先不自动返回。
 
-const BLACK_HOLD := 1.6
 const NOISE_FADE := 1.0
-const RETURN_SCENE := "res://Scenes/menu.tscn"
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
@@ -21,5 +20,4 @@ func _ready() -> void:
 	await t.finished
 	noise.stop()
 
-	await get_tree().create_timer(BLACK_HOLD).timeout
-	get_tree().change_scene_to_file(RETURN_SCENE)
+	# 保持纯黑，等后续内容接入
