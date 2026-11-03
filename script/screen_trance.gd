@@ -160,6 +160,13 @@ func _apply_glitch(k: float) -> void:
 
 func _play() -> void:
 	_charging = false
+
+	# 进了 2D 黑屏就没有角色了，那之后再退出是写不出存档的。
+	# 先在主场景里落一份：黑屏里按 EXIT 回标题也会有 CONTINUE。
+	var save := get_node_or_null("/root/SaveGame")
+	if save != null:
+		save.save_from(_world)
+
 	_player.begin_trance()
 
 	var ui := _world.get_node_or_null("HUD/UIRoot") as Control
