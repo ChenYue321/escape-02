@@ -500,6 +500,7 @@ shader_parameter/noise_strength = 0.05
 shader_parameter/wobble_strength = 1.0
 shader_parameter/tracking_strength = 4.0
 shader_parameter/vignette_strength = 0.42
+shader_parameter/fisheye = 0.15
 
 [node name="Main" type="Node3D" unique_id=2012244315]
 

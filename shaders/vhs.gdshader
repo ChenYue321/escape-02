@@ -13,14 +13,22 @@ uniform float noise_strength : hint_range(0.0, 0.2) = 0.05;
 uniform float wobble_strength : hint_range(0.0, 5.0) = 1.0;
 uniform float tracking_strength : hint_range(0.0, 20.0) = 4.0;
 uniform float vignette_strength : hint_range(0.0, 1.5) = 0.42;
+// 轻微鱼眼；0 = 关，0.15 已经很明显但不夸张
+uniform float fisheye : hint_range(0.0, 0.5) = 0.15;
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
 }
 
 void fragment() {
-	vec2 uv = SCREEN_UV;
+	vec2 screen_uv = SCREEN_UV;
 	float t = TIME;
+
+	// 轻微桶形畸变（鱼眼）：中心保持 1:1，越靠边越往外拉。
+	// 四角会稍微采到画面外，clamp 住，再交给暗角盖掉。
+	vec2 d = screen_uv - 0.5;
+	float r2 = dot(d, d);
+	vec2 uv = clamp(0.5 + d * (1.0 + fisheye * r2 * 2.0), vec2(0.002), vec2(0.998));
 
 	vec2 px = SCREEN_PIXEL_SIZE;
 
@@ -50,11 +58,11 @@ void fragment() {
 	col = mix(col, bleed, 0.3 * strength);
 
 	// 扫描线
-	float scan = 1.0 - scanline_strength * strength * (0.5 + 0.5 * sin(uv.y * 540.0 + t * 2.0));
+	float scan = 1.0 - scanline_strength * strength * (0.5 + 0.5 * sin(screen_uv.y * 540.0 + t * 2.0));
 	col *= scan;
 
 	// 噪点
-	float n = hash(uv * vec2(1280.0, 720.0) + vec2(t * 60.0, t * 37.0));
+	float n = hash(screen_uv * vec2(1280.0, 720.0) + vec2(t * 60.0, t * 37.0));
 	col += (n - 0.5) * noise_strength * strength;
 
 	// VHS 的发灰感：去一点饱和、黑位抬蓝
@@ -64,7 +72,7 @@ void fragment() {
 	col += vec3(0.006, 0.008, 0.012) * strength;
 
 	// 暗角
-	float vig = smoothstep(0.85, 0.25, length(dir));
+	float vig = smoothstep(0.85, 0.25, length(screen_uv - 0.5));
 	col *= mix(1.0, vig, vignette_strength * strength);
 
 	COLOR = vec4(col, 1.0);
