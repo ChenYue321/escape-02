@@ -90,6 +90,8 @@ var _crouching: bool = false
 
 ## 是否坐在凳子上
 var _seated: bool = false
+## 屏幕吞没的过场：锁住视角和移动，由 ScreenTrance 接管相机
+var _trance: bool = false
 ## 坐着时的相机高度（相对脚底）
 var _seated_eye_height: float = 1.1
 ## 坐下前的位置与朝向，起身时还原
@@ -149,6 +151,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		return
 
+	if _trance:
+		return
+
 	if event is InputEventMouseMotion:
 		_look(event as InputEventMouseMotion)
 	elif event.is_action_pressed("ui_cancel"):
@@ -165,6 +170,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	if _is_frozen():
+		velocity = Vector3.ZERO
+		return
+
+	if _trance:
 		velocity = Vector3.ZERO
 		return
 
@@ -587,6 +596,21 @@ func apply_save(data: Dictionary) -> void:
 
 	_spawn_position = global_position
 	_spawn_rotation_y = rotation.y
+
+
+## 屏幕过场用：坐着、看屏幕、锁输入
+func is_seated() -> bool:
+	return _seated
+
+
+func get_camera() -> Camera3D:
+	return _camera
+
+
+func begin_trance() -> void:
+	_trance = true
+	velocity = Vector3.ZERO
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
 
 ## 鼠标灵敏度 = 脚本里的默认值 × 设置里的倍率

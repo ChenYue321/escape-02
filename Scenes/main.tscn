@@ -36,6 +36,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/pause_menu.tscn" id="31_pause"]
 [ext_resource type="Script" uid="uid://b1sqptdxikvai" path="res://script/world_state.gd" id="32_world_state"]
 [ext_resource type="Shader" uid="uid://1pgs1t2yyelx" path="res://shaders/vhs.gdshader" id="33_vhs"]
+[ext_resource type="Script" path="res://script/screen_trance.gd" id="34_trance"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vhs"]
 shader = ExtResource("33_vhs")
@@ -88,10 +89,20 @@ height = 0.1
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tkkqb"]
 albedo_color = Color(0.3459457, 0.34594572, 0.3459457, 1)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_metal"]
+albedo_color = Color(0.7, 0.71, 0.73, 1)
+metallic = 0.05
+roughness = 0.46
+
 [sub_resource type="CylinderMesh" id="CylinderMesh_ceiling_canopy"]
 top_radius = 0.07
 bottom_radius = 0.085
 height = 0.03
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceiling_shade"]
+albedo_color = Color(0.26, 0.26, 0.29, 1)
+metallic = 0.2
+roughness = 0.5
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_ceiling_shade"]
 top_radius = 0.08
@@ -99,9 +110,14 @@ bottom_radius = 0.32
 height = 0.4
 cap_bottom = false
 
-[sub_resource type="TorusMesh" id="TorusMesh_ceiling_rim"]
-inner_radius = 0.3
-outer_radius = 0.325
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceiling_inner"]
+resource_local_to_scene = true
+cull_mode = 1
+albedo_color = Color(0.34, 0.3, 0.25, 1)
+roughness = 0.75
+emission_enabled = true
+emission = Color(1, 0.75, 0.55, 1)
+emission_energy_multiplier = 0.12
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_ceiling_inner"]
 top_radius = 0.075
@@ -109,37 +125,25 @@ bottom_radius = 0.31
 height = 0.39
 cap_bottom = false
 
-[sub_resource type="SphereMesh" id="SphereMesh_ceiling_bulb"]
-radius = 0.06
-height = 0.12
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceiling_shade"]
-albedo_color = Color(0.26, 0.26, 0.29, 1)
-metallic = 0.2
-roughness = 0.5
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceiling_inner"]
-resource_local_to_scene = true
-cull_mode = 1
-albedo_color = Color(0.34, 0.3, 0.25, 1)
-metallic = 0.0
-roughness = 0.75
-emission_enabled = true
-emission = Color(1, 0.75, 0.55, 1)
-emission_energy_multiplier = 0.12
+[sub_resource type="TorusMesh" id="TorusMesh_ceiling_rim"]
+inner_radius = 0.3
+outer_radius = 0.325
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceiling_bulb"]
 resource_local_to_scene = true
 albedo_color = Color(1, 0.94, 0.84, 1)
-metallic = 0.0
 roughness = 0.4
 emission_enabled = true
 emission = Color(1, 0.8, 0.55, 1)
 emission_energy_multiplier = 3.0
 
+[sub_resource type="SphereMesh" id="SphereMesh_ceiling_bulb"]
+radius = 0.06
+height = 0.12
+
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ceiling_lamp"]
-radius = 0.32
 height = 0.4
+radius = 0.32
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall_side"]
 size = Vector3(3.45, 3, 0.1)
@@ -489,11 +493,6 @@ height = 0.026
 [sub_resource type="SphereShape3D" id="SphereShape3D_switch"]
 radius = 0.16
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_metal"]
-albedo_color = Color(0.7, 0.71, 0.73, 1)
-metallic = 0.05
-roughness = 0.46
-
 [sub_resource type="TorusMesh" id="TorusMesh_lamp_rim"]
 inner_radius = 0.058
 outer_radius = 0.068
@@ -637,6 +636,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5999999, 0)
 target_position = Vector3(0, 0, -2.5)
 collision_mask = 3
 
+[node name="ScreenTrance" type="Node" parent="Character"]
+script = ExtResource("34_trance")
+
 [node name="Character-body" type="MeshInstance3D" parent="Character" unique_id=2133256776]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
 cast_shadow = 3
@@ -660,7 +662,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.10173464, 0)
 mesh = SubResource("CylinderMesh_p3oet")
 surface_material_override/0 = SubResource("StandardMaterial3D_tkkqb")
 
-[node name="Canopy" type="MeshInstance3D" parent="Room/Ceiling/Top Light"]
+[node name="Canopy" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=890830156]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.03, 0)
 material_override = SubResource("StandardMaterial3D_lamp_metal")
 mesh = SubResource("CylinderMesh_ceiling_canopy")
@@ -670,24 +672,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3459785, 0)
 material_override = SubResource("StandardMaterial3D_ceiling_shade")
 mesh = SubResource("CylinderMesh_ceiling_shade")
 
-[node name="Shade Inner" type="MeshInstance3D" parent="Room/Ceiling/Top Light"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3459785, 0)
-cast_shadow = 0
-material_override = SubResource("StandardMaterial3D_ceiling_inner")
-mesh = SubResource("CylinderMesh_ceiling_inner")
-
-[node name="Shade Rim" type="MeshInstance3D" parent="Room/Ceiling/Top Light"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.546, 0)
-cast_shadow = 0
-material_override = SubResource("StandardMaterial3D_lamp_metal")
-mesh = SubResource("TorusMesh_ceiling_rim")
-
-[node name="Bulb" type="MeshInstance3D" parent="Room/Ceiling/Top Light"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46, 0)
-cast_shadow = 0
-material_override = SubResource("StandardMaterial3D_ceiling_bulb")
-mesh = SubResource("SphereMesh_ceiling_bulb")
-
 [node name="SpotLight3D" type="SpotLight3D" parent="Room/Ceiling/Top Light/Lampshade" unique_id=1741843520]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, -0.05, 0)
 light_size = 0.4
@@ -695,12 +679,30 @@ shadow_enabled = true
 spot_attenuation = 1.5
 spot_angle = 65.0
 
-[node name="LampCollision" type="StaticBody3D" parent="Room/Ceiling/Top Light"]
-collision_layer = 1
+[node name="Shade Inner" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=1187300373]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3459785, 0)
+material_override = SubResource("StandardMaterial3D_ceiling_inner")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_ceiling_inner")
+
+[node name="Shade Rim" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=1419871751]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.546, 0)
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+cast_shadow = 0
+mesh = SubResource("TorusMesh_ceiling_rim")
+
+[node name="Bulb" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=133968094]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46, 0)
+material_override = SubResource("StandardMaterial3D_ceiling_bulb")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_ceiling_bulb")
+
+[node name="LampCollision" type="StaticBody3D" parent="Room/Ceiling/Top Light" unique_id=50183341]
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Ceiling/Top Light/LampCollision"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Ceiling/Top Light/LampCollision" unique_id=753379451]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3459785, 0)
+visible = false
 shape = SubResource("CylinderShape3D_ceiling_lamp")
 
 [node name="Wall1 Left" type="MeshInstance3D" parent="Room" unique_id=392236091]
