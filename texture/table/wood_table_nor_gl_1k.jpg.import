@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cli80dl3lj78"
 path.s3tc="res://.godot/imported/wood_table_nor_gl_1k.jpg-d4e8945d3e1c26c9c20a8ccdd149d019.s3tc.ctex"
+path.etc2="res://.godot/imported/wood_table_nor_gl_1k.jpg-d4e8945d3e1c26c9c20a8ccdd149d019.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://texture/table/wood_table_nor_gl_1k.jpg"
-dest_files=["res://.godot/imported/wood_table_nor_gl_1k.jpg-d4e8945d3e1c26c9c20a8ccdd149d019.s3tc.ctex"]
+dest_files=["res://.godot/imported/wood_table_nor_gl_1k.jpg-d4e8945d3e1c26c9c20a8ccdd149d019.s3tc.ctex", "res://.godot/imported/wood_table_nor_gl_1k.jpg-d4e8945d3e1c26c9c20a8ccdd149d019.etc2.ctex"]
 
 [params]
 

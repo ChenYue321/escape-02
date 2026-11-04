@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bl0frr6uaki0b"
 path.s3tc="res://.godot/imported/wood_table_worn_diff_1k.jpg-9f94732885d95f97bb87d1f33cd9e50a.s3tc.ctex"
+path.etc2="res://.godot/imported/wood_table_worn_diff_1k.jpg-9f94732885d95f97bb87d1f33cd9e50a.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://texture/table/wood_table_worn_diff_1k.jpg"
-dest_files=["res://.godot/imported/wood_table_worn_diff_1k.jpg-9f94732885d95f97bb87d1f33cd9e50a.s3tc.ctex"]
+dest_files=["res://.godot/imported/wood_table_worn_diff_1k.jpg-9f94732885d95f97bb87d1f33cd9e50a.s3tc.ctex", "res://.godot/imported/wood_table_worn_diff_1k.jpg-9f94732885d95f97bb87d1f33cd9e50a.etc2.ctex"]
 
 [params]
 

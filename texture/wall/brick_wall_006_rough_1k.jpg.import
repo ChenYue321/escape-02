@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cwrlws6gdjhab"
 path.s3tc="res://.godot/imported/brick_wall_006_rough_1k.jpg-172e68738948a9e374a3ed9acf13c36e.s3tc.ctex"
+path.etc2="res://.godot/imported/brick_wall_006_rough_1k.jpg-172e68738948a9e374a3ed9acf13c36e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://texture/wall/brick_wall_006_rough_1k.jpg"
-dest_files=["res://.godot/imported/brick_wall_006_rough_1k.jpg-172e68738948a9e374a3ed9acf13c36e.s3tc.ctex"]
+dest_files=["res://.godot/imported/brick_wall_006_rough_1k.jpg-172e68738948a9e374a3ed9acf13c36e.s3tc.ctex", "res://.godot/imported/brick_wall_006_rough_1k.jpg-172e68738948a9e374a3ed9acf13c36e.etc2.ctex"]
 
 [params]
 

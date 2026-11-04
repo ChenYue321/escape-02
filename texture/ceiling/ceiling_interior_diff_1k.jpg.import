@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://b1gwme7oi23us"
 path.s3tc="res://.godot/imported/ceiling_interior_diff_1k.jpg-47a856f0307dd7132557ebf454638fc9.s3tc.ctex"
+path.etc2="res://.godot/imported/ceiling_interior_diff_1k.jpg-47a856f0307dd7132557ebf454638fc9.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://texture/ceiling/ceiling_interior_diff_1k.jpg"
-dest_files=["res://.godot/imported/ceiling_interior_diff_1k.jpg-47a856f0307dd7132557ebf454638fc9.s3tc.ctex"]
+dest_files=["res://.godot/imported/ceiling_interior_diff_1k.jpg-47a856f0307dd7132557ebf454638fc9.s3tc.ctex", "res://.godot/imported/ceiling_interior_diff_1k.jpg-47a856f0307dd7132557ebf454638fc9.etc2.ctex"]
 
 [params]
 

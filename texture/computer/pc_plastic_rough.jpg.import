@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkkod4qegbd0i"
 path.s3tc="res://.godot/imported/pc_plastic_rough.jpg-7f9accd1eb9ef2b41b55ce942f9926af.s3tc.ctex"
+path.etc2="res://.godot/imported/pc_plastic_rough.jpg-7f9accd1eb9ef2b41b55ce942f9926af.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://texture/computer/pc_plastic_rough.jpg"
-dest_files=["res://.godot/imported/pc_plastic_rough.jpg-7f9accd1eb9ef2b41b55ce942f9926af.s3tc.ctex"]
+dest_files=["res://.godot/imported/pc_plastic_rough.jpg-7f9accd1eb9ef2b41b55ce942f9926af.s3tc.ctex", "res://.godot/imported/pc_plastic_rough.jpg-7f9accd1eb9ef2b41b55ce942f9926af.etc2.ctex"]
 
 [params]
 

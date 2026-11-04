@@ -77,5 +77,6 @@ crouch={
 rendering_device/driver.windows="d3d12"
 scaling_3d/mode=1
 scaling_3d/scale=1.0
+textures/vram_compression/import_etc2_astc=true
 lights_and_shadows/positional_shadow/atlas_size=2048
 lights_and_shadows/positional_shadow/soft_shadow_filter_quality=2

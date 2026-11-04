@@ -2,5 +2,8 @@
 .godot/
 /android/
 
+# 导出产物
+/build/
+
 # macOS
 .DS_Store

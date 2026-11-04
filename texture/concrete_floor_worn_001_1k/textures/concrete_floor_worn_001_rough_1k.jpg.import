@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://ciobpku1sjrx6"
 path.s3tc="res://.godot/imported/concrete_floor_worn_001_rough_1k.jpg-a4f4654491a9ba9923406ef3d0b9b2f3.s3tc.ctex"
+path.etc2="res://.godot/imported/concrete_floor_worn_001_rough_1k.jpg-a4f4654491a9ba9923406ef3d0b9b2f3.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_rough_1k.jpg"
-dest_files=["res://.godot/imported/concrete_floor_worn_001_rough_1k.jpg-a4f4654491a9ba9923406ef3d0b9b2f3.s3tc.ctex"]
+dest_files=["res://.godot/imported/concrete_floor_worn_001_rough_1k.jpg-a4f4654491a9ba9923406ef3d0b9b2f3.s3tc.ctex", "res://.godot/imported/concrete_floor_worn_001_rough_1k.jpg-a4f4654491a9ba9923406ef3d0b9b2f3.etc2.ctex"]
 
 [params]
 
