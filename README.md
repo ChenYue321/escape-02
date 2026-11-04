@@ -191,7 +191,7 @@ escape-02/
 
 ## 运行方式
 
-不想自己开引擎的话，可以直接到 [Releases](https://github.com/ChenYue321/escape-02/releases) 下载 macOS / Windows / Linux demo 包。
+不想自己开引擎的话，可以直接到 [Releases](https://github.com/ChenYue321/escape-02/releases) 下载 macOS / Windows / Linux（x86_64 与 arm64）demo 包。
 
 1. 安装 **Godot 4.7**（标准版即可，无需 .NET 版本）
 2. 在项目管理器中导入本仓库根目录的 `project.godot`
@@ -206,7 +206,8 @@ escape-02/
 - 黑屏之后的内容还没做，`screen_void.tscn` 现在停在纯黑
 - 没有拾取、背包、门锁等系统
 - 场景以基础几何体 + 少量程序化网格拼装，尚无自建模型
-- 主要在 macOS 上开发；仓库里带了 macOS / Windows / Linux 导出预设，macOS 包已实机验证，Windows / Linux 包还没有在对应系统上跑过
+- 主要在 macOS 上开发；macOS 与 Linux arm64 已实机验证，Windows 与 Linux x86_64 还没有在对应系统上跑过
+- Linux 上如果没有 Bradley Hand / Comic Sans 之类的字体，手写标题会退到系统默认的无衬线字体
 - 只做了键鼠，没有手柄支持
 
 ## Roadmap（想到哪做到哪）
@@ -220,7 +221,7 @@ escape-02/
 - [ ] 至少一条完整的解谜链路
 - [ ] 氛围音乐
 - [ ] 体积雾 / 更细的光照调优
-- [ ] Windows / Linux 实机验证 / 手柄支持
+- [ ] Windows / Linux x86_64 实机验证 / 手柄支持
 
 ## 人声处理约定
 
