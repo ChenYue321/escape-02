@@ -120,6 +120,8 @@ var _option_buttons: Dictionary = {}
 
 
 func _ready() -> void:
+	_apply_linux_hand_font()
+
 	# 暂停菜单里的"设置页副本"：不建背景、不显示主菜单
 	if settings_only:
 		_style_scroll($SettingsPage/Scroll)
@@ -336,6 +338,20 @@ func _style_scroll(scroll: ScrollContainer) -> void:
 
 func _hand_font() -> Font:
 	return _start.get_theme_font("font")
+
+
+## Linux 通常没有 Bradley Hand / Comic Sans，SystemFont 会退回默认无衬线，
+## 标题就失去手写感。Linux 上整棵菜单树换成随包携带的 Patrick Hand（OFL）。
+func _apply_linux_hand_font() -> void:
+	if OS.get_name() != "Linux":
+		return
+	var font := load("res://fonts/PatrickHand-Regular.ttf") as Font
+	if font == null:
+		return
+	for node in find_children("*", "Control", true, false):
+		var control := node as Control
+		if control.has_theme_font_override("font"):
+			control.add_theme_font_override("font", font)
 
 
 func _row_box(parent: VBoxContainer) -> HBoxContainer:

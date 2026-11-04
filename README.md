@@ -42,7 +42,7 @@
 - **主菜单**：`Scenes/menu.tscn` 是项目启动场景。背景不是图片，而是把 `main.tscn` 整个实例化进来——删掉玩家、HUD、暂停菜单和 `WorldState`，隐藏所有 `Light3D`，只留显示器在黑暗里闪，所以背景是活的
   - 布局按参考图：左上角手写体标题 `ESCAPE-02`，下面 `START / CONTINUE / SETTING / EXIT` 左对齐，选中项前面加箭头
   - `CONTINUE` 只在 `user://save.cfg` 存在时插到 `START` 下面；新游戏按 `START` 会把旧存档清掉
-  - 字体用 `SystemFont` 请求系统里的 Bradley Hand（回退 Chalkboard / Marker Felt / Comic Sans / 默认）
+  - 字体优先用 `SystemFont` 请求系统里的 Bradley Hand（回退 Chalkboard / Marker Felt / Comic Sans）；Linux 上这些通常都没有，会换成随包携带的 Patrick Hand（OFL）
   - `SETTING` 是**整页切换**（不是弹出小窗），里面是一组入口：`AUDIO` / `DISPLAY` / `CONTROLS` / `ACCESSIBILITY` / `KEY BINDING` / `BACK`；页面切换时交叉淡入 0.18 秒。这些页的行全部由 `menu.gd` 顶部的 `PAGES` 表驱动生成，加一项设置只要往表里加一行
   - **AUDIO**：`MASTER` / `VOICE` / `SFX` / `AMBIENCE` 四条滑条。后三条总线在运行时由 `Settings` 创建（`AudioServer.add_bus`），旁白走 Voice、开关和门走 SFX、雪花底噪走 Ambience
   - **DISPLAY**：`BRIGHTNESS`（相机曝光 0.6~1.8，菜单背景会实时预览）、`FOV`（65~100）、`3D QUALITY`（PERFORMANCE / BALANCED / SHARP）、`MAX FPS`（UNLIMITED / 30 / 60 / 120 / 144 循环）、`V-SYNC`、`FULLSCREEN`
@@ -146,6 +146,9 @@ escape-02/
 │   └── wire.gd            # @tool：把 Path3D 曲线生成为管状网格
 ├── tools/
 │   └── process_voice.sh   # 旁白批处理：降调 / 滤波 / 回声 / 响度归一
+├── fonts/
+│   ├── PatrickHand-Regular.ttf # Linux 上替代 Bradley Hand 的手写字体（OFL）
+│   └── OFL.txt
 ├── environment/
 │   └── room_env.tres      # 环境资源：环境光、色调映射、SSAO、辉光
 ├── shaders/
@@ -207,7 +210,6 @@ escape-02/
 - 没有拾取、背包、门锁等系统
 - 场景以基础几何体 + 少量程序化网格拼装，尚无自建模型
 - 主要在 macOS 上开发；macOS 与 Linux arm64 已实机验证，Windows 与 Linux x86_64 还没有在对应系统上跑过
-- Linux 上如果没有 Bradley Hand / Comic Sans 之类的字体，手写标题会退到系统默认的无衬线字体
 - 只做了键鼠，没有手柄支持
 
 ## Roadmap（想到哪做到哪）
@@ -244,11 +246,13 @@ tools/process_voice.sh ~/Downloads/某句台词.m4a audio/voice/xxx.mp3
 
 `texture/` 下的 PBR 贴图取自公开素材库（ambientCG / Poly Haven 系列命名格式），主体为 CC0 授权。由于本仓库为公开仓库，**如需再分发或商用，请自行核对其原始授权条款**；`texture/*.tres` 材质与场景文件均为本项目原创。
 
+`fonts/PatrickHand-Regular.ttf` 为 Patrick Hand 字体，遵循 SIL Open Font License 1.1，完整许可见 `fonts/OFL.txt`。
+
 ## License
 
 代码以 [MIT License](LICENSE) 开源，随便用，不必打招呼。
 
-需要说明的是，MIT 只覆盖本仓库中的原创部分（脚本、场景、材质资源等）；`texture/` 下的第三方贴图仍遵循其原始授权条款，不在 MIT 覆盖范围内。
+需要说明的是，MIT 只覆盖本仓库中的原创部分（脚本、场景、材质资源等）；`texture/` 下的第三方贴图与 `fonts/` 下的 Patrick Hand 仍遵循其原始授权条款，不在 MIT 覆盖范围内。
 
 ---
 
