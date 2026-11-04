@@ -39,6 +39,7 @@
 [ext_resource type="Script" path="res://script/screen_trance.gd" id="34_trance"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vhs"]
+resource_local_to_scene = true
 shader = ExtResource("33_vhs")
 shader_parameter/strength = 0.85
 shader_parameter/aberration = 2.5
