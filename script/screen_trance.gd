@@ -26,6 +26,7 @@ var _current_glitch: float = 0.0
 var _charging: bool = false
 var _canceling: bool = false
 var _started: bool = false
+var _returning: bool = false
 
 
 func _ready() -> void:
@@ -90,7 +91,7 @@ func _build_screen_body() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if _started or _ray == null or _canceling:
+	if _returning or _started or _ray == null or _canceling:
 		return
 
 	var ok: bool = _player.is_seated() and not _player._is_frozen()
@@ -219,3 +220,84 @@ func _push_camera() -> void:
 
 func _apply_camera(v: float, cam: Camera3D, from_xf: Transform3D, to_xf: Transform3D) -> void:
 	cam.global_transform = from_xf.interpolate_with(to_xf, v)
+
+
+## 黑屏里按 Shift 回来：反向推镜 → 交还相机 → 站起来。
+## 由 WorldState 在主场景套用存档之后调用。
+func begin_return() -> void:
+	if _player == null or _player_cam == null or _screen == null:
+		return
+	if _returning:
+		return
+
+	_returning = true
+	_started = true
+	_charging = false
+	_canceling = false
+	_hold = 0.0
+	_current_glitch = 1.0
+
+	_player.begin_return()
+
+	var stool := _world.get_node_or_null("Stool") as Node3D
+	if stool != null:
+		var eye_height := 1.1
+		var value: Variant = stool.get("seat_eye_height")
+		if value != null:
+			eye_height = float(value)
+		_player.enter_seated_for_return(stool, eye_height)
+
+	var ui := _world.get_node_or_null("HUD/UIRoot") as Control
+	if ui != null:
+		ui.visible = false
+
+	# 倒放期间也不许暂停，避免把相机补间冻住
+	var pause := _world.get_node_or_null("PauseMenu")
+	if pause != null:
+		pause.process_mode = Node.PROCESS_MODE_DISABLED
+
+	_apply_glitch(1.0)
+	var glitch_tween := create_tween()
+	glitch_tween.tween_method(_apply_glitch, 1.0, 0.0, PUSH_SECONDS) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	var center: Vector3 = _screen.global_transform * _screen.get_aabb().get_center()
+	var normal := _screen.global_transform.basis.z.normalized()
+	if normal.dot(_player_cam.global_position - center) < 0.0:
+		normal = -normal
+	var target := center + normal * 0.1
+	var start_xf := Transform3D(Basis(), target).looking_at(center, Vector3.UP)
+	var seat_xf: Transform3D = _player_cam.global_transform
+
+	if _build_cam == null:
+		_build_cam = Camera3D.new()
+		_build_cam.name = "TranceCamera"
+		_build_cam.fov = _player_cam.fov
+		_build_cam.near = 0.02
+		_world.add_child(_build_cam)
+
+	_build_cam.global_transform = start_xf
+	_build_cam.current = true
+
+	var t := create_tween()
+	t.tween_method(_apply_camera.bind(_build_cam, start_xf, seat_xf), 0.0, 1.0, PUSH_SECONDS) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	await t.finished
+
+	# 相机回到坐姿，交还给玩家；然后起身回到坐下前的位置
+	_player_cam.current = true
+	await get_tree().create_timer(0.15).timeout
+	_player.stand_up()
+	await get_tree().create_timer(0.45).timeout
+
+	_returning = false
+	_started = false
+	_hold = 0.0
+	_charging = false
+	_current_glitch = 0.0
+	_apply_glitch(0.0)
+	if ui != null:
+		ui.visible = true
+	if pause != null:
+		pause.process_mode = Node.PROCESS_MODE_ALWAYS
+	_player.end_return()

@@ -205,10 +205,15 @@ func resume_pause() -> void:
 	_open = false
 	visible = false
 	get_tree().paused = false
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 	var player := get_parent().get_node_or_null("Character")
-	if player != null and player.has_method("_capture_mouse"):
+	if player == null:
+		# 2D 黑屏等没有角色的场景：保持鼠标释放
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		return
+
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if player.has_method("_capture_mouse"):
 		player._capture_mouse()
 
 

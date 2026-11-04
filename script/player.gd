@@ -92,6 +92,8 @@ var _crouching: bool = false
 var _seated: bool = false
 ## 屏幕吞没的过场：锁住视角和移动，由 ScreenTrance 接管相机
 var _trance: bool = false
+## 正在从 2D 黑屏倒放回来：仍然锁输入，但允许视点高度跟着起身变化
+var _returning: bool = false
 ## 坐着时的相机高度（相对脚底）
 var _seated_eye_height: float = 1.1
 ## 坐下前的位置与朝向，起身时还原
@@ -131,12 +133,16 @@ func _ready() -> void:
 		_camera.fov = settings.fov
 		settings.apply_exposure(get_parent())
 
-	_capture_mouse()
+	# 从黑屏倒放回来时，相机和鼠标由 ScreenTrance 接手，不再播入场睁眼
+	var save := get_node_or_null("/root/SaveGame")
+	var returning: bool = save != null and save.has_pending_return()
+	if not returning:
+		_capture_mouse()
 
-	# 进场睁眼（菜单转场已经把屏幕压黑了）
-	var fade := get_node_or_null("/root/ScreenFade")
-	if fade != null:
-		fade.fade_from_black(1.2)
+		# 进场睁眼（菜单转场已经把屏幕压黑了）
+		var fade := get_node_or_null("/root/ScreenFade")
+		if fade != null:
+			fade.fade_from_black(1.2)
 
 
 ## 转场（睁眼/闭眼）期间"啥都干不了"：不移动、不交互、不转视角
@@ -175,6 +181,9 @@ func _physics_process(delta: float) -> void:
 
 	if _trance:
 		velocity = Vector3.ZERO
+		# 倒放回来时镜头已经交还给玩家，起身过程中视点要从坐姿抬回站姿
+		if _returning:
+			_update_crouch(delta)
 		return
 
 	if not _falling and global_position.y < fall_threshold:
@@ -608,9 +617,45 @@ func get_camera() -> Camera3D:
 
 
 func begin_trance() -> void:
+	_returning = false
 	_trance = true
 	velocity = Vector3.ZERO
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+
+
+## 从 2D 黑屏倒放回来：锁输入，但让 _physics_process 继续更新眼高
+func begin_return() -> void:
+	_trance = true
+	_returning = true
+	# 黑屏里是按住 Shift 触发的，这个键要一直"吃掉"，直到玩家松手
+	_suppress_crouch_until_release = true
+	velocity = Vector3.ZERO
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+
+
+func end_return() -> void:
+	_trance = false
+	_returning = false
+	_capture_mouse()
+
+
+## 倒放时先把人瞬间放回坐姿（不播坐下补间），相机再从屏幕退到这里
+func enter_seated_for_return(seat: Node3D, eye_height: float) -> void:
+	if seat == null:
+		return
+	if _seat_tween != null and _seat_tween.is_valid():
+		_seat_tween.kill()
+	_seat_busy = false
+	_seated = true
+	_seat = seat
+	_saved_position = global_position
+	_saved_rotation_y = rotation.y
+	_seated_eye_height = eye_height
+	_crouching = false
+	global_position = seat.global_position
+	rotation.y = seat.global_rotation.y
+	_camera.position.y = eye_height
+	velocity = Vector3.ZERO
 
 
 ## 鼠标灵敏度 = 脚本里的默认值 × 设置里的倍率

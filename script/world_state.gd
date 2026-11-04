@@ -8,8 +8,14 @@ func _ready() -> void:
 	if save == null:
 		return
 	await get_tree().process_frame
-	if save.consume_load():
+	var want_load: bool = save.consume_load()
+	var want_return: bool = save.consume_return()
+	if want_load or want_return:
 		save.apply_to(get_parent())
+	if want_return:
+		var trance := get_parent().get_node_or_null("Character/ScreenTrance")
+		if trance != null and trance.has_method("begin_return"):
+			trance.begin_return()
 
 
 ## 直接关窗口（Cmd+Q / 红叉）也当作一次退出：先落一份存档，

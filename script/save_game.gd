@@ -9,6 +9,8 @@ const VERSION := 1
 
 ## 标题页按 Continue 时置位；主场景的 WorldState 读走后清掉
 var _pending_load: bool = false
+## 2D 黑屏里按 Shift 返回时置位；主场景套用存档后播放反向过场
+var _pending_return: bool = false
 
 
 func has_save() -> bool:
@@ -27,9 +29,27 @@ func consume_load() -> bool:
 	return wanted
 
 
+## 2D 黑屏要回到房间：主场景加载后先套用存档，再倒放过场
+func request_return() -> void:
+	_pending_return = true
+
+
+## 玩家 _ready 用：还没被 WorldState 取走，就先别播入场睁眼
+func has_pending_return() -> bool:
+	return _pending_return
+
+
+## WorldState 用：取走一次性的"从黑屏返回"标记
+func consume_return() -> bool:
+	var wanted := _pending_return
+	_pending_return = false
+	return wanted
+
+
 ## 新游戏：把旧存档删掉
 func clear() -> void:
 	_pending_load = false
+	_pending_return = false
 	if FileAccess.file_exists(PATH):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
 
