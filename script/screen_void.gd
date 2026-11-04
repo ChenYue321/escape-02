@@ -7,11 +7,18 @@ const NOISE_FADE := 1.0
 const RETURN_HOLD := 0.35
 const RETURN_FADE := 1.0
 const GAME_SCENE := "res://Scenes/main.tscn"
+## 和凳子的起身提示一致：底部字幕，显示 5 秒
+const HINT_TEXT := "Hold [shift] to leave the computer"
+const HINT_SECONDS := 5.0
 
 ## 入场淡出是否结束：结束之前按 Shift 不生效
 var _settled: bool = false
 var _returning: bool = false
 var _hold: float = 0.0
+## 用来作废已经过期的 5 秒计时
+var _hint_token: int = 0
+
+@onready var _subtitle: Label = $Subtitle
 
 
 func _ready() -> void:
@@ -32,6 +39,23 @@ func _ready() -> void:
 	noise.stop()
 
 	_settled = true
+	_show_hint()
+
+
+## 黑屏稳定后像旁白一样提示怎么离开，5 秒后自动收起
+func _show_hint() -> void:
+	_hint_token += 1
+	var token := _hint_token
+	_subtitle.text = HINT_TEXT
+	_subtitle.visible = true
+	await get_tree().create_timer(HINT_SECONDS).timeout
+	if token == _hint_token:
+		_subtitle.visible = false
+
+
+func _hide_hint() -> void:
+	_hint_token += 1
+	_subtitle.visible = false
 
 
 func _process(delta: float) -> void:
@@ -52,6 +76,7 @@ func _return_to_room() -> void:
 	if _returning:
 		return
 	_returning = true
+	_hide_hint()
 
 	# 倒放期间不允许暂停
 	var pause := get_node_or_null("PauseMenu")
