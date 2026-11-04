@@ -4,7 +4,7 @@
 
 目前仍是早期原型：以手工搭建的 3D 室内场景为主体，探索程序化生成几何体（电线、管道）与写实 PBR 材质的组合效果。已经能走动、开关灯、开门、坐下，还有一小段"盯着屏幕看"的过场，但离完整的解谜游戏还很远。
 
-> 可玩的 demo：[Releases](https://github.com/ChenYue321/escape-02/releases)（macOS / Windows）。
+> 可玩的 demo：[Releases](https://github.com/ChenYue321/escape-02/releases)（macOS / Windows / Linux）。
 
 ![Godot](https://img.shields.io/badge/Godot-4.7-478cbf)
 ![Status](https://img.shields.io/badge/status-prototype-orange)
@@ -119,7 +119,7 @@
 ```
 escape-02/
 ├── project.godot          # 项目配置（渲染后端、物理引擎、ETC2/ASTC 导入）
-├── export_presets.cfg     # macOS / Windows 导出预设
+├── export_presets.cfg     # macOS / Windows / Linux 导出预设
 ├── Scenes/
 │   ├── menu.tscn          # 主菜单（项目启动场景）
 │   ├── main.tscn          # 游戏场景：房间 / 书桌 / 电脑 / 灯 / 凳子
@@ -191,7 +191,7 @@ escape-02/
 
 ## 运行方式
 
-不想自己开引擎的话，可以直接到 [Releases](https://github.com/ChenYue321/escape-02/releases) 下载 macOS / Windows demo 包。
+不想自己开引擎的话，可以直接到 [Releases](https://github.com/ChenYue321/escape-02/releases) 下载 macOS / Windows / Linux demo 包。
 
 1. 安装 **Godot 4.7**（标准版即可，无需 .NET 版本）
 2. 在项目管理器中导入本仓库根目录的 `project.godot`
@@ -206,7 +206,7 @@ escape-02/
 - 黑屏之后的内容还没做，`screen_void.tscn` 现在停在纯黑
 - 没有拾取、背包、门锁等系统
 - 场景以基础几何体 + 少量程序化网格拼装，尚无自建模型
-- 主要在 macOS 上开发；仓库里带了 macOS / Windows 导出预设，macOS 包已实机验证，Windows 包还没有在真实 Windows 上跑过
+- 主要在 macOS 上开发；仓库里带了 macOS / Windows / Linux 导出预设，macOS 包已实机验证，Windows / Linux 包还没有在对应系统上跑过
 - 只做了键鼠，没有手柄支持
 
 ## Roadmap（想到哪做到哪）
@@ -220,7 +220,7 @@ escape-02/
 - [ ] 至少一条完整的解谜链路
 - [ ] 氛围音乐
 - [ ] 体积雾 / 更细的光照调优
-- [ ] Windows 实机验证 / 手柄支持
+- [ ] Windows / Linux 实机验证 / 手柄支持
 
 ## 人声处理约定
 
