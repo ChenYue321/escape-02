@@ -21,16 +21,27 @@ extends StaticBody3D
 @export var sound_off: AudioStream
 @export var sound_volume_db: float = -11.0
 
+## 墙上的开关带一个 Button 子节点：开灯时按键往里缩这么多米。
+## 不做补间，按 E 的瞬间和音效一起切换。
+@export var button_press_depth: float = 0.016
+
 var _on: bool = false
 var _light: SpotLight3D
 ## 组里所有自发光材质 → 它"开着"时的自发光强度，关灯时归零、开灯时还原
 var _glow_energies: Dictionary = {}
 var _audio: AudioStreamPlayer3D
+## 开关按键（只有墙上那个有），以及它"没被按下"时的本地 z
+var _button: Node3D
+var _button_out_z: float = 0.0
 
 
 func _ready() -> void:
 	_setup_audio()
 	_find_parts()
+
+	_button = get_node_or_null("Button") as Node3D
+	if _button != null:
+		_button_out_z = _button.position.z
 
 	_on = _light.visible if _light != null else false
 	_apply()
@@ -85,13 +96,15 @@ func _group_root() -> Node:
 	return target if target != null else get_parent()
 
 
-## 把当前状态套用到聚光灯和所有自发光材质上
+## 把当前状态套用到聚光灯、所有自发光材质和开关按键上
 func _apply() -> void:
 	if _light != null:
 		_light.visible = _on
 	for material in _glow_energies:
 		var mat := material as StandardMaterial3D
 		mat.emission_energy_multiplier = float(_glow_energies[material]) if _on else 0.0
+	if _button != null:
+		_button.position.z = _button_out_z + (button_press_depth if _on else 0.0)
 
 
 ## 存档用：开/关状态
