@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 旁白/人声统一处理：把一句干声做成"录音机里的旁白"。
+# 旁白/人声统一处理：把一句干声做成"老式座机听筒里的旁白"。
 #
 # 用法:
 #   tools/process_voice.sh <输入音频> <输出.mp3>
@@ -8,16 +8,17 @@
 #
 # 处理链（顺序有意义）:
 #   1. 降调 1.5 个半音（asetrate + atempo，速度不变）——让声音不那么"像自己"
-#   2. 120 Hz 高通 + 6.5 kHz 低通——收窄频带，像磁带/录音机
-#   3. 轻压缩 + tanh 软削波——一点点磁带饱和，不是失真
-#   4. 0.4 Hz / 0.5% 的 wow——磁带转速轻微不稳
-#   5. 很轻的 pink noise 底噪——磁带嘶声
-#   6. 单条 38 ms、9% 的短反射——空间感比原来的 60/95 ms 双回声轻很多
-#   7. loudnorm 到 -25 LUFS / 峰值 -3 dB——统一旁白电平
-#   8. 128 kbps 单声道 48 kHz MP3 输出（Godot 不认 m4a）
+#   2. 340 Hz 高通 + 3.2 kHz 低通——老式电话的窄频带，去掉低频和齿音
+#   3. 1.6 kHz +6 dB、2.5 kHz +3 dB——电话听筒的中频鼻音/箱声
+#   4. 4:1 压缩 + tanh 软削波——像电话听筒被推得很响、轻微失真
+#   5. 再收一次 330 Hz–3.1 kHz——削波产生的带外高频不要
+#   6. 单条 12 ms、5% 的极短反射——一点点听筒腔体感，不是房间混响
+#   7. 很轻的 pink noise 线路底噪
+#   8. loudnorm 到 -25 LUFS / 峰值 -3 dB
+#   9. 112 kbps 单声道 48 kHz MP3 输出（Godot 不认 m4a）
 #
 # 想改：PITCH 是降调的频率比（0.917 = -1.5 半音，0.955 = -0.8 半音），
-#       TARGET_LUFS 控制整体音量；空间感主要看 ECHO_MS / ECHO_DECAY。
+#       TARGET_LUFS 控制整体音量；电话感主要看 HIGHPASS / LOWPASS / EQ 和削波前音量。
 set -euo pipefail
 
 if [ $# -lt 2 ]; then
@@ -29,14 +30,16 @@ IN="$1"
 OUT="$2"
 PITCH=0.917
 TARGET_LUFS=-25
-HIGHPASS=120
-LOWPASS=6500
-WOW_HZ=0.4
-WOW_DEPTH=0.005
-ECHO_MS=38
-ECHO_DECAY=0.09
-HISS_AMP=0.0006
-BITRATE=128k
+HIGHPASS=340
+LOWPASS=3200
+PHONE_PEAK=1600
+PHONE_PEAK_GAIN=6
+PHONE_PRESENCE=2500
+PHONE_PRESENCE_GAIN=3
+ECHO_MS=12
+ECHO_DECAY=0.05
+HISS_AMP=0.0012
+BITRATE=112k
 
 SR=$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of csv=p=0 "$IN")
 RATE=$(awk "BEGIN{printf \"%.0f\", $SR * $PITCH}")
@@ -49,12 +52,13 @@ ffmpeg -hide_banner -loglevel error -y -i "$IN" \
 	-filter_complex "\
 [0:a]asetrate=${RATE},aresample=48000,atempo=${TEMPO},\
 highpass=f=${HIGHPASS},lowpass=f=${LOWPASS},\
-acompressor=threshold=0.1:ratio=2.5:attack=10:release=180:makeup=1.2,\
-volume=4dB,asoftclip=type=tanh:threshold=0.55:output=0.9,volume=-4dB,\
-vibrato=f=${WOW_HZ}:d=${WOW_DEPTH},\
-highshelf=f=3500:g=-2,\
-aecho=0.7:0.5:${ECHO_MS}:${ECHO_DECAY}[voice];\
-[1:a]highpass=f=500,lowpass=f=5000[noise];\
+equalizer=f=${PHONE_PEAK}:t=q:w=1.0:g=${PHONE_PEAK_GAIN},\
+equalizer=f=${PHONE_PRESENCE}:t=q:w=1.2:g=${PHONE_PRESENCE_GAIN},\
+acompressor=threshold=0.045:ratio=4:attack=4:release=120:makeup=1.8,\
+volume=8dB,asoftclip=type=tanh:threshold=0.4:output=0.8,volume=-6dB,\
+highpass=f=330,lowpass=f=3100,\
+aecho=0.6:0.4:${ECHO_MS}:${ECHO_DECAY}[voice];\
+[1:a]highpass=f=${HIGHPASS},lowpass=f=3100[noise];\
 [voice][noise]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,\
 loudnorm=I=${TARGET_LUFS}:TP=-3:LRA=9,aresample=48000[out]" \
 	-map "[out]" -shortest -c:a libmp3lame -b:a "${BITRATE}" -ar 48000 -ac 1 "$OUT"

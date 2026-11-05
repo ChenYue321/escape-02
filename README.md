@@ -228,22 +228,23 @@ escape-02/
 
 ## 人声处理约定
 
-所有旁白/人声统一走 `tools/process_voice.sh`，现在是"录音机里的旁白"：
+所有旁白/人声统一走 `tools/process_voice.sh`，现在是"老式座机听筒里的旁白"：
 
 1. 降调 1.5 个半音（速度不变）——让录音不那么"像自己"
-2. 120 Hz 高通 + 6.5 kHz 低通——收窄频带，做出磁带/录音机的窄带感
-3. 轻压缩 + tanh 软削波——一点点磁带饱和，不是明显失真
-4. 0.4 Hz、0.5% 的 wow——磁带转速轻微不稳
-5. 很轻的 pink noise 底噪——磁带嘶声
-6. 单条 38 ms、9% 的短反射——空间感比原来的 60 / 95 ms 双回声轻很多
-7. 响度归一到 **-25 LUFS / 峰值 -3 dB**——比音效低几 dB，落在"旁白"而不是"贴耳说话"的位置
-8. 128 kbps 单声道 48 kHz MP3 输出（Godot 不认 `.m4a`）
+2. 340 Hz 高通 + 3.2 kHz 低通——老式电话的窄频带，去掉低频和齿音
+3. 1.6 kHz +6 dB、2.5 kHz +3 dB——电话听筒的中频鼻音/箱声
+4. 4:1 压缩 + tanh 软削波——像听筒被推得很响，带一点轻微失真
+5. 削波后再收一次 330 Hz–3.1 kHz——不要带外高频
+6. 单条 12 ms、5% 的极短反射——一点点听筒腔体感，不是房间混响
+7. 很轻的 pink noise 线路底噪
+8. 响度归一到 **-25 LUFS / 峰值 -3 dB**
+9. 112 kbps 单声道 48 kHz MP3 输出（Godot 不认 `.m4a`）
 
 ```bash
 tools/process_voice.sh ~/Downloads/某句台词.m4a audio/voice/xxx.mp3
 ```
 
-脚本里的 `PITCH`、`TARGET_LUFS`、`ECHO_MS` / `ECHO_DECAY` 都可以直接改；`fall_01` / `fall_02` / `easter_01` 已经按这条链从原始 m4a 重新处理过。
+脚本里的 `PITCH`、`TARGET_LUFS`、`HIGHPASS` / `LOWPASS`、`PHONE_PEAK_GAIN`、`ECHO_DECAY` 都可以直接改；`fall_01` / `fall_02` / `easter_01` 已经按这条链从原始 m4a 重新处理过。
 
 ## 素材说明
 
