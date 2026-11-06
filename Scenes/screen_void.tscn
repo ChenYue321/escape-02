@@ -53,20 +53,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Brand" type="Label" parent="CRT"]
-layout_mode = 1
-anchors_preset = 0
-anchor_left = 0.02
-anchor_top = 0.966
-anchor_right = 0.02
-anchor_bottom = 0.966
-offset_right = 220.0
-offset_bottom = 26.0
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.3, 0.32, 0.35, 0.9)
-theme_override_font_sizes/font_size = 11
-text = "ESCAPE-02"
-
 [node name="Subtitle" type="Label" parent="."]
 custom_minimum_size = Vector2(600, 0)
 visible = false
