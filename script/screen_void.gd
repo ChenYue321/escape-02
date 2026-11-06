@@ -1,7 +1,7 @@
 extends Control
 
-## 被屏幕吞进去之后的 2D 场景：雪花先退成黑色，再"通电"成一台老 CRT，
-## 屏幕上留着一行空提示符。按住 Shift 会倒放整个过程，回到房间。
+## 被屏幕吞进去之后的 2D 场景：雪花先退成黑色，再"通电"成一台老 CRT。
+## 屏幕上没有可操作内容，只有扫描线、边框和电源灯；按住 Shift 倒放回房间。
 
 const NOISE_FADE := 1.0
 const SNOW_TO_BLACK := 0.45
@@ -20,27 +20,19 @@ var _returning: bool = false
 var _hold: float = 0.0
 ## 用来作废已经过期的 5 秒计时
 var _hint_token: int = 0
-## 光标闪烁计时
-var _blink: float = 0.0
 
 @onready var _crt: ColorRect = $CRT
-@onready var _terminal: HBoxContainer = $Terminal
-@onready var _prompt: Label = $Terminal/Prompt
-@onready var _cursor: ColorRect = $Terminal/Cursor
 @onready var _subtitle: Label = $Subtitle
 
 
 func _ready() -> void:
 	# 黑屏里没有准星和 3D 视角，把鼠标还给玩家
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	_setup_terminal_font()
 
 	var black := $Black as ColorRect
 	var noise := $Static as AudioStreamPlayer
 	black.modulate.a = 0.0
 	_crt.modulate.a = 0.0
-	_terminal.visible = false
-	_cursor.visible = false
 
 	# 底噪和画面一起退掉
 	var audio_tween := create_tween()
@@ -59,21 +51,8 @@ func _ready() -> void:
 	await on.finished
 
 	noise.stop()
-	_terminal.visible = true
-	_blink = 0.0
 	_settled = true
 	_show_hint()
-
-
-## 老式终端的等宽字体
-func _setup_terminal_font() -> void:
-	var mono := SystemFont.new()
-	mono.font_names = PackedStringArray([
-		"Courier New", "Courier", "DejaVu Sans Mono", "Menlo", "Monaco", "monospace",
-	])
-	mono.allow_system_fallback = true
-	_prompt.add_theme_font_override("font", mono)
-	_prompt.text = "C:\\>"
 
 
 ## 5 秒后自动收起的离开提示
@@ -93,10 +72,6 @@ func _hide_hint() -> void:
 
 
 func _process(delta: float) -> void:
-	if _terminal.visible:
-		_blink += delta
-		_cursor.visible = fmod(_blink, 1.0) < 0.55
-
 	if not _settled or _returning:
 		return
 
@@ -115,8 +90,6 @@ func _return_to_room() -> void:
 		return
 	_returning = true
 	_hide_hint()
-	_terminal.visible = false
-	_cursor.visible = false
 
 	# 倒放期间不允许暂停
 	var pause := get_node_or_null("PauseMenu")
