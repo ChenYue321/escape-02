@@ -77,31 +77,30 @@ func _hide_hint() -> void:
 	_subtitle.visible = false
 
 
-## 黑屏里的鼠标：经典左上箭头，绿色、粗像素块、深色描边。
+## 黑屏里的鼠标：参考图那种向右的凹四边形，绿色粗像素块，热点在右尖。
 func _install_pixel_cursor() -> void:
 	const SCALE := 4
 	const OUTLINE := Color(0.01, 0.06, 0.02, 1.0)
-	const HIGHLIGHT := Color(0.62, 1.0, 0.68, 1.0)
 	const FILL := Color(0.28, 0.88, 0.40, 1.0)
 
-	# 16x16 手绘点位：'#' 描边，'+' 左上高光，'*' 绿色填充
+	# 16x16 点位：'#' 描边、'*' 绿色填充，底部留出凹口
 	const PATTERN := [
-		"#...............",
-		"##..............",
-		"#+#.............",
-		"#++#............",
-		"#++*#...........",
-		"#++**#..........",
-		"#++***#.........",
-		"#++****#........",
-		"#++*****#.......",
-		"#++******#......",
-		"#++***#####.....",
-		"#++#**#.........",
-		"#+#.#**#........",
-		"##..#**#........",
-		"#....#**#.......",
-		"......##........",
+		".#..............",
+		".###............",
+		".#**##..........",
+		".#****##........",
+		".#******##......",
+		".#********##....",
+		".#**********##..",
+		".#*******####...",
+		".#****###.......",
+		".#***#..........",
+		".#**#...........",
+		".#*#............",
+		".##.............",
+		".#..............",
+		"................",
+		"................",
 	]
 
 	var img := Image.create(16, 16, false, Image.FORMAT_RGBA8)
@@ -110,21 +109,15 @@ func _install_pixel_cursor() -> void:
 		var row: String = PATTERN[y]
 		for x in row.length():
 			var ch := row.substr(x, 1)
-			var color := Color(0, 0, 0, 0)
-			match ch:
-				"#":
-					color = OUTLINE
-				"+":
-					color = HIGHLIGHT
-				"*":
-					color = FILL
-			if color.a > 0.0:
-				img.set_pixel(x, y, color)
+			if ch == "#":
+				img.set_pixel(x, y, OUTLINE)
+			elif ch == "*":
+				img.set_pixel(x, y, FILL)
 
 	img.resize(16 * SCALE, 16 * SCALE, Image.INTERPOLATE_NEAREST)
 	_cursor_texture = ImageTexture.create_from_image(img)
 	_cursor_layer = CURSOR_SCRIPT.new() as CanvasLayer
-	_cursor_layer.call("setup", _cursor_texture, Vector2.ZERO)
+	_cursor_layer.call("setup", _cursor_texture, Vector2(12 * SCALE, 7 * SCALE))
 	add_child(_cursor_layer)
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
