@@ -13,7 +13,6 @@ const GAME_SCENE := "res://Scenes/main.tscn"
 ## 和凳子的起身提示一致：底部字幕，显示 5 秒
 const HINT_TEXT := "Hold [shift] to leave the computer"
 const HINT_SECONDS := 5.0
-const CURSOR_SCRIPT := preload("res://script/pixel_cursor.gd")
 
 ## 入场是否结束：结束之前按 Shift 不生效
 var _settled: bool = false
@@ -21,19 +20,14 @@ var _returning: bool = false
 var _hold: float = 0.0
 ## 用来作废已经过期的 5 秒计时
 var _hint_token: int = 0
-## 黑屏用软件鼠标：macOS 上系统自定义光标要鼠标移出窗口才刷新，不能依赖
-## （PauseMenu 会读这个标记，暂停时不要把系统光标放出来）
-var uses_software_cursor: bool = true
-var _cursor_texture: ImageTexture
-var _cursor_layer: CanvasLayer
 
 @onready var _crt: ColorRect = $CRT
 @onready var _subtitle: Label = $Subtitle
 
 
 func _ready() -> void:
-	# 黑屏里没有准星和 3D 视角；先建软件鼠标，它会把系统光标藏起来
-	_install_pixel_cursor()
+	# 黑屏里没有准星和 3D 视角，把鼠标还给玩家
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 	var black := $Black as ColorRect
 	var noise := $Static as AudioStreamPlayer
@@ -77,59 +71,6 @@ func _hide_hint() -> void:
 	_subtitle.visible = false
 
 
-## 黑屏里的鼠标：参考图那种偏高的向右凹四边形，绿色粗像素块，热点在右尖。
-func _install_pixel_cursor() -> void:
-	const SCALE := 4
-	const OUTLINE := Color(0.01, 0.06, 0.02, 1.0)
-	const FILL := Color(0.28, 0.88, 0.40, 1.0)
-
-	# 16x16 手绘点位：'#' 描边、'*' 绿色填充，底部留凹口
-	const PATTERN := [
-		".#..............",
-		".##.............",
-		".#*##...........",
-		".#***#..........",
-		".#****##........",
-		".#******##......",
-		".#********#.....",
-		".#******###.....",
-		".#****##........",
-		".#***#..........",
-		".#**#...........",
-		".#*#............",
-		".##.............",
-		".#..............",
-		"................",
-		"................",
-	]
-
-	var img := Image.create(16, 16, false, Image.FORMAT_RGBA8)
-	img.fill(Color(0, 0, 0, 0))
-	for y in PATTERN.size():
-		var row: String = PATTERN[y]
-		for x in row.length():
-			var ch := row.substr(x, 1)
-			if ch == "#":
-				img.set_pixel(x, y, OUTLINE)
-			elif ch == "*":
-				img.set_pixel(x, y, FILL)
-
-	img.resize(16 * SCALE, 16 * SCALE, Image.INTERPOLATE_NEAREST)
-	_cursor_texture = ImageTexture.create_from_image(img)
-	_cursor_layer = CURSOR_SCRIPT.new() as CanvasLayer
-	_cursor_layer.call("setup", _cursor_texture, Vector2(10 * SCALE, 7 * SCALE))
-	add_child(_cursor_layer)
-	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
-
-
-func _exit_tree() -> void:
-	# 离开黑屏 / 回标题时恢复系统光标；如果是 Shift 返回，主场景会自己接管
-	if _cursor_layer != null:
-		_cursor_layer.visible = false
-	if not _returning:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-
-
 func _process(delta: float) -> void:
 	if not _settled or _returning:
 		return
@@ -149,10 +90,6 @@ func _return_to_room() -> void:
 		return
 	_returning = true
 	_hide_hint()
-	# 开始倒放就先收起软件鼠标，别让它压在雪花的转场上
-	if _cursor_layer != null:
-		_cursor_layer.visible = false
-	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
 	# 倒放期间不允许暂停
 	var pause := get_node_or_null("PauseMenu")
