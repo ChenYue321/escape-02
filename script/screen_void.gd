@@ -77,56 +77,56 @@ func _hide_hint() -> void:
 	_subtitle.visible = false
 
 
-## 黑屏里的鼠标：绿色、粗像素方块、向右的箭头，热点在箭头尖端。
+## 黑屏里的鼠标：经典左上箭头，绿色、粗像素块、深色描边。
 func _install_pixel_cursor() -> void:
-	const GRID := 16
-	const SCALE := 3
-	const OUTLINE := Color(0.01, 0.08, 0.02, 1.0)
-	const FILL := Color(0.35, 1.0, 0.45, 1.0)
+	const SCALE := 4
+	const OUTLINE := Color(0.01, 0.06, 0.02, 1.0)
+	const HIGHLIGHT := Color(0.62, 1.0, 0.68, 1.0)
+	const FILL := Color(0.28, 0.88, 0.40, 1.0)
 
-	# 参考图片的轮廓：左竖边、上扬的上边、右尖、底部凹口
-	var poly := [
-		Vector2(1, 0), Vector2(15, 7), Vector2(9, 8),
-		Vector2(7, 11), Vector2(1, 15),
+	# 16x16 手绘点位：'#' 描边，'+' 左上高光，'*' 绿色填充
+	const PATTERN := [
+		"#...............",
+		"##..............",
+		"#+#.............",
+		"#++#............",
+		"#++*#...........",
+		"#++**#..........",
+		"#++***#.........",
+		"#++****#........",
+		"#++*****#.......",
+		"#++******#......",
+		"#++***#####.....",
+		"#++#**#.........",
+		"#+#.#**#........",
+		"##..#**#........",
+		"#....#**#.......",
+		"......##........",
 	]
 
-	var inside: Array = []
-	for y in GRID:
-		var row: Array = []
-		for x in GRID:
-			row.append(_point_in_polygon(Vector2(x + 0.5, y + 0.5), poly))
-		inside.append(row)
-
-	var img := Image.create(GRID, GRID, false, Image.FORMAT_RGBA8)
+	var img := Image.create(16, 16, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	for y in GRID:
-		for x in GRID:
-			if not inside[y][x]:
-				continue
-			var edge: bool = x == 0 or x == GRID - 1 or y == 0 or y == GRID - 1 \
-				or not inside[y - 1][x] or not inside[y + 1][x] \
-				or not inside[y][x - 1] or not inside[y][x + 1]
-			img.set_pixel(x, y, OUTLINE if edge else FILL)
+	for y in PATTERN.size():
+		var row: String = PATTERN[y]
+		for x in row.length():
+			var ch := row.substr(x, 1)
+			var color := Color(0, 0, 0, 0)
+			match ch:
+				"#":
+					color = OUTLINE
+				"+":
+					color = HIGHLIGHT
+				"*":
+					color = FILL
+			if color.a > 0.0:
+				img.set_pixel(x, y, color)
 
-	img.resize(GRID * SCALE, GRID * SCALE, Image.INTERPOLATE_NEAREST)
+	img.resize(16 * SCALE, 16 * SCALE, Image.INTERPOLATE_NEAREST)
 	_cursor_texture = ImageTexture.create_from_image(img)
 	_cursor_layer = CURSOR_SCRIPT.new() as CanvasLayer
-	_cursor_layer.call("setup", _cursor_texture, Vector2(15 * SCALE - 2, 7 * SCALE))
+	_cursor_layer.call("setup", _cursor_texture, Vector2.ZERO)
 	add_child(_cursor_layer)
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
-
-
-func _point_in_polygon(p: Vector2, poly: Array) -> bool:
-	var inside := false
-	var j := poly.size() - 1
-	for i in poly.size():
-		var a: Vector2 = poly[i]
-		var b: Vector2 = poly[j]
-		if ((a.y > p.y) != (b.y > p.y)) \
-			and (p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x):
-			inside = not inside
-		j = i
-	return inside
 
 
 func _exit_tree() -> void:
