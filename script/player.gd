@@ -360,11 +360,19 @@ func _update_focus() -> void:
 	var target: Node = null
 	if _interact_ray.is_colliding():
 		var collider = _interact_ray.get_collider()
-		if collider != null and collider.has_method("interact"):
+		if collider != null and is_instance_valid(collider) and collider.has_method("interact"):
 			target = collider
+
+	# 被指着的物体可能已经在别的场景/房间里被 free 了。
+	# 这种"已释放"的引用和 null 比较会变成相等，单靠 target != _focus 判断不出来。
+	var focus_invalid := typeof(_focus) == TYPE_OBJECT and not is_instance_valid(_focus)
+	if focus_invalid:
+		_focus = null
 	if target != _focus:
 		_focus = target
 		focus_changed.emit(_focus)
+	elif focus_invalid:
+		focus_changed.emit(null)
 
 	# 提示文字：对着可交互物体显示 [E]，其余收起。
 	# 坐着时的"如何起身"改用字幕提示，不再占用准星旁边的位置
@@ -375,6 +383,15 @@ func _update_focus() -> void:
 	if prompt != _prompt_text:
 		_prompt_text = prompt
 		prompt_text_changed.emit(_prompt_text)
+
+
+## 传送/切房间之前主动清掉焦点，别让 HUD 留着上一个房间的高亮
+func _clear_focus() -> void:
+	if typeof(_focus) == TYPE_OBJECT:
+		_focus = null
+		focus_changed.emit(null)
+		_prompt_text = ""
+		prompt_text_changed.emit("")
 
 
 func _try_interact() -> void:
@@ -504,6 +521,7 @@ func _enter_easter_egg() -> void:
 		get_parent().add_child(_easter_egg)
 
 	_in_easter_egg = true
+	_clear_focus()
 
 	# 房间里没有门，出生点放在桌子正前方，朝向桌子
 	global_position = easter_egg_offset + Vector3(0.0, 0.05, 2.5)
@@ -526,6 +544,7 @@ func _auto_leave_easter_egg() -> void:
 
 ## 离开彩蛋房间：黑屏 → 回主场景出生点 → 张开，并销毁房间实例
 func _leave_easter_egg() -> void:
+	_clear_focus()
 	var fade := get_node_or_null("/root/ScreenFade")
 	if fade != null:
 		await fade.fade_to_black(0.8)
