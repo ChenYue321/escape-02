@@ -193,7 +193,9 @@ func open_pause() -> void:
 	visible = true
 	_root.visible = true
 	_settings_layer.visible = false
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	# 黑屏用软件鼠标时不要放出系统光标，否则会出现两个指针
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN if _uses_software_cursor() \
+		else Input.MOUSE_MODE_VISIBLE
 
 	_set_arrow(_resume)
 	_resume.grab_focus()
@@ -208,13 +210,20 @@ func resume_pause() -> void:
 
 	var player := get_parent().get_node_or_null("Character")
 	if player == null:
-		# 2D 黑屏等没有角色的场景：保持鼠标释放
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		# 2D 黑屏等没有角色的场景：有软件鼠标就继续藏系统光标
+		Input.mouse_mode = Input.MOUSE_MODE_HIDDEN if _uses_software_cursor() \
+			else Input.MOUSE_MODE_VISIBLE
 		return
 
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if player.has_method("_capture_mouse"):
 		player._capture_mouse()
+
+
+## 父场景声明了自己在画软件鼠标（screen_void）
+func _uses_software_cursor() -> bool:
+	var parent := get_parent()
+	return parent != null and bool(parent.get("uses_software_cursor"))
 
 
 func _resume_pressed() -> void:

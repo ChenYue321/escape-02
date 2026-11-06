@@ -13,6 +13,7 @@ const GAME_SCENE := "res://Scenes/main.tscn"
 ## 和凳子的起身提示一致：底部字幕，显示 5 秒
 const HINT_TEXT := "Hold [shift] to leave the computer"
 const HINT_SECONDS := 5.0
+const CURSOR_SCRIPT := preload("res://script/pixel_cursor.gd")
 
 ## 入场是否结束：结束之前按 Shift 不生效
 var _settled: bool = false
@@ -20,16 +21,18 @@ var _returning: bool = false
 var _hold: float = 0.0
 ## 用来作废已经过期的 5 秒计时
 var _hint_token: int = 0
-## 自定义像素鼠标贴图（需要一直持有引用）
+## 黑屏用软件鼠标：macOS 上系统自定义光标要鼠标移出窗口才刷新，不能依赖
+## （PauseMenu 会读这个标记，暂停时不要把系统光标放出来）
+var uses_software_cursor: bool = true
 var _cursor_texture: ImageTexture
+var _cursor_layer: CanvasLayer
 
 @onready var _crt: ColorRect = $CRT
 @onready var _subtitle: Label = $Subtitle
 
 
 func _ready() -> void:
-	# 黑屏里没有准星和 3D 视角，把鼠标还给玩家
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	# 黑屏里没有准星和 3D 视角；先建软件鼠标，它会把系统光标藏起来
 	_install_pixel_cursor()
 
 	var black := $Black as ColorRect
@@ -83,8 +86,8 @@ func _install_pixel_cursor() -> void:
 
 	# 参考图片的轮廓：左竖边、上扬的上边、右尖、底部凹口
 	var poly := [
-		Vector2(2, 1), Vector2(14, 8), Vector2(8, 9),
-		Vector2(7, 11), Vector2(2, 15),
+		Vector2(1, 0), Vector2(15, 7), Vector2(9, 8),
+		Vector2(7, 11), Vector2(1, 15),
 	]
 
 	var inside: Array = []
@@ -107,7 +110,10 @@ func _install_pixel_cursor() -> void:
 
 	img.resize(GRID * SCALE, GRID * SCALE, Image.INTERPOLATE_NEAREST)
 	_cursor_texture = ImageTexture.create_from_image(img)
-	Input.set_custom_mouse_cursor(_cursor_texture, Input.CURSOR_ARROW, Vector2(14 * SCALE - 1, 8 * SCALE))
+	_cursor_layer = CURSOR_SCRIPT.new() as CanvasLayer
+	_cursor_layer.call("setup", _cursor_texture, Vector2(15 * SCALE - 2, 7 * SCALE))
+	add_child(_cursor_layer)
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
 
 func _point_in_polygon(p: Vector2, poly: Array) -> bool:
@@ -124,8 +130,11 @@ func _point_in_polygon(p: Vector2, poly: Array) -> bool:
 
 
 func _exit_tree() -> void:
-	# 离开黑屏 / 回标题时恢复系统默认鼠标
-	Input.set_custom_mouse_cursor(null)
+	# 离开黑屏 / 回标题时恢复系统光标；如果是 Shift 返回，主场景会自己接管
+	if _cursor_layer != null:
+		_cursor_layer.visible = false
+	if not _returning:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _process(delta: float) -> void:
@@ -147,7 +156,9 @@ func _return_to_room() -> void:
 		return
 	_returning = true
 	_hide_hint()
-	# 开始倒放就先收起光标，别让它压在雪花的转场上
+	# 开始倒放就先收起软件鼠标，别让它压在雪花的转场上
+	if _cursor_layer != null:
+		_cursor_layer.visible = false
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
 	# 倒放期间不允许暂停
