@@ -1,12 +1,16 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://script/screen_void.gd" id="1_void"]
 [ext_resource type="Shader" path="res://shaders/snow_2d.gdshader" id="2_snow"]
 [ext_resource type="AudioStream" path="res://audio/sfx/tv_static.wav" id="3_static"]
 [ext_resource type="PackedScene" path="res://Scenes/pause_menu.tscn" id="4_pause"]
+[ext_resource type="Shader" path="res://shaders/void_crt.gdshader" id="5_crt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_snow"]
 shader = ExtResource("2_snow")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_void_crt"]
+shader = ExtResource("5_crt")
 
 [node name="ScreenVoid" type="Control"]
 layout_mode = 3
@@ -37,6 +41,46 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
+
+[node name="CRT" type="ColorRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+material = SubResource("ShaderMaterial_void_crt")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Terminal" type="HBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.10
+anchor_top = 0.14
+anchor_right = 0.10
+anchor_bottom = 0.14
+offset_right = 420.0
+offset_bottom = 60.0
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Prompt" type="Label" parent="Terminal"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.62, 0.93, 0.7, 0.92)
+theme_override_colors/font_outline_color = Color(0.4, 0.9, 0.5, 0.18)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 34
+vertical_alignment = 1
+
+[node name="Cursor" type="ColorRect" parent="Terminal"]
+custom_minimum_size = Vector2(14, 34)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+color = Color(0.62, 0.93, 0.7, 0.92)
 
 [node name="Subtitle" type="Label" parent="."]
 custom_minimum_size = Vector2(600, 0)
