@@ -94,7 +94,7 @@ func _install_pixel_cursor() -> void:
 		".#***###............",
 		".#******###.........",
 		".#*********###......",
-		".#***********####...",
+		".#**************#...",
 		".#*****######.......",
 		".#****#.............",
 		".#**##..............",
@@ -121,7 +121,7 @@ func _install_pixel_cursor() -> void:
 	img.resize(20 * SCALE, 20 * SCALE, Image.INTERPOLATE_NEAREST)
 	_cursor_texture = ImageTexture.create_from_image(img)
 	_cursor_layer = CURSOR_SCRIPT.new() as CanvasLayer
-	_cursor_layer.call("setup", _cursor_texture, Vector2(13 * SCALE, 10 * SCALE))
+	_cursor_layer.call("setup", _cursor_texture, Vector2(15 * SCALE, 9 * SCALE))
 	add_child(_cursor_layer)
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
