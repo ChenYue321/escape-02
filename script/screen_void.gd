@@ -1,7 +1,7 @@
 extends Control
 
-## 被屏幕吞进去之后的 2D 场景：雪花先退成黑色，再"通电"成一台老 CRT。
-## 屏幕上没有可操作内容，只有扫描线、边框和电源灯；按住 Shift 倒放回房间。
+## 被屏幕吞进去之后的 2D 场景：雪花先退成黑色，再"通电"成一块全屏 CRT。
+## 屏幕上没有可操作内容，只有扫描线和暗角；按住 Shift 倒放回房间。
 
 const NOISE_FADE := 1.0
 const SNOW_TO_BLACK := 0.45
@@ -20,6 +20,8 @@ var _returning: bool = false
 var _hold: float = 0.0
 ## 用来作废已经过期的 5 秒计时
 var _hint_token: int = 0
+## 自定义像素鼠标贴图（需要一直持有引用）
+var _cursor_texture: ImageTexture
 
 @onready var _crt: ColorRect = $CRT
 @onready var _subtitle: Label = $Subtitle
@@ -28,6 +30,7 @@ var _hint_token: int = 0
 func _ready() -> void:
 	# 黑屏里没有准星和 3D 视角，把鼠标还给玩家
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_install_pixel_cursor()
 
 	var black := $Black as ColorRect
 	var noise := $Static as AudioStreamPlayer
@@ -71,6 +74,60 @@ func _hide_hint() -> void:
 	_subtitle.visible = false
 
 
+## 黑屏里的鼠标：绿色、粗像素方块、向右的箭头，热点在箭头尖端。
+func _install_pixel_cursor() -> void:
+	const GRID := 16
+	const SCALE := 3
+	const OUTLINE := Color(0.01, 0.08, 0.02, 1.0)
+	const FILL := Color(0.35, 1.0, 0.45, 1.0)
+
+	# 参考图片的轮廓：左竖边、上扬的上边、右尖、底部凹口
+	var poly := [
+		Vector2(2, 1), Vector2(14, 8), Vector2(8, 9),
+		Vector2(7, 11), Vector2(2, 15),
+	]
+
+	var inside: Array = []
+	for y in GRID:
+		var row: Array = []
+		for x in GRID:
+			row.append(_point_in_polygon(Vector2(x + 0.5, y + 0.5), poly))
+		inside.append(row)
+
+	var img := Image.create(GRID, GRID, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	for y in GRID:
+		for x in GRID:
+			if not inside[y][x]:
+				continue
+			var edge: bool = x == 0 or x == GRID - 1 or y == 0 or y == GRID - 1 \
+				or not inside[y - 1][x] or not inside[y + 1][x] \
+				or not inside[y][x - 1] or not inside[y][x + 1]
+			img.set_pixel(x, y, OUTLINE if edge else FILL)
+
+	img.resize(GRID * SCALE, GRID * SCALE, Image.INTERPOLATE_NEAREST)
+	_cursor_texture = ImageTexture.create_from_image(img)
+	Input.set_custom_mouse_cursor(_cursor_texture, Input.CURSOR_ARROW, Vector2(14 * SCALE - 1, 8 * SCALE))
+
+
+func _point_in_polygon(p: Vector2, poly: Array) -> bool:
+	var inside := false
+	var j := poly.size() - 1
+	for i in poly.size():
+		var a: Vector2 = poly[i]
+		var b: Vector2 = poly[j]
+		if ((a.y > p.y) != (b.y > p.y)) \
+			and (p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x):
+			inside = not inside
+		j = i
+	return inside
+
+
+func _exit_tree() -> void:
+	# 离开黑屏 / 回标题时恢复系统默认鼠标
+	Input.set_custom_mouse_cursor(null)
+
+
 func _process(delta: float) -> void:
 	if not _settled or _returning:
 		return
@@ -90,6 +147,8 @@ func _return_to_room() -> void:
 		return
 	_returning = true
 	_hide_hint()
+	# 开始倒放就先收起光标，别让它压在雪花的转场上
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
 	# 倒放期间不允许暂停
 	var pause := get_node_or_null("PauseMenu")
