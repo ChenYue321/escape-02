@@ -54,6 +54,8 @@ const PAGES := [
 			{"kind": "toggle", "label": "INVERT Y", "prop": "invert_y"},
 			{"kind": "option", "label": "CROUCH", "prop": "crouch_toggle", "options": [false, true],
 				"labels": ["HOLD", "TOGGLE"]},
+			{"kind": "option", "label": "CROSSHAIR", "prop": "crosshair_style", "options": [0, 1, 2],
+				"labels": ["FOCUS", "DOT", "CROSS"]},
 			{"kind": "link", "label": "KEY BINDING", "page": "keys"},
 		],
 	},

@@ -70,13 +70,18 @@ func interact(_user: Node3D) -> void:
 
 	_open = true
 	_busy = false
-	# 门开着就不再作为交互目标，准星移过去也不会闪提示
+	# 门开着就不再作为交互目标，视线移过去也不会闪提示
 	collision_layer = 0
 
 
 ## 存档用：门是不是开着
 func is_open() -> bool:
 	return _open
+
+
+## 提示文字里的动词（HUD 拼成 [E] Open）
+func interact_prompt() -> String:
+	return "Open"
 
 
 ## 读档用：直接把门摆到开/关状态，不播动画、不发声

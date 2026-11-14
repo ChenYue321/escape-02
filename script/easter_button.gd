@@ -29,7 +29,6 @@ func interact(user: Node3D) -> void:
 	if _pressed:
 		return
 	_pressed = true
-
 	_play_sound()
 
 	if _moving != null:
@@ -42,6 +41,11 @@ func interact(user: Node3D) -> void:
 
 	if user != null and user.has_method("leave_easter_egg"):
 		user.leave_easter_egg()
+
+
+## 提示文字里的动词（HUD 拼成 [E] Press）
+func interact_prompt() -> String:
+	return "Press"
 
 
 func _play_sound() -> void:

@@ -567,15 +567,9 @@ mouse_filter = 2
 
 [node name="Crosshair" type="Control" parent="HUD/UIRoot" unique_id=1914745854]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("11_crosshair")
@@ -598,23 +592,17 @@ vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="Prompt" type="Label" parent="HUD/UIRoot" unique_id=1349683114]
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -40.0
-offset_top = 26.0
-offset_right = 40.0
-offset_bottom = 46.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 220.0
+offset_bottom = 18.0
 theme_override_colors/font_color = Color(1, 0.85, 0.45, 0.95)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.6)
 theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 14
 text = "[E]"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Character" type="CharacterBody3D" parent="." unique_id=1321363321]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3.6)
@@ -632,10 +620,6 @@ shape = SubResource("CapsuleShape3D_body")
 
 [node name="Camera3D" type="Camera3D" parent="Character" unique_id=1550534383]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5999999, 0)
-
-[node name="InteractRay" type="RayCast3D" parent="Character/Camera3D" unique_id=680330884]
-target_position = Vector3(0, 0, -2.5)
-collision_mask = 3
 
 [node name="ScreenTrance" type="Node" parent="Character"]
 script = ExtResource("34_trance")
@@ -1304,7 +1288,6 @@ script = ExtResource("32_world_state")
 
 [node name="PauseMenu" parent="." unique_id=907900229 instance=ExtResource("31_pause")]
 
-[connection signal="focus_changed" from="Character" to="HUD" method="_on_focus_changed"]
 [connection signal="prompt_text_changed" from="Character" to="HUD" method="_on_prompt_text_changed"]
 [connection signal="respawned" from="Character" to="Room/Door/DoorPivot/HandleHit" method="reset_door"]
 [connection signal="subtitle_changed" from="Character" to="HUD" method="_on_subtitle_changed"]

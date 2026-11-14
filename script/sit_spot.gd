@@ -1,6 +1,6 @@
 extends StaticBody3D
 
-## 凳子：准星指到它按 E 坐下。
+## 凳子：视线落到它上面按 E 坐下。
 ## 真正的"坐下"由 player.gd 的 sit_down() 完成，这里只负责把座位信息传过去。
 
 ## 坐下后相机相对凳子原点的高度（米）。
@@ -11,3 +11,8 @@ extends StaticBody3D
 func interact(user: Node3D) -> void:
 	if user.has_method("sit_down"):
 		user.sit_down(self, seat_eye_height)
+
+
+## 提示文字里的动词（HUD 拼成 [E] Sit down）
+func interact_prompt() -> String:
+	return "Sit down"

@@ -46,17 +46,17 @@
   - `SETTING` 是**整页切换**（不是弹出小窗），里面是一组入口：`AUDIO` / `DISPLAY` / `CONTROLS` / `ACCESSIBILITY` / `KEY BINDING` / `BACK`；页面切换时交叉淡入 0.18 秒。这些页的行全部由 `menu.gd` 顶部的 `PAGES` 表驱动生成，加一项设置只要往表里加一行
   - **AUDIO**：`MASTER` / `VOICE` / `SFX` / `AMBIENCE` 四条滑条。后三条总线在运行时由 `Settings` 创建（`AudioServer.add_bus`），旁白走 Voice、开关和门走 SFX、雪花底噪走 Ambience
   - **DISPLAY**：`BRIGHTNESS`（相机曝光 0.6~1.8，菜单背景会实时预览）、`FOV`（65~100）、`3D QUALITY`（PERFORMANCE / BALANCED / SHARP）、`MAX FPS`（UNLIMITED / 30 / 60 / 120 / 144 循环）、`V-SYNC`、`FULLSCREEN`
-  - **CONTROLS**：`SENSITIVITY`、`INVERT Y`、`CROUCH`（HOLD / TOGGLE）、以及通往 `KEY BINDING` 的入口
+  - **CONTROLS**：`SENSITIVITY`、`INVERT Y`、`CROUCH`（HOLD / TOGGLE）、`CROSSHAIR`（FOCUS / DOT / CROSS）、以及通往 `KEY BINDING` 的入口
   - **ACCESSIBILITY**：`REDUCE FLICKER`（把 CRT 闪烁最低亮度抬到 75% 并禁用连闪，对光敏人群更安全）、`SUBTITLE BG`（字幕底衬不透明度，0 = 不加底）
   - `KEY BINDING`：`MOVE FORWARD / BACK / LEFT / RIGHT / JUMP / INTERACT / CROUCH` 七个动作各占一行，点当前按键开始监听，按下新键立刻生效并落盘；监听时按 Esc 撤销。用的是**物理键码**（`physical_keycode`），换键盘布局不会错位。底部有 `RESTORE DEFAULTS`，把所有动作还原成 `project.godot` 里的原始键位（默认值在 `Settings` 启动时快照下来）
-  - 所有设置即时生效并写进 `user://settings.cfg`；相机 FOV / 曝光 / 反转 Y / 蹲下方式在进入游戏时由 `player.gd` 读取，字幕底衬由 `hud.gd` 读取
+  - 所有设置即时生效并写进 `user://settings.cfg`；相机 FOV / 曝光 / 反转 Y / 蹲下方式在进入游戏时由 `player.gd` 读取，字幕底衬和 `CROSSHAIR` 样式由 `hud.gd` 读取
   - 相机取景由 `menu.gd` 的导出参数控制：`camera_position` / `camera_target` / `camera_fov`
 - **暂停菜单**：游戏里按 `Esc` 打开 `PauseMenu`（`CanvasLayer`，layer 100），`RESUME / SETTING / EXIT`，背后压一层半透明灰罩；`SETTING` 直接复用主菜单的设置页（`settings_only` 模式，不建 3D 背景）。推镜过场期间暂停被临时禁用，到了 2D 黑屏里恢复可用
 - **单存档**：暂停菜单的 `EXIT` 把玩家位姿、两盏灯和门的状态写进 `user://save.cfg`，然后回标题页；标题页检测到存档才生成 `CONTINUE`，按下读回。游戏里直接关窗口（`Cmd+Q` / 红叉）也会先落一份档。没有多存档槽，`START` 会清掉旧档
   - 进入屏幕过场前也会先存一次，所以从黑屏退出再 `CONTINUE`，会回到坐下之前的房间
   - 黑屏场景里没有 `Character`，那里的 `EXIT` 不会覆盖存档，保留的就是进入过场前的那一份
 - **VHS 覆盖层**：`HUD/VHS` 是一个常驻的全屏 CanvasItem 着色器（`shaders/vhs.gdshader`）——轻微扫描线、色差、抖动、跟踪带、暗角和鱼眼；平时很淡，屏幕过场时由 `screen_trance.gd` 把参数推到满
-- **屏幕过场**：坐上凳子、准星对准显示器屏幕并保持 **3 秒**——前 3 秒只有 VHS glitch 逐渐增强，相机不推进（视角仍然自由，移开就会中断）；中途移开视线或起身，glitch 会在 0.25 秒内退回去。满 3 秒后 glitch 拉满，相机在 2.8 秒内推到屏幕前 0.1 m，然后切到 `Scenes/screen_void.tscn`
+- **屏幕过场**：坐上凳子、把视线停在显示器屏幕上并保持 **3 秒**——前 3 秒只有 VHS glitch 逐渐增强，相机不推进（视角仍然自由，移开就会中断）；中途移开视线或起身，glitch 会在 0.25 秒内退回去。满 3 秒后 glitch 拉满，相机在 2.8 秒内推到屏幕前 0.1 m，然后切到 `Scenes/screen_void.tscn`
 - **2D 黑屏**：`screen_void.tscn` 一开始是与屏幕一致的雪花噪点；雪花先退成黑色，再"通电"成一块全屏的老 CRT：整屏的绿色荧光屏、扫描线、暗角和轻微球面弯曲，没有边框、指示灯或屏幕上的文字。屏幕上没有命令行或可操作内容，只是纯画面。屏幕里鼠标会释放，底部会像旁白一样显示 5 秒 `Hold [shift] to leave the computer`，暂停菜单仍然可用。按住 `Shift` 会倒放整个过程：CRT 断电、黑幕退掉、雪花和底噪回来 → 切回 3D、相机从屏幕前退回坐姿 → 人站起来（回到坐下前的位置），避免又被吸回去。黑屏之后的新内容还没做
 - **彩蛋房间**：第二次坠落时玩家会被送进 `Scenes/escape01_room.tscn`。房间实例化在 `(2000, 0, 0)` 的独立空间里，不与主场景重叠；原场景的 18 个网格各有凸包碰撞体，展台和按钮另有自己的碰撞
   - **睁眼之后**才开始播放 `audio/voice/easter_01.mp3`（旁白吐槽这个房间），**说完之后**房间中央才升起展台：金色底座 + 黑漆柱 + 发光红环 + 红色亮面按钮
@@ -74,9 +74,10 @@
   - **会不定时抽一下**：`Desk/Computer/Monitor` 挂 `crt_flicker.gd`，只驱动屏幕着色器的 `brightness`（不照亮周围）。脚本里还留了可选的 `light_path`，指一盏灯就能连它一起闪
 - **台灯**：灯罩、支架、底座 + `SpotLight3D`
 - **第一人称控制器**：`Character`（`CharacterBody3D`）+ 胶囊碰撞体 + `script/player.gd`，相机位于 1.6 m 眼高
-- **凳子**：`Stool`（紧贴桌前，凳沿与桌沿相距 10 cm，人挤不过去）——凳面用桌面木纹材质、凳腿用桌腿材质，无靠背；按 `E` 平滑坐下，坐着时只能转视角（仍可对别的东西按 `E`），按 `Shift` 平滑起身；坐下后把准星对准屏幕并保持 3 秒会触发屏幕过场
-- **准星**：`HUD/UIRoot/Crosshair`（`CanvasLayer` + 自绘 `Control`），屏幕正中的圆点与四段短线，指到可交互物体时变金色并张开
-- **交互**：`Camera3D/InteractRay`（`RayCast3D`，2.5 m）命中带 `interact()` 方法的碰撞体后弹出 `[E]` 提示
+- **凳子**：`Stool`（紧贴桌前，凳沿与桌沿相距 10 cm，人挤不过去）——凳面用桌面木纹材质、凳腿用桌腿材质，无靠背；按 `E` 平滑坐下，坐着时只能转视角（仍可对别的东西按 `E`），按 `Shift` 平滑起身；坐下后把视线停在屏幕上并保持 3 秒会触发屏幕过场
+- **交互焦点**：`HUD/UIRoot/Crosshair`（`CanvasLayer` + 自绘 `Control`），默认 `FOCUS` 档**平时完全不显示**；视线落到可交互物上时，标记才在物体表面浮出（小圆点 + 细环，带淡入和跟随），提示文字贴在标记旁边
+- **交互瞄准**：以视线中心为轴、默认 ±2.2° 的小圆锥（5×5 采样、2.5 m），取最靠近中心的可交互物，并带 0.15 秒粘滞；不用把中心精确压在把手上，稍微偏一点也能选中。参数在 `Character` 节点 Inspector 的「交互瞄准」分组
+- **交互**：焦点物体按 `E` 触发；提示会显示当前绑定的键和物体自己的动词（`[E] Open` / `[E] Turn on` / `[E] Sit down`）
   - 吊灯：按门边墙上的按钮 `Room/Wall1 Right/Top Light Switch`（开局**默认亮着**）
   - 台灯：直接对着台灯按 `E`（开局**默认熄灭**）
   - 灯的默认状态直接由场景里 `SpotLight3D` 的 `visible` 决定，开关在 `_ready()` 时按它同步自发光灯片和按键位置
@@ -98,19 +99,26 @@
 | 移动鼠标 | 转动视角（左右转身体，上下只转相机，俯仰限制 ±89°） |
 | `ESC` | 打开/关闭暂停菜单（`RESUME / SETTING / EXIT`）；转场黑幕期间只释放鼠标 |
 | 鼠标左键 | 在游戏里重新捕获鼠标 |
-| `E` | 与准星指着的物体交互（门把手、门边的电灯按钮、台灯本身、凳子） |
-| 坐着并对准屏幕 3 秒 | 触发屏幕过场：glitch → 相机推近 → 2D 黑屏 |
+| `E` | 与视线焦点的物体交互（门把手、门边的电灯按钮、台灯本身、凳子） |
+| 坐着并把视线停在屏幕上 3 秒 | 触发屏幕过场：glitch → 相机推近 → 2D 黑屏 |
 | 黑屏里按住 `Shift` | 倒放回房间：雪花回来 → 相机退出屏幕 → 起身 |
 
-准星位于屏幕正中，形状由 `script/crosshair.gd` 的导出参数控制（点半径、四段短线长度、颜色），改完在 Inspector 里立即生效。
+默认没有常驻准星：平时屏幕上只有场景，视线落到可交互物上时才会在物体表面浮出焦点标记和 `[E] 动词` 提示。标记的形状、淡入淡出和跟随手感由 `script/crosshair.gd` 的导出参数控制；瞄准容差、粘滞时间和判定距离在 `Character` 节点的「交互瞄准」分组里。
+
+`SETTING → CONTROLS → CROSSHAIR` 有三档，切换即时生效：
+
+- `FOCUS`（默认）：没有中心准星，只在物体上出标记
+- `DOT`：FOCUS + 没有焦点时在屏幕中心留一个小而清晰的白点，并轻微呼吸（给需要中心参考点、但不想要十字的玩家；呼吸是为了不被误认成屏幕上的灰）
+- `CROSS`：原来的十字准星——固定在屏幕中心，指到可交互物时变金色并张开，提示回到屏幕正下方
 
 ### 给新物体加交互
 
-不需要继承任何基类：只要一个 `CollisionObject3D` 实现了 `interact(user)` 方法，就会被射线识别。
+不需要继承任何基类：只要一个 `CollisionObject3D` 实现了 `interact(user)` 方法，就会被视线锥识别。
 
-1. 在目标物体旁建一个 `StaticBody3D`，加 `CollisionShape3D`，碰撞层设为 **2（interactable）**、mask 设为 0 —— 玩家撞不到它，但射线看得到
+1. 在目标物体旁建一个 `StaticBody3D`，加 `CollisionShape3D`，碰撞层设为 **2（interactable）**、mask 设为 0 —— 玩家撞不到它，但视线锥看得到
 2. 挂一个脚本，实现 `func interact(user: Node3D) -> void:`
-3. 提示文字目前固定为 `[E]`，由 `player.gd` 的 `_update_focus()` 通过 `prompt_text_changed` 信号发出；要定制就从那里改
+3. 想给提示加动词，再实现 `func interact_prompt() -> String:`（例如 `"Open"`），HUD 会拼成 `[E] Open`；按键文字自动取设置里实际绑定的键，不写死 `E`
+4. 焦点标记的位置和提示文字由 `player.gd` 的 `_update_focus()` 发出，视觉在 `crosshair.gd` 和 `hud.gd` 里调
 
 
 按键映射定义在项目设置的 `input/` 段，可在 `项目 → 项目设置 → 输入映射` 中改键或加重绑定（比如手柄）。
@@ -128,9 +136,9 @@ escape-02/
 │   ├── screen_void.tscn   # 屏幕过场之后的 CRT 终端
 │   └── escape01_room.tscn # 彩蛋房间（由 escape-01 导入，已补 18 个碰撞体）
 ├── script/
-│   ├── player.gd          # 第一人称控制器：移动、跳跃、蹲/坐、坠落、交互射线
-│   ├── hud.gd             # HUD：准星高亮、[E] 提示、字幕
-│   ├── crosshair.gd       # 屏幕准星：用 _draw() 画的圆点与短线
+│   ├── player.gd          # 第一人称控制器：移动、跳跃、蹲/坐、坠落、视线锥交互
+│   ├── hud.gd             # HUD：交互反馈、[E] 提示、字幕
+│   ├── crosshair.gd       # 交互反馈：FOCUS/DOT 的焦点标记 + 原来的 CROSS 准星
 │   ├── lamp_switch.gd     # 开关灯：SpotLight3D、自发光灯片、按键缩进、音效
 │   ├── door.gd            # 门把手交互：先转把手，再推开门
 │   ├── sit_spot.gd        # 凳子：按 E 坐下

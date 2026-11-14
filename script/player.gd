@@ -48,7 +48,21 @@ extends CharacterBody3D
 ## 俯仰角上限，度。防止视角翻过头顶
 @export var pitch_limit: float = 89.0
 
-## 准星指到可交互物体时发出，target 为 null 表示失去目标
+@export_group("交互瞄准")
+## 允许的瞄准偏差（度）。以视线中心为轴，在这个圆锥里找可交互物，
+## 所以不用把中心精确压在门把手上；设成 0 就退化成一条细射线。
+@export_range(0.0, 8.0, 0.1) var aim_assist_degrees: float = 2.2
+## 锥形内的采样密度：5 = 5×5 个方向，越密越不容易漏掉细小的开关。
+## 必须是奇数，保证正中有一条射线。
+@export_range(1, 9, 2) var aim_sample_steps: int = 5
+## 已经锁定的目标比新目标近多少度以内时保持不变，避免两个相邻物体来回跳
+@export_range(0.0, 3.0, 0.1) var aim_hysteresis_degrees: float = 0.5
+## 目标离开中心后还能保持焦点的秒数，避免手一抖提示就闪掉
+@export_range(0.0, 1.0, 0.01) var focus_grace: float = 0.15
+## 交互判定距离（米）
+@export var interact_distance: float = 2.5
+
+## 视线焦点变化时发出，target 为 null 表示失去目标
 signal focus_changed(target: Node)
 
 ## 掉出世界（门外没有地面）时发出，方便以后接旁白、字幕或成就
@@ -64,13 +78,16 @@ signal subtitle_changed(text: String)
 signal prompt_text_changed(text: String)
 
 @onready var _camera: Camera3D = $Camera3D
-@onready var _interact_ray: RayCast3D = $Camera3D/InteractRay
 @onready var _collision: CollisionShape3D = $CollisionShape3D
 ## 全屏转场（autoload），开场睁眼期间要锁住视角
 @onready var _screen_fade: CanvasLayer = get_node_or_null("/root/ScreenFade")
 
-## 当前准星指着的可交互物体（实现 interact() 方法的碰撞体）
+## 当前视线焦点的可交互物体（实现 interact() 方法的碰撞体）
 var _focus: Node = null
+## 焦点落在物体表面上的世界坐标：HUD 用它把标记和提示贴到物体上
+var _focus_point: Vector3 = Vector3.ZERO
+## 还有多久彻底丢掉焦点（秒）。离开中心后留一点缓冲，防止提示抖动
+var _focus_grace_left: float = 0.0
 
 ## 出生点与出生朝向，掉出世界时用来复位
 var _spawn_position: Vector3
@@ -353,45 +370,162 @@ func _apply_look(motion: InputEventMouseMotion) -> void:
 	_camera.rotation.x = clampf(pitch, -deg_to_rad(pitch_limit), deg_to_rad(pitch_limit))
 
 
-## 每帧检查交互射线打到了什么。
+## 每帧在视线中心一小片圆锥里找可交互物。
 ## 用"有没有 interact() 方法"来判断能否交互（鸭子类型），
 ## 这样任何碰撞体只要实现一个 interact(user) 就能被使用，不必继承特定基类。
+##
+## 以前是一条细射线，必须把屏幕中心精确压在门把手上；现在改成在 ±aim_assist_degrees
+## 的锥形里撒一小片射线，取最靠近视线中心的那一个——玩家只要"看向"物体就够了。
 func _update_focus() -> void:
+	_focus_grace_left = maxf(0.0, _focus_grace_left - get_physics_process_delta_time())
+
+	var hit := _aim_at_interactable()
 	var target: Node = null
-	if _interact_ray.is_colliding():
-		var collider = _interact_ray.get_collider()
-		if collider != null and is_instance_valid(collider) and collider.has_method("interact"):
-			target = collider
+	var point := Vector3.ZERO
+
+	if not hit.is_empty():
+		target = hit["collider"] as Node
+		point = hit["position"] as Vector3
+		_focus_grace_left = focus_grace
+	elif _focus != null and is_instance_valid(_focus) and _focus_grace_left > 0.0:
+		# 宽限期：目标离开中心一点点时先不放手，但转得太多就立刻丢
+		var to_target := _focus_point - _camera.global_position
+		var keep_cone := deg_to_rad(maxf(aim_assist_degrees * 1.5, 1.0))
+		if to_target.length() <= interact_distance * 1.4 \
+				and to_target.normalized().dot(-_camera.global_transform.basis.z) >= cos(keep_cone):
+			target = _focus
+			point = _focus_point
 
 	# 被指着的物体可能已经在别的场景/房间里被 free 了。
 	# 这种"已释放"的引用和 null 比较会变成相等，单靠 target != _focus 判断不出来。
 	var focus_invalid := typeof(_focus) == TYPE_OBJECT and not is_instance_valid(_focus)
 	if focus_invalid:
 		_focus = null
+	var focus_changed_now := focus_invalid
 	if target != _focus:
 		_focus = target
+		_focus_point = point
+		focus_changed_now = true
+	elif target != null:
+		# 同一个物体：命中点会随视角变化，跟着更新，标记才能贴住把手
+		_focus_point = point
+	if focus_changed_now:
 		focus_changed.emit(_focus)
-	elif focus_invalid:
-		focus_changed.emit(null)
 
-	# 提示文字：对着可交互物体显示 [E]，其余收起。
-	# 坐着时的"如何起身"改用字幕提示，不再占用准星旁边的位置
-	var prompt := ""
-	# 坐着时对着自己屁股底下的凳子不该再提示 [E]（按了也没用）
-	if _focus != null and _focus != _seat:
-		prompt = "[E]"
+	# 提示文字：可交互物自己可以给一个动词（[E] Open），没给就只显示按键。
+	# 坐着时不再把自己的凳子当目标，所以这里不用再特判 _seat。
+	var prompt := _prompt_for(_focus)
 	if prompt != _prompt_text:
 		_prompt_text = prompt
 		prompt_text_changed.emit(_prompt_text)
 
 
-## 传送/切房间之前主动清掉焦点，别让 HUD 留着上一个房间的高亮
+## 在视线锥里采样，返回离中心最近的可交互命中；没命中返回空字典。
+## 每个方向只取最近的碰撞体，所以墙照样能挡住后面的东西。
+func _aim_at_interactable() -> Dictionary:
+	var space := get_world_3d().direct_space_state
+	if space == null:
+		return {}
+
+	var cam_xf := _camera.global_transform
+	var origin := cam_xf.origin
+	var max_tan := tan(deg_to_rad(aim_assist_degrees))
+	var steps := maxi(1, aim_sample_steps)
+	var half := float(steps - 1) * 0.5
+	var denom := maxf(half, 1.0)
+	# 墙体（层 1）和可交互物（层 2）一起查：靠前的墙会先被命中，形成遮挡
+	var exclude: Array[RID] = [get_rid()]
+	var query := PhysicsRayQueryParameters3D.create(origin, origin, 3, exclude)
+
+	var best: Dictionary = {}
+	var best_score := INF
+	# 已经锁着的目标单独记一份：它只要没比新目标远太多，就继续用它
+	var focus_hit: Dictionary = {}
+	var focus_score := INF
+
+	for iy in steps:
+		for ix in steps:
+			var u := ((float(ix) - half) / denom) * max_tan
+			var v := ((float(iy) - half) / denom) * max_tan
+			# 光线方向在相机局部空间里定义，z = -1 就是正前方
+			var dir := (cam_xf.basis * Vector3(u, v, -1.0)).normalized()
+			query.to = origin + dir * interact_distance
+			var hit: Dictionary = space.intersect_ray(query)
+			if hit.is_empty():
+				continue
+
+			var collider = hit.get("collider")
+			if collider == null or not is_instance_valid(collider):
+				continue
+			if not collider.has_method("interact"):
+				continue
+			# 坐着时对着自己的凳子按 E 没有意义，直接不当目标
+			if _seat != null and collider == _seat:
+				continue
+
+			# 角度先决，距离只用来在角度完全相同时分胜负
+			var hit_pos: Vector3 = hit["position"]
+			var score := Vector2(u, v).length() + origin.distance_to(hit_pos) * 0.0001
+			if score < best_score:
+				best_score = score
+				best = hit
+			if _focus != null and is_instance_valid(_focus) and collider == _focus and score < focus_score:
+				focus_score = score
+				focus_hit = hit
+
+	# 粘滞：当前目标只是稍微偏了一点就继续用它，避免提示在两个物体之间闪
+	if not focus_hit.is_empty() \
+			and focus_score <= best_score + tan(deg_to_rad(aim_hysteresis_degrees)):
+		return focus_hit
+	return best
+
+
+## 把焦点翻译成提示文字。可交互物可以实现 interact_prompt() 返回动词。
+func _prompt_for(target: Node) -> String:
+	if target == null:
+		return ""
+	var key := _interact_key_label()
+	if target.has_method("interact_prompt"):
+		var verb := str(target.call("interact_prompt")).strip_edges()
+		if not verb.is_empty():
+			return "[%s] %s" % [key, verb]
+	return "[%s]" % key
+
+
+## 提示里显示玩家当前绑定的交互键，而不是写死 E
+func _interact_key_label() -> String:
+	var settings := get_node_or_null("/root/Settings")
+	if settings != null and settings.has_method("keycode_for"):
+		var code := int(settings.call("keycode_for", "interact"))
+		if code != 0:
+			var text := OS.get_keycode_string(code)
+			if not text.is_empty():
+				return text
+	return "E"
+
+
+## 传送/切房间之前主动清掉焦点，别让 HUD 留着上一个房间的标记
 func _clear_focus() -> void:
+	_focus_grace_left = 0.0
+	_focus_point = Vector3.ZERO
 	if typeof(_focus) == TYPE_OBJECT:
 		_focus = null
 		focus_changed.emit(null)
 		_prompt_text = ""
 		prompt_text_changed.emit("")
+
+
+## HUD 用：当前有没有焦点，以及焦点该画在屏幕的哪里
+func has_interact_focus() -> bool:
+	return _focus != null and is_instance_valid(_focus)
+
+
+func get_focus_screen_point() -> Vector2:
+	if not has_interact_focus():
+		return Vector2(-9999.0, -9999.0)
+	if _camera.is_position_behind(_focus_point):
+		return Vector2(-9999.0, -9999.0)
+	return _camera.unproject_position(_focus_point)
 
 
 func _try_interact() -> void:

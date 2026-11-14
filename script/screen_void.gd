@@ -26,7 +26,7 @@ var _hint_token: int = 0
 
 
 func _ready() -> void:
-	# 黑屏里没有准星和 3D 视角，把鼠标还给玩家
+	# 黑屏里没有焦点标记和 3D 视角，把鼠标还给玩家
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 	var black := $Black as ColorRect

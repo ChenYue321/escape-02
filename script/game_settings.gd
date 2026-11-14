@@ -23,6 +23,8 @@ var mouse_scale: float = 1.0
 var invert_y: bool = false
 ## 蹲下：true = 按一下切换，false = 按住
 var crouch_toggle: bool = false
+## 准星样式：0 = FOCUS（默认，无中心准星）、1 = DOT（中心小点）、2 = CROSS（原来的十字准星）
+var crosshair_style: int = 0
 
 # --- 显示 ---
 ## 最大帧率（0 = 不限）；默认 60，避免高刷屏白烧一倍功耗
@@ -160,6 +162,7 @@ func load_settings() -> void:
 	mouse_scale = clampf(float(cfg.get_value("input", "mouse_scale", mouse_scale)), 0.1, 5.0)
 	invert_y = bool(cfg.get_value("input", "invert_y", invert_y))
 	crouch_toggle = bool(cfg.get_value("input", "crouch_toggle", crouch_toggle))
+	crosshair_style = clampi(int(cfg.get_value("hud", "crosshair_style", crosshair_style)), 0, 2)
 	var saved: Variant = cfg.get_value("input", "bindings", {})
 	if saved is Dictionary:
 		bindings = (saved as Dictionary).duplicate()
@@ -186,6 +189,7 @@ func save_settings() -> void:
 	cfg.set_value("input", "invert_y", invert_y)
 	cfg.set_value("input", "crouch_toggle", crouch_toggle)
 	cfg.set_value("input", "bindings", bindings)
+	cfg.set_value("hud", "crosshair_style", crosshair_style)
 
 	cfg.set_value("audio", "master", volume)
 	cfg.set_value("audio", "voice", voice)

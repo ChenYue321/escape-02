@@ -1,6 +1,6 @@
 extends StaticBody3D
 
-## 灯开关：准星指到它按 E，切换一组灯。
+## 灯开关：视线落到它上面按 E，切换一组灯。
 ##
 ## 一组灯 = 该节点（或 target）下面的一盏 SpotLight3D + 该组里所有自发光材质。
 ## 台灯和墙上的顶灯开关都用这个脚本，只是 target 不同：
@@ -110,6 +110,11 @@ func _apply() -> void:
 ## 存档用：开/关状态
 func is_on() -> bool:
 	return _on
+
+
+## 提示文字里的动词，跟着灯的状态变（[E] Turn on / Turn off）
+func interact_prompt() -> String:
+	return "Turn off" if _on else "Turn on"
 
 
 ## 读档用：直接设成某个状态，不播声音
