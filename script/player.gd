@@ -299,6 +299,16 @@ func _flash_subtitle(text: String, duration: float) -> void:
 		_set_subtitle("")
 
 
+## 给屏幕过场用：和起身提示同一套 HUD 字幕
+func flash_subtitle(text: String, duration: float) -> void:
+	_flash_subtitle(text, duration)
+
+
+## 清掉当前字幕（离开屏幕时用）
+func clear_subtitle() -> void:
+	_set_subtitle("")
+
+
 ## 坐到凳子上：平滑挪到座位、朝向跟着凳子，之后只允许转视角
 func sit_down(seat: Node3D, eye_height: float) -> void:
 	if _seated or _falling or _seat_busy:

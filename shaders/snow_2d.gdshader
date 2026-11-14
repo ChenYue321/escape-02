@@ -2,15 +2,18 @@ shader_type canvas_item;
 
 // 2D 雪花屏：和显示器上的 crt_static 同一套图案，供"被屏幕吞进去"的过场使用。
 
-uniform float brightness : hint_range(0.0, 2.0) = 0.85;
-uniform float grain : hint_range(20.0, 2000.0) = 150.0;
+uniform float brightness : hint_range(0.0, 2.0) = 0.86;
+uniform float grain : hint_range(20.0, 2000.0) = 560.0;
 uniform float speed : hint_range(1.0, 60.0) = 20.0;
 uniform float scanlines : hint_range(40.0, 600.0) = 240.0;
 uniform float scanline_strength : hint_range(0.0, 0.6) = 0.22;
 uniform float vignette : hint_range(0.0, 1.5) = 0.7;
 uniform float flicker : hint_range(0.0, 0.4) = 0.08;
 uniform float roll_speed : hint_range(0.0, 1.0) = 0.11;
-uniform vec3 tint : source_color = vec3(0.82, 0.88, 1.0);
+// 和 3D 显示器上的绿色荧光屏同一套颜色（GREEN PHOSPHOR）
+uniform vec3 tint : source_color = vec3(0.514, 0.851, 0.584);
+uniform vec3 base_color : source_color = vec3(0.0275, 0.0627, 0.0353);
+uniform vec3 highlight_color : source_color = vec3(0.765, 0.922, 0.796);
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -33,5 +36,9 @@ void fragment() {
 
 	float value = noise * scan * band * max(vig, 0.0) * fl * brightness;
 	value = max(value, 0.05);
-	COLOR = vec4(tint * value, 1.0);
+
+	// 暗部深绿、中段荧光绿、最亮颗粒略微发白，和 crt_static 保持一致
+	vec3 color = mix(base_color, tint, smoothstep(0.0, 0.5, value));
+	color = mix(color, highlight_color, smoothstep(0.6, 1.0, value) * 0.35);
+	COLOR = vec4(color, 1.0);
 }

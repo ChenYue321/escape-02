@@ -438,7 +438,7 @@ size = Vector3(0.0425, 0.355, 0.045)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_crt_static"]
 render_priority = 0
 shader = ExtResource("16_crt_static")
-shader_parameter/brightness = 0.5
+shader_parameter/brightness = 0.68
 shader_parameter/grain = 560.0
 shader_parameter/speed = 20.0
 shader_parameter/scanlines = 240.0
@@ -446,7 +446,9 @@ shader_parameter/scanline_strength = 0.22
 shader_parameter/vignette = 0.7
 shader_parameter/flicker = 0.08
 shader_parameter/roll_speed = 0.11
-shader_parameter/tint = Color(0.82, 0.88, 1, 1)
+shader_parameter/tint = Color(0.514, 0.851, 0.584, 1)
+shader_parameter/base_color = Color(0.0275, 0.0627, 0.0353, 1)
+shader_parameter/highlight_color = Color(0.765, 0.922, 0.796, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_crt_screen"]
 size = Vector3(0.31, 0.225, 0.012)
@@ -1069,6 +1071,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_ukihg")
 [node name="Monitor" type="Node3D" parent="Desk/Computer" unique_id=1787699531]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.097, -0.02)
 script = ExtResource("29_crt_flicker")
+base_brightness = 0.68
 
 [node name="Base" type="MeshInstance3D" parent="Desk/Computer/Monitor" unique_id=175331020]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, 0)
@@ -1132,7 +1135,7 @@ mesh = SubResource("BoxMesh_crt_knob")
 
 [node name="Monitor Light" type="OmniLight3D" parent="Desk/Computer/Monitor" unique_id=1484748390]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.219, 0.24)
-light_color = Color(0.72, 0.82, 1, 1)
+light_color = Color(0.271, 0.659, 0.353, 1)
 light_energy = 0.0
 light_size = 0.15
 omni_range = 1.6

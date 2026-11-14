@@ -1,123 +1,92 @@
 extends Control
 
-## 被屏幕吞进去之后的 2D 场景：雪花先退成黑色，再"通电"成一块全屏 CRT。
-## 屏幕上没有可操作内容，只有扫描线和暗角；按住 Shift 倒放回房间。
+## 2D 屏幕内容："贴近显示器"之后，它会被渲染进一个固定 1152×836 的 SubViewport，
+## 再贴到 3D 显示器屏幕上。没有场景切换，也没有全屏 2D 界面。
+##
+## 由 ScreenTrance 调 play_intro() / play_outro()；
+## 这里只负责雪花 → 黑 → CRT 通电；离开提示走 HUD 字幕。
+## 显示器持续的雪花噪音也绑在这里：雪花退掉时噪音一起退，雪花回来时一起回来。
 
-const NOISE_FADE := 1.0
 const SNOW_TO_BLACK := 0.45
 const CRT_ON := 0.55
 const CRT_OFF := 0.35
 const BLACK_TO_SNOW := 0.65
-const RETURN_HOLD := 0.35
-const GAME_SCENE := "res://Scenes/main.tscn"
-## 和凳子的起身提示一致：底部字幕，显示 5 秒
-const HINT_TEXT := "Hold [shift] to leave the computer"
-const HINT_SECONDS := 5.0
-
-## 入场是否结束：结束之前按 Shift 不生效
-var _settled: bool = false
-var _returning: bool = false
-var _hold: float = 0.0
-## 用来作废已经过期的 5 秒计时
-var _hint_token: int = 0
+const NOISE_MIN_DB := -60.0
 
 @onready var _crt: ColorRect = $CRT
-@onready var _subtitle: Label = $Subtitle
+@onready var _black: ColorRect = $Black
+
+var _noise: AudioStreamPlayer3D
+var _noise_db: float = -6.0
+
+
+## 由 ScreenTrance 把主场景显示器上的持续雪花声接进来
+func bind_static_noise(player: AudioStreamPlayer3D) -> void:
+	_noise = player
+	if _noise != null:
+		_noise_db = _noise.volume_db
 
 
 func _ready() -> void:
-	# 黑屏里没有焦点标记和 3D 视角，把鼠标还给玩家
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-
-	var black := $Black as ColorRect
-	var noise := $Static as AudioStreamPlayer
-	black.modulate.a = 0.0
+	_black.modulate.a = 0.0
 	_crt.modulate.a = 0.0
 
-	# 底噪和画面一起退掉
-	var audio_tween := create_tween()
-	audio_tween.tween_property(noise, "volume_db", -60.0, NOISE_FADE)
 
-	# 雪花 → 黑
+## 进入屏幕内容：雪花先退成黑色，再"通电"成 CRT
+func play_intro() -> void:
+	_black.modulate.a = 0.0
+	_crt.modulate.a = 0.0
+
+	# 雪花退成黑的同时，把显示器底噪一起淡出
+	if _noise != null:
+		_noise.volume_db = _noise_db
+		if not _noise.playing:
+			_noise.play()
+	_fade_noise_out(SNOW_TO_BLACK)
+
 	var t := create_tween()
-	t.tween_property(black, "modulate:a", 1.0, SNOW_TO_BLACK) \
+	t.tween_property(_black, "modulate:a", 1.0, SNOW_TO_BLACK) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await t.finished
+	if _noise != null:
+		_noise.stop()
 
-	# 黑 → CRT 通电
 	var on := create_tween()
 	on.tween_property(_crt, "modulate:a", 1.0, CRT_ON) \
 		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	await on.finished
 
-	noise.stop()
-	_settled = true
-	_show_hint()
 
-
-## 5 秒后自动收起的离开提示
-func _show_hint() -> void:
-	_hint_token += 1
-	var token := _hint_token
-	_subtitle.text = HINT_TEXT
-	_subtitle.visible = true
-	await get_tree().create_timer(HINT_SECONDS).timeout
-	if token == _hint_token:
-		_subtitle.visible = false
-
-
-func _hide_hint() -> void:
-	_hint_token += 1
-	_subtitle.visible = false
-
-
-func _process(delta: float) -> void:
-	if not _settled or _returning:
-		return
-
-	# 按住 Shift 一小会儿才返回，避免误触
-	if Input.is_action_pressed("crouch"):
-		_hold += delta
-		if _hold >= RETURN_HOLD:
-			_return_to_room()
-	else:
-		_hold = 0.0
-
-
-## 倒放：CRT 断电 → 黑幕退掉、雪花和底噪回来 → 切回主场景接着退镜头
-func _return_to_room() -> void:
-	if _returning:
-		return
-	_returning = true
-	_hide_hint()
-
-	# 倒放期间不允许暂停
-	var pause := get_node_or_null("PauseMenu")
-	if pause != null:
-		pause.process_mode = Node.PROCESS_MODE_DISABLED
-
-	var black := $Black as ColorRect
-	var noise := $Static as AudioStreamPlayer
-	noise.volume_db = -60.0
-	noise.play()
-
-	# CRT 断电，露出黑
+## 离开屏幕内容：CRT 断电，退回雪花
+func play_outro() -> void:
 	var off := create_tween()
 	off.tween_property(_crt, "modulate:a", 0.0, CRT_OFF) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	await off.finished
 
-	# 黑 → 雪花，底噪一起回来
-	var t := create_tween()
-	t.set_parallel(true)
-	t.tween_property(black, "modulate:a", 0.0, BLACK_TO_SNOW) \
-		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	t.tween_property(noise, "volume_db", -6.0, BLACK_TO_SNOW)
-	await t.finished
-	# 让雪花完整地露出来一下，再切回 3D
-	await get_tree().create_timer(0.2).timeout
+	# 雪花回来时，显示器底噪一起淡回来
+	_fade_noise_in(BLACK_TO_SNOW)
 
-	var save := get_node_or_null("/root/SaveGame")
-	if save != null:
-		save.request_return()
-	get_tree().change_scene_to_file(GAME_SCENE)
+	var t := create_tween()
+	t.tween_property(_black, "modulate:a", 0.0, BLACK_TO_SNOW) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await t.finished
+
+
+func _fade_noise_out(duration: float) -> void:
+	if _noise == null:
+		return
+	var t := create_tween()
+	t.tween_property(_noise, "volume_db", NOISE_MIN_DB, duration) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+func _fade_noise_in(duration: float) -> void:
+	if _noise == null:
+		return
+	_noise.volume_db = NOISE_MIN_DB
+	if not _noise.playing:
+		_noise.play()
+	var t := create_tween()
+	t.tween_property(_noise, "volume_db", _noise_db, duration) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)

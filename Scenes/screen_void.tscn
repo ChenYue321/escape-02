@@ -1,16 +1,19 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://script/screen_void.gd" id="1_void"]
 [ext_resource type="Shader" path="res://shaders/snow_2d.gdshader" id="2_snow"]
-[ext_resource type="AudioStream" path="res://audio/sfx/tv_static.wav" id="3_static"]
-[ext_resource type="PackedScene" path="res://Scenes/pause_menu.tscn" id="4_pause"]
-[ext_resource type="Shader" path="res://shaders/void_crt.gdshader" id="5_crt"]
+[ext_resource type="Shader" path="res://shaders/void_crt.gdshader" id="3_crt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_snow"]
 shader = ExtResource("2_snow")
+shader_parameter/brightness = 0.86
+shader_parameter/grain = 560.0
+shader_parameter/tint = Color(0.514, 0.851, 0.584, 1)
+shader_parameter/base_color = Color(0.0275, 0.0627, 0.0353, 1)
+shader_parameter/highlight_color = Color(0.765, 0.922, 0.796, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_void_crt"]
-shader = ExtResource("5_crt")
+shader = ExtResource("3_crt")
 
 [node name="ScreenVoid" type="Control"]
 layout_mode = 3
@@ -52,30 +55,3 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="Subtitle" type="Label" parent="."]
-custom_minimum_size = Vector2(600, 0)
-visible = false
-layout_mode = 1
-anchors_preset = 0
-anchor_left = 0.12
-anchor_top = 0.82
-anchor_right = 0.88
-anchor_bottom = 0.95
-grow_horizontal = 2
-grow_vertical = 0
-mouse_filter = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.94)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
-
-[node name="Static" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_static")
-volume_db = -6.0
-autoplay = true
-
-[node name="PauseMenu" parent="." instance=ExtResource("4_pause")]

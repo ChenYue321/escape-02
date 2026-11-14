@@ -208,7 +208,13 @@ func resume_pause() -> void:
 
 	var player := get_parent().get_node_or_null("Character")
 	if player == null:
-		# 2D 黑屏等没有角色的场景：保持鼠标释放
+		# 没有角色的场景：保持鼠标释放
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		return
+
+	# 贴近屏幕/屏幕内容里鼠标是故意释放的，恢复游戏时不要抢回来
+	var trance := get_parent().get_node_or_null("Character/ScreenTrance")
+	if trance != null and trance.has_method("wants_mouse_visible") and trance.wants_mouse_visible():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		return
 

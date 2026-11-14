@@ -20,8 +20,14 @@ uniform float vignette : hint_range(0.0, 1.5) = 0.7;
 uniform float flicker : hint_range(0.0, 0.4) = 0.08;
 // 缓慢滚动的亮带速度
 uniform float roll_speed : hint_range(0.0, 1.0) = 0.11;
-// 屏幕偏色（老 CRT 偏冷）
-uniform vec3 tint : source_color = vec3(0.82, 0.88, 1.0);
+// 蓄力时屏幕自身轻微发亮，作为"保持 3 秒"的反馈（不做全屏扭曲）
+uniform float charge_glow : hint_range(0.0, 1.0) = 0.0;
+// 荧光粉的亮部绿色（参考 ESCAPE-02 GREEN PHOSPHOR 的 Phosphor Green #83D995）
+uniform vec3 tint : source_color = vec3(0.514, 0.851, 0.584);
+// 荧光屏的底色：没被电子束打到的部分也只是极暗的绿（Deep Black #071009）
+uniform vec3 base_color : source_color = vec3(0.0275, 0.0627, 0.0353);
+// 最亮的颗粒偏白一点（Highlight #C3EBCB）
+uniform vec3 highlight_color : source_color = vec3(0.765, 0.922, 0.796);
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -58,5 +64,12 @@ void fragment() {
 	float value = noise * scan * band * max(vig, 0.0) * fl * brightness;
 	// 兜底：无论噪声怎么退化，屏幕都不会变成纯黑
 	value = max(value, 0.05);
-	ALBEDO = tint * value;
+
+	// 蓄力反馈：屏幕整体亮一点，仍然是屏幕自身的变化
+	value *= 1.0 + charge_glow * 0.9;
+
+	// 绿色荧光粉的亮度曲线：暗部是深绿，中段是荧光绿，最亮的颗粒略微发白
+	vec3 color = mix(base_color, tint, smoothstep(0.0, 0.5, value));
+	color = mix(color, highlight_color, smoothstep(0.6, 1.0, value) * 0.35);
+	ALBEDO = color;
 }
