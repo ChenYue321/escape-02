@@ -34,6 +34,7 @@ var _build_cam: Camera3D
 ## 显示器屏幕上的 2D 内容：固定 1152×836 的 SubViewport
 var _ui_viewport: SubViewport
 var _ui_scene: Control
+var _facility_ui: Control
 var _ui_material: ShaderMaterial
 ## 显示器原本的无信号雪花材质
 var _static_material: Material
@@ -97,6 +98,7 @@ func _setup_screen_ui() -> void:
 
 	_ui_scene = load(UI_SCENE).instantiate() as Control
 	_ui_viewport.add_child(_ui_scene)
+	_facility_ui = _ui_scene.get_node_or_null("FacilityUI") as Control
 
 	var noise := SceneNodes.find(_world, SceneNodes.STATIC_NOISE) as AudioStreamPlayer3D
 	if noise != null and _ui_scene.has_method("bind_static_noise"):
@@ -155,6 +157,8 @@ func _process(delta: float) -> void:
 	if not _in_screen or _returning:
 		return
 
+	_keep_screen_pointer()
+
 	if Input.is_action_pressed("crouch"):
 		_return_hold += delta
 		if _return_hold >= RETURN_HOLD:
@@ -162,6 +166,64 @@ func _process(delta: float) -> void:
 			_return_from_screen()
 	else:
 		_return_hold = 0.0
+
+
+## 鼠标事件在主窗口上发生，但页面在 SubViewport 里：
+## 这里把鼠标位置投到显示器平面，再换算成页面 UV 交给 FacilityUI。
+func _input(event: InputEvent) -> void:
+	if not _in_screen or _facility_ui == null or get_tree().paused:
+		return
+	if not event is InputEventMouseButton:
+		return
+	var button := event as InputEventMouseButton
+	if not button.pressed or button.button_index != MOUSE_BUTTON_LEFT:
+		return
+	var uv = _screen_uv_from_position(button.position)
+	if uv == null:
+		return
+	_facility_ui.call("handle_click", uv, button.double_click)
+	get_viewport().set_input_as_handled()
+
+
+## 屏幕里鼠标必须保持可见；同时每帧刷新悬停卡片
+func _keep_screen_pointer() -> void:
+	if _facility_ui == null or _screen == null or _player_cam == null:
+		return
+	if Input.mouse_mode != Input.MOUSE_MODE_VISIBLE:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_facility_ui.call("set_pointer", _screen_uv_from_mouse())
+
+
+## 鼠标射线与显示器屏幕平面的交点 -> 屏幕 UV（0..1）
+func _screen_uv_from_mouse():
+	return _screen_uv_from_position(get_viewport().get_mouse_position())
+
+
+## 便于测试/复用的版本：传入视口坐标，不直接读系统鼠标
+func _screen_uv_from_position(mouse: Vector2):
+	if _screen == null:
+		return null
+	# 推镜后真正渲染的是 TranceCamera，而不是玩家原相机
+	var cam: Camera3D = get_viewport().get_camera_3d()
+	if cam == null:
+		cam = _player_cam
+	if cam == null:
+		return null
+	var origin := cam.project_ray_origin(mouse)
+	var direction := cam.project_ray_normal(mouse)
+	var normal := _screen.global_transform.basis.z.normalized()
+	var plane := Plane(normal, normal.dot(_screen.global_position))
+	var hit = plane.intersects_ray(origin, direction)
+	if hit == null:
+		return null
+
+	var local: Vector3 = _screen.to_local(hit as Vector3)
+	var aabb := _screen.get_aabb()
+	var u := (local.x - aabb.position.x) / aabb.size.x
+	var v := 1.0 - (local.y - aabb.position.y) / aabb.size.y
+	if u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0:
+		return null
+	return Vector2(u, v)
 
 
 func _begin_charge() -> void:

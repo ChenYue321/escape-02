@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://script/screen_void.gd" id="1_void"]
 [ext_resource type="Shader" path="res://shaders/snow_2d.gdshader" id="2_snow"]
@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" path="res://fonts/VT323-Regular.ttf" id="4_vt323"]
 [ext_resource type="Script" path="res://script/facility_ui.gd" id="5_facility"]
 [ext_resource type="Script" path="res://script/folder_icon.gd" id="6_folder"]
+[ext_resource type="Script" path="res://script/folder_card.gd" id="7_card"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_snow"]
 shader = ExtResource("2_snow")
@@ -108,6 +109,31 @@ theme_override_font_sizes/font_size = 28
 horizontal_alignment = 2
 vertical_alignment = 1
 
+[node name="BackButton" type="Label" parent="FacilityUI"]
+visible = false
+layout_mode = 0
+offset_left = 40.0
+offset_top = 102.0
+offset_right = 76.0
+offset_bottom = 146.0
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 40
+text = "<"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FolderSubtitle" type="Label" parent="FacilityUI"]
+visible = false
+layout_mode = 0
+offset_left = 80.0
+offset_top = 102.0
+offset_right = 760.0
+offset_bottom = 144.0
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 36
+text = ""
+vertical_alignment = 1
+
 [node name="HeaderLine" type="ColorRect" parent="FacilityUI"]
 layout_mode = 0
 offset_left = 40.0
@@ -117,73 +143,112 @@ offset_bottom = 152.0
 mouse_filter = 2
 color = Color(0.271, 0.659, 0.353, 0.35)
 
-[node name="EnvironmentIcon" type="Control" parent="FacilityUI"]
+[node name="Content" type="Control" parent="FacilityUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="EnvironmentCard" type="Panel" parent="FacilityUI/Content"]
 layout_mode = 0
-offset_left = 160.0
-offset_top = 205.0
-offset_right = 224.0
-offset_bottom = 255.0
+offset_left = 42.0
+offset_top = 210.0
+offset_right = 342.0
+offset_bottom = 370.0
+mouse_filter = 2
+script = ExtResource("7_card")
+folder_name = "ENVIRONMENT"
+
+[node name="Icon" type="Control" parent="FacilityUI/Content/EnvironmentCard"]
+layout_mode = 0
+offset_left = 118.0
+offset_top = 25.0
+offset_right = 182.0
+offset_bottom = 75.0
 mouse_filter = 2
 script = ExtResource("6_folder")
 line_color = Color(0.514, 0.851, 0.584, 1)
 
-[node name="Environment" type="Label" parent="FacilityUI"]
+[node name="Label" type="Label" parent="FacilityUI/Content/EnvironmentCard"]
 layout_mode = 0
-offset_left = 32.0
-offset_top = 270.0
-offset_right = 352.0
-offset_bottom = 308.0
+offset_left = 0.0
+offset_top = 85.0
+offset_right = 300.0
+offset_bottom = 123.0
 theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
 theme_override_font_sizes/font_size = 34
 text = "ENVIRONMENT"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RecordsIcon" type="Control" parent="FacilityUI"]
+[node name="RecordsCard" type="Panel" parent="FacilityUI/Content"]
 layout_mode = 0
-offset_left = 544.0
-offset_top = 205.0
-offset_right = 608.0
-offset_bottom = 255.0
+offset_left = 426.0
+offset_top = 210.0
+offset_right = 726.0
+offset_bottom = 370.0
+mouse_filter = 2
+script = ExtResource("7_card")
+folder_name = "RECORDS"
+
+[node name="Icon" type="Control" parent="FacilityUI/Content/RecordsCard"]
+layout_mode = 0
+offset_left = 118.0
+offset_top = 25.0
+offset_right = 182.0
+offset_bottom = 75.0
 mouse_filter = 2
 script = ExtResource("6_folder")
 line_color = Color(0.514, 0.851, 0.584, 1)
 
-[node name="Records" type="Label" parent="FacilityUI"]
+[node name="Label" type="Label" parent="FacilityUI/Content/RecordsCard"]
 layout_mode = 0
-offset_left = 416.0
-offset_top = 270.0
-offset_right = 736.0
-offset_bottom = 308.0
+offset_left = 0.0
+offset_top = 85.0
+offset_right = 300.0
+offset_bottom = 123.0
 theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
 theme_override_font_sizes/font_size = 34
 text = "RECORDS"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ProcessesIcon" type="Control" parent="FacilityUI"]
+[node name="ProcessesCard" type="Panel" parent="FacilityUI/Content"]
 layout_mode = 0
-offset_left = 928.0
-offset_top = 205.0
-offset_right = 992.0
-offset_bottom = 255.0
+offset_left = 810.0
+offset_top = 210.0
+offset_right = 1110.0
+offset_bottom = 370.0
+mouse_filter = 2
+script = ExtResource("7_card")
+folder_name = "PROCESSES"
+
+[node name="Icon" type="Control" parent="FacilityUI/Content/ProcessesCard"]
+layout_mode = 0
+offset_left = 118.0
+offset_top = 25.0
+offset_right = 182.0
+offset_bottom = 75.0
 mouse_filter = 2
 script = ExtResource("6_folder")
 line_color = Color(0.514, 0.851, 0.584, 1)
 
-[node name="Processes" type="Label" parent="FacilityUI"]
+[node name="Label" type="Label" parent="FacilityUI/Content/ProcessesCard"]
 layout_mode = 0
-offset_left = 800.0
-offset_top = 270.0
-offset_right = 1120.0
-offset_bottom = 308.0
+offset_left = 0.0
+offset_top = 85.0
+offset_right = 300.0
+offset_bottom = 123.0
 theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
 theme_override_font_sizes/font_size = 34
 text = "PROCESSES"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Executables" type="Label" parent="FacilityUI"]
+[node name="Executables" type="Label" parent="FacilityUI/Content"]
 layout_mode = 0
 offset_left = 40.0
 offset_top = 510.0
@@ -194,7 +259,7 @@ theme_override_font_sizes/font_size = 32
 text = "EXECUTABLES"
 vertical_alignment = 1
 
-[node name="ObjectCount" type="Label" parent="FacilityUI"]
+[node name="ObjectCount" type="Label" parent="FacilityUI/Content"]
 layout_mode = 0
 offset_left = 820.0
 offset_top = 510.0
