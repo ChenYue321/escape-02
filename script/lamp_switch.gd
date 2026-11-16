@@ -5,7 +5,7 @@ extends StaticBody3D
 ## 一组灯 = 该节点（或 target）下面的一盏 Light3D + 该组里所有自发光材质。
 ## 台灯和墙上的顶灯开关都用这个脚本，只是 target 不同：
 ##   · 台灯：开关挂在 Lampshade 下，target 留空 → 控制自己父节点这一组
-##   · 顶灯开关：挂在墙上，target 指向 Room/Ceiling/Top Light
+##   · 顶灯开关：挂在墙上，target 指向 Room/Room Ceiling/Top Light
 ##
 ## 每个自发光材质记住自己"开着"时的强度：台灯是灯泡 3.0、灯罩内衬 0.8，
 ## 关灯时一起归零，开灯时各自还原——内衬不会被拉到灯泡那么亮。
