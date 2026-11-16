@@ -2,7 +2,7 @@ extends StaticBody3D
 
 ## 灯开关：视线落到它上面按 E，切换一组灯。
 ##
-## 一组灯 = 该节点（或 target）下面的一盏 SpotLight3D + 该组里所有自发光材质。
+## 一组灯 = 该节点（或 target）下面的一盏 Light3D + 该组里所有自发光材质。
 ## 台灯和墙上的顶灯开关都用这个脚本，只是 target 不同：
 ##   · 台灯：开关挂在 Lampshade 下，target 留空 → 控制自己父节点这一组
 ##   · 顶灯开关：挂在墙上，target 指向 Room/Ceiling/Top Light
@@ -10,7 +10,7 @@ extends StaticBody3D
 ## 每个自发光材质记住自己"开着"时的强度：台灯是灯泡 3.0、灯罩内衬 0.8，
 ## 关灯时一起归零，开灯时各自还原——内衬不会被拉到灯泡那么亮。
 ##
-## 开灯状态由场景里 SpotLight3D 的 visible 决定：
+## 开灯状态由场景里 Light3D 的 visible 决定：
 ## 台灯场景里是 visible = false，所以进游戏默认关着；顶灯是开的。
 
 ## 要控制的灯组根节点；留空则用自己的父节点
@@ -26,7 +26,7 @@ extends StaticBody3D
 @export var button_press_depth: float = 0.016
 
 var _on: bool = false
-var _light: SpotLight3D
+var _light: Light3D
 ## 组里所有自发光材质 → 它"开着"时的自发光强度，关灯时归零、开灯时还原
 var _glow_energies: Dictionary = {}
 var _audio: AudioStreamPlayer3D
@@ -69,8 +69,8 @@ func _find_parts() -> void:
 	if root == null:
 		return
 
-	for node in root.find_children("*", "SpotLight3D", true, false):
-		_light = node as SpotLight3D
+	for node in root.find_children("*", "Light3D", true, false):
+		_light = node as Light3D
 		break
 
 	for node in root.find_children("*", "MeshInstance3D", true, false):

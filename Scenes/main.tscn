@@ -3,14 +3,12 @@
 [ext_resource type="Texture2D" uid="uid://d1d58poev6wch" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_nor_gl_1k.jpg" id="1_21xkr"]
 [ext_resource type="Script" uid="uid://dnbeuh1k5xa1u" path="res://script/wire.gd" id="1_jjgbg"]
 [ext_resource type="Texture2D" uid="uid://ciobpku1sjrx6" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_rough_1k.jpg" id="2_6bp64"]
-[ext_resource type="Material" uid="uid://elgtnjxkcj27" path="res://texture/new_standard_material_3d.tres" id="3_344ge"]
-[ext_resource type="Texture2D" uid="uid://b1gwme7oi23us" path="res://texture/ceiling/ceiling_interior_diff_1k.jpg" id="3_d1ilt"]
-[ext_resource type="Texture2D" uid="uid://dy0hrduog4mxg" path="res://texture/ceiling/ceiling_interior_nor_gl_1k.jpg" id="4_6iyac"]
+[ext_resource type="Material" path="res://texture/wall/stucco_wall.tres" id="3_344ge"]
 [ext_resource type="Texture2D" uid="uid://bkd6ioqs57g0k" path="res://texture/table/wood_table_diff_1k.jpg" id="4_ynf5e"]
-[ext_resource type="Texture2D" uid="uid://bfevaiecu5hjg" path="res://texture/ceiling/ceiling_interior_rough_1k.jpg" id="5_fdnlq"]
 [ext_resource type="Texture2D" uid="uid://cli80dl3lj78" path="res://texture/table/wood_table_nor_gl_1k.jpg" id="5_hptm8"]
 [ext_resource type="Texture2D" uid="uid://dvbc36oxrftfi" path="res://texture/table/wood_table_rough_1k.jpg" id="6_d1ilt"]
 [ext_resource type="Material" uid="uid://dnxrsnwevuoe0" path="res://texture/desk_leg.tres" id="7_6iyac"]
+[ext_resource type="Material" path="res://texture/desk_leg_light.tres" id="37_leg_light"]
 [ext_resource type="Texture2D" uid="uid://canlgd0cn0aba" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_diff_1k.jpg" id="8_k4x2p"]
 [ext_resource type="Environment" path="res://environment/room_env.tres" id="9_env"]
 [ext_resource type="Script" uid="uid://cp55x6qmufw1o" path="res://script/player.gd" id="10_player"]
@@ -37,6 +35,8 @@
 [ext_resource type="Script" uid="uid://b1sqptdxikvai" path="res://script/world_state.gd" id="32_world_state"]
 [ext_resource type="Shader" uid="uid://1pgs1t2yyelx" path="res://shaders/vhs.gdshader" id="33_vhs"]
 [ext_resource type="Script" uid="uid://dckcgg6krtt2o" path="res://script/screen_trance.gd" id="34_trance"]
+[ext_resource type="Material" path="res://texture/floor/granite_floor.tres" id="35_granite"]
+[ext_resource type="Material" path="res://texture/wall/stucco_ceiling.tres" id="36_stucco_ceiling"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vhs"]
 resource_local_to_scene = true
@@ -62,28 +62,8 @@ height = 1.8
 [sub_resource type="BoxMesh" id="BoxMesh_p3oet"]
 size = Vector3(8, 0.1, 8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8gbba"]
-albedo_color = Color(0.881126, 0.881179, 0.8661595, 1)
-albedo_texture = ExtResource("8_k4x2p")
-roughness = 0.9
-roughness_texture = ExtResource("2_6bp64")
-normal_enabled = true
-normal_scale = 0.3
-normal_texture = ExtResource("1_21xkr")
-uv1_scale = Vector3(4, 4, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_jwpg7"]
-size = Vector3(8, 0.1, 20)
-
 [sub_resource type="BoxMesh" id="BoxMesh_7u77a"]
 size = Vector3(8, 0.1, 8)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fdnlq"]
-albedo_texture = ExtResource("3_d1ilt")
-roughness_texture = ExtResource("5_fdnlq")
-normal_enabled = true
-normal_texture = ExtResource("4_6iyac")
-uv1_scale = Vector3(5, 5, 5)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_p3oet"]
 top_radius = 0.005
@@ -144,6 +124,16 @@ emission_energy_multiplier = 3.0
 [sub_resource type="SphereMesh" id="SphereMesh_ceiling_bulb"]
 radius = 0.06
 height = 0.12
+
+[sub_resource type="BoxMesh" id="BoxMesh_ceiling_panel"]
+size = Vector3(0.8, 0.03, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceiling_panel"]
+albedo_color = Color(0.92, 0.92, 0.9, 1)
+emission_enabled = true
+emission = Color(1, 0.96, 0.9, 1)
+emission_energy_multiplier = 2.0
+roughness = 0.35
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ceiling_lamp"]
 height = 0.4
@@ -210,7 +200,7 @@ roughness = 0.5
 size = Vector3(0.08, 2.1, 0.13)
 
 [sub_resource type="BoxMesh" id="BoxMesh_door_header"]
-size = Vector3(1, 0.08, 0.12)
+size = Vector3(1.14, 0.08, 0.13)
 
 [sub_resource type="BoxMesh" id="BoxMesh_door_lamp"]
 size = Vector3(0.3, 0.07, 0.1)
@@ -293,7 +283,7 @@ albedo_color = Color(0.028, 0.028, 0.031, 1)
 metallic_specular = 0.22
 roughness = 0.92
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_jwpg7"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_hdf80"]
 _surfaces = [{
 "aabb": AABB(-0.3, 1.6599267, -0.027992532, 0.3004961, 0.06371403, 0.029163968),
 "format": 34359742471,
@@ -312,7 +302,7 @@ _data = {
 }
 point_count = 3
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_k2e45"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_jwpg7"]
 _surfaces = [{
 "aabb": AABB(-0.00049607735, 1.6599267, -0.027992532, 0.3004961, 0.06371403, 0.029163968),
 "format": 34359742471,
@@ -331,7 +321,7 @@ size = Vector3(1.8, 0.05, 1)
 size = Vector3(1.8, 0.05, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5qx63"]
-albedo_color = Color(0.41981313, 0.41981313, 0.4198131, 1)
+albedo_color = Color(0.6, 0.6, 0.6, 1)
 albedo_texture = ExtResource("4_ynf5e")
 roughness_texture = ExtResource("6_d1ilt")
 normal_enabled = true
@@ -378,7 +368,7 @@ _data = {
 }
 point_count = 10
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_536cc"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_k2e45"]
 _surfaces = [{
 "aabb": AABB(-0.19347723, -0.055, -0.0049604173, 0.27184463, 0.059961036, 0.31877378),
 "format": 34359742471,
@@ -397,7 +387,7 @@ _data = {
 }
 point_count = 11
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_aqgau"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_536cc"]
 _surfaces = [{
 "aabb": AABB(-0.0099948, -0.61257005, -1.334069, 0.25991905, 0.62251544, 1.3351121),
 "format": 34359742471,
@@ -545,6 +535,22 @@ size = Vector3(0.42, 0.55, 0.42)
 [sub_resource type="BoxShape3D" id="BoxShape3D_stool_solid"]
 size = Vector3(0.34, 0.5, 0.34)
 
+[sub_resource type="BoxMesh" id="BoxMesh_jwpg7"]
+size = Vector3(5, 0.1, 20)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8gbba"]
+albedo_color = Color(0.881126, 0.881179, 0.8661595, 1)
+albedo_texture = ExtResource("8_k4x2p")
+roughness = 0.9
+roughness_texture = ExtResource("2_6bp64")
+normal_enabled = true
+normal_scale = 0.3
+normal_texture = ExtResource("1_21xkr")
+uv1_scale = Vector3(4, 4, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8cuat"]
+size = Vector3(5, 0.1, 20)
+
 [node name="Main" type="Node3D" unique_id=2012244315]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1404679818]
@@ -638,63 +644,28 @@ mesh = SubResource("CylinderMesh_p3ljj")
 [node name="Room" type="Node3D" parent="." unique_id=1917453701]
 
 [node name="Room Floor" type="MeshInstance3D" parent="Room" unique_id=1321805653]
+material_override = ExtResource("35_granite")
 mesh = SubResource("BoxMesh_p3oet")
-surface_material_override/0 = SubResource("StandardMaterial3D_8gbba")
 
 [node name="Ceiling" type="MeshInstance3D" parent="Room" unique_id=1537868402]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+material_override = ExtResource("36_stucco_ceiling")
 mesh = SubResource("BoxMesh_7u77a")
-surface_material_override/0 = SubResource("StandardMaterial3D_fdnlq")
 
 [node name="Top Light" type="Node3D" parent="Room/Ceiling" unique_id=1501450873]
 
-[node name="Wire" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=2137426161]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.10173464, 0)
-mesh = SubResource("CylinderMesh_p3oet")
-surface_material_override/0 = SubResource("StandardMaterial3D_tkkqb")
+[node name="Panel" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=204839001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_ceiling_panel")
+mesh = SubResource("BoxMesh_ceiling_panel")
 
-[node name="Canopy" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=890830156]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.03, 0)
-material_override = SubResource("StandardMaterial3D_lamp_metal")
-mesh = SubResource("CylinderMesh_ceiling_canopy")
-
-[node name="Lampshade" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=44790043]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3459785, 0)
-material_override = SubResource("StandardMaterial3D_ceiling_shade")
-mesh = SubResource("CylinderMesh_ceiling_shade")
-
-[node name="SpotLight3D" type="SpotLight3D" parent="Room/Ceiling/Top Light/Lampshade" unique_id=1741843520]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, -0.05, 0)
-light_size = 0.4
+[node name="Light" type="OmniLight3D" parent="Room/Ceiling/Top Light" unique_id=204839002]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+light_color = Color(1, 0.96, 0.9, 1)
+light_energy = 1.2
 shadow_enabled = true
-spot_attenuation = 1.5
-spot_angle = 65.0
-
-[node name="Shade Inner" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=1187300373]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3459785, 0)
-material_override = SubResource("StandardMaterial3D_ceiling_inner")
-cast_shadow = 0
-mesh = SubResource("CylinderMesh_ceiling_inner")
-
-[node name="Shade Rim" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=1419871751]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.546, 0)
-material_override = SubResource("StandardMaterial3D_lamp_metal")
-cast_shadow = 0
-mesh = SubResource("TorusMesh_ceiling_rim")
-
-[node name="Bulb" type="MeshInstance3D" parent="Room/Ceiling/Top Light" unique_id=133968094]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46, 0)
-material_override = SubResource("StandardMaterial3D_ceiling_bulb")
-cast_shadow = 0
-mesh = SubResource("SphereMesh_ceiling_bulb")
-
-[node name="LampCollision" type="StaticBody3D" parent="Room/Ceiling/Top Light" unique_id=50183341]
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Room/Ceiling/Top Light/LampCollision" unique_id=753379451]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3459785, 0)
-visible = false
-shape = SubResource("CylinderShape3D_ceiling_lamp")
+omni_range = 8.0
 
 [node name="Wall1 Left" type="MeshInstance3D" parent="Room" unique_id=392236091]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.275, 1.5, 3.95)
@@ -808,7 +779,7 @@ material_override = SubResource("StandardMaterial3D_door_frame")
 mesh = SubResource("BoxMesh_door_jamb")
 
 [node name="Frame Header" type="MeshInstance3D" parent="Room/Door" unique_id=655348726]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.13, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.11, 0)
 material_override = SubResource("StandardMaterial3D_door_frame")
 mesh = SubResource("BoxMesh_door_header")
 
@@ -930,7 +901,7 @@ radius = 0.002
 
 [node name="WireMesh" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign/String L" unique_id=1565070579]
 material_override = SubResource("StandardMaterial3D_cable_rubber")
-mesh = SubResource("ArrayMesh_jwpg7")
+mesh = SubResource("ArrayMesh_hdf80")
 
 [node name="String R" type="Path3D" parent="Room/Door/DoorPivot/Hanging Sign" unique_id=2031959086]
 curve = SubResource("Curve3D_string_r")
@@ -939,7 +910,7 @@ radius = 0.002
 
 [node name="WireMesh" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign/String R" unique_id=735714196]
 material_override = SubResource("StandardMaterial3D_cable_rubber")
-mesh = SubResource("ArrayMesh_k2e45")
+mesh = SubResource("ArrayMesh_jwpg7")
 
 [node name="Desk" type="Node3D" parent="Room" unique_id=1186838603]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, -2.5)
@@ -957,22 +928,22 @@ surface_material_override/0 = SubResource("StandardMaterial3D_5qx63")
 
 [node name="Desk Leg BL" type="MeshInstance3D" parent="Room/Desk" unique_id=1268756316]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, -0.3, 0.4)
-material_override = ExtResource("7_6iyac")
+material_override = ExtResource("37_leg_light")
 mesh = SubResource("BoxMesh_3xxii")
 
 [node name="Desk Leg BR" type="MeshInstance3D" parent="Room/Desk" unique_id=1745879811]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.3, 0.4)
 mesh = SubResource("BoxMesh_3xxii")
-surface_material_override/0 = ExtResource("7_6iyac")
+surface_material_override/0 = ExtResource("37_leg_light")
 
 [node name="Desk Leg FR" type="MeshInstance3D" parent="Room/Desk" unique_id=718642472]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, -0.3, -0.4)
-material_override = ExtResource("7_6iyac")
+material_override = ExtResource("37_leg_light")
 mesh = SubResource("BoxMesh_3xxii")
 
 [node name="Desk Leg FL" type="MeshInstance3D" parent="Room/Desk" unique_id=1985924612]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.3, -0.4)
-material_override = ExtResource("7_6iyac")
+material_override = ExtResource("37_leg_light")
 mesh = SubResource("BoxMesh_3xxii")
 
 [node name="Computer" type="Node3D" parent="Room/Desk" unique_id=209154535]
@@ -1053,7 +1024,7 @@ radius = 0.005
 
 [node name="WireMesh" type="MeshInstance3D" parent="Room/Desk/Computer/Case/wire to keyboard" unique_id=1165869543]
 material_override = SubResource("StandardMaterial3D_cable_rubber")
-mesh = SubResource("ArrayMesh_536cc")
+mesh = SubResource("ArrayMesh_k2e45")
 
 [node name="Power cord" type="Node3D" parent="Room/Desk/Computer/Case" unique_id=540409664]
 
@@ -1064,7 +1035,7 @@ script = ExtResource("1_jjgbg")
 radius = 0.01
 
 [node name="WireMesh" type="MeshInstance3D" parent="Room/Desk/Computer/Case/Power cord/Power cord wire" unique_id=264676649]
-mesh = SubResource("ArrayMesh_aqgau")
+mesh = SubResource("ArrayMesh_536cc")
 surface_material_override/0 = SubResource("StandardMaterial3D_cable_rubber")
 
 [node name="plug" type="MeshInstance3D" parent="Room/Desk/Computer/Case/Power cord" unique_id=1425464764]
@@ -1255,22 +1226,22 @@ mesh = SubResource("BoxMesh_stool_seat")
 
 [node name="Leg FL" type="MeshInstance3D" parent="Room/Stool" unique_id=1779603710]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.145, 0.2, 0.145)
-material_override = ExtResource("7_6iyac")
+material_override = ExtResource("37_leg_light")
 mesh = SubResource("BoxMesh_stool_leg")
 
 [node name="Leg FR" type="MeshInstance3D" parent="Room/Stool" unique_id=24719364]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.145, 0.2, 0.145)
-material_override = ExtResource("7_6iyac")
+material_override = ExtResource("37_leg_light")
 mesh = SubResource("BoxMesh_stool_leg")
 
 [node name="Leg BL" type="MeshInstance3D" parent="Room/Stool" unique_id=2104364386]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.145, 0.2, -0.145)
-material_override = ExtResource("7_6iyac")
+material_override = ExtResource("37_leg_light")
 mesh = SubResource("BoxMesh_stool_leg")
 
 [node name="Leg BR" type="MeshInstance3D" parent="Room/Stool" unique_id=1807800979]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.145, 0.2, -0.145)
-material_override = ExtResource("7_6iyac")
+material_override = ExtResource("37_leg_light")
 mesh = SubResource("BoxMesh_stool_leg")
 
 [node name="SitBody" type="StaticBody3D" parent="Room/Stool" unique_id=1792286564]
@@ -1295,6 +1266,11 @@ shape = SubResource("BoxShape3D_stool_solid")
 [node name="Corridor Floor" type="MeshInstance3D" parent="Corridor" unique_id=740719327]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 14)
 mesh = SubResource("BoxMesh_jwpg7")
+surface_material_override/0 = SubResource("StandardMaterial3D_8gbba")
+
+[node name="Corridor Ceiling" type="MeshInstance3D" parent="Corridor" unique_id=1744850073]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 14)
+mesh = SubResource("BoxMesh_8cuat")
 surface_material_override/0 = SubResource("StandardMaterial3D_8gbba")
 
 [node name="WorldState" type="Node" parent="." unique_id=197509103]
