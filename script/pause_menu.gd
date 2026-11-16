@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const SceneNodes := preload("res://script/scene_nodes.gd")
+
 ## Esc 暂停界面。挂在 main.tscn 下，process_mode = ALWAYS 才能在 paused 树里工作。
 ## 背景用一层半透明灰罩住，3D 画面保持原样只是停住；
 ## SETTING 直接复用 Menu 场景的设置页（settings_only 模式，不建 3D 背景）。
@@ -154,7 +156,9 @@ func _build_settings() -> void:
 
 	_settings_menu = (load(SETTINGS_SCENE_PATH) as PackedScene).instantiate()
 	_settings_menu.settings_only = true
-	_settings_menu.set_preview_context(get_parent() as Node3D, get_parent().get_node_or_null("Character/Camera3D") as Camera3D)
+	var preview_player := SceneNodes.find(get_parent(), SceneNodes.CHARACTER) as CharacterBody3D
+	var preview_cam: Camera3D = preview_player.get_camera() if preview_player != null else null
+	_settings_menu.set_preview_context(get_parent() as Node3D, preview_cam)
 	_settings_menu.settings_closed.connect(_close_settings)
 	_settings_layer.add_child(_settings_menu)
 	_settings_menu.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -170,7 +174,7 @@ func _input(event: InputEvent) -> void:
 
 	if not _open:
 		# 开场黑幕/转场期间不暂停，免得把补间也冻住
-		var player := get_parent().get_node_or_null("Character")
+		var player := SceneNodes.find(get_parent(), SceneNodes.CHARACTER)
 		if player != null and player.has_method("_is_frozen") and player._is_frozen():
 			return
 		open_pause()
@@ -206,14 +210,14 @@ func resume_pause() -> void:
 	visible = false
 	get_tree().paused = false
 
-	var player := get_parent().get_node_or_null("Character")
+	var player := SceneNodes.find(get_parent(), SceneNodes.CHARACTER)
 	if player == null:
 		# 没有角色的场景：保持鼠标释放
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		return
 
 	# 贴近屏幕/屏幕内容里鼠标是故意释放的，恢复游戏时不要抢回来
-	var trance := get_parent().get_node_or_null("Character/ScreenTrance")
+	var trance := SceneNodes.find(get_parent(), SceneNodes.SCREEN_TRANCE)
 	if trance != null and trance.has_method("wants_mouse_visible") and trance.wants_mouse_visible():
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		return

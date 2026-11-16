@@ -3,7 +3,7 @@ shader_type canvas_item;
 // 被屏幕吞进去之后的"显示器"：全屏的老 CRT 荧光屏。
 // 只保留扫描线、暗角、滚动亮带和轻微球面弯曲，没有边框和指示灯。
 
-uniform vec3 screen_tint : source_color = vec3(0.063, 0.157, 0.090);
+uniform vec3 screen_tint : source_color = vec3(0.0275, 0.0627, 0.0353);
 
 uniform float curvature : hint_range(0.0, 0.12) = 0.035;
 uniform float scanline_count : hint_range(80.0, 800.0) = 300.0;

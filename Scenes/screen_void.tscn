@@ -1,8 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://script/screen_void.gd" id="1_void"]
 [ext_resource type="Shader" path="res://shaders/snow_2d.gdshader" id="2_snow"]
 [ext_resource type="Shader" path="res://shaders/void_crt.gdshader" id="3_crt"]
+[ext_resource type="FontFile" path="res://fonts/VT323-Regular.ttf" id="4_vt323"]
+[ext_resource type="Script" path="res://script/facility_ui.gd" id="5_facility"]
+[ext_resource type="Script" path="res://script/folder_icon.gd" id="6_folder"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_snow"]
 shader = ExtResource("2_snow")
@@ -14,6 +17,10 @@ shader_parameter/highlight_color = Color(0.514, 0.851, 0.584, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_void_crt"]
 shader = ExtResource("3_crt")
+
+[sub_resource type="Theme" id="Theme_vt323"]
+default_font = ExtResource("4_vt323")
+default_font_size = 32
 
 [node name="ScreenVoid" type="Control"]
 layout_mode = 3
@@ -55,3 +62,166 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="FacilityUI" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = SubResource("Theme_vt323")
+script = ExtResource("5_facility")
+
+[node name="Title" type="Label" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 18.0
+offset_right = 760.0
+offset_bottom = 102.0
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 64
+text = "FACILITY CONTROL"
+vertical_alignment = 1
+
+[node name="Time" type="Label" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 820.0
+offset_top = 12.0
+offset_right = 1112.0
+offset_bottom = 84.0
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 72
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Date" type="Label" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 820.0
+offset_top = 92.0
+offset_right = 1112.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0.271, 0.659, 0.353, 1)
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="HeaderLine" type="ColorRect" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 150.0
+offset_right = 1112.0
+offset_bottom = 152.0
+mouse_filter = 2
+color = Color(0.271, 0.659, 0.353, 0.35)
+
+[node name="EnvironmentIcon" type="Control" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 205.0
+offset_right = 224.0
+offset_bottom = 255.0
+mouse_filter = 2
+script = ExtResource("6_folder")
+line_color = Color(0.514, 0.851, 0.584, 1)
+
+[node name="Environment" type="Label" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 270.0
+offset_right = 352.0
+offset_bottom = 308.0
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 34
+text = "ENVIRONMENT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RecordsIcon" type="Control" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 544.0
+offset_top = 205.0
+offset_right = 608.0
+offset_bottom = 255.0
+mouse_filter = 2
+script = ExtResource("6_folder")
+line_color = Color(0.514, 0.851, 0.584, 1)
+
+[node name="Records" type="Label" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 416.0
+offset_top = 270.0
+offset_right = 736.0
+offset_bottom = 308.0
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 34
+text = "RECORDS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ProcessesIcon" type="Control" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 928.0
+offset_top = 205.0
+offset_right = 992.0
+offset_bottom = 255.0
+mouse_filter = 2
+script = ExtResource("6_folder")
+line_color = Color(0.514, 0.851, 0.584, 1)
+
+[node name="Processes" type="Label" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 800.0
+offset_top = 270.0
+offset_right = 1120.0
+offset_bottom = 308.0
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 34
+text = "PROCESSES"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Executables" type="Label" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 510.0
+offset_right = 500.0
+offset_bottom = 546.0
+theme_override_colors/font_color = Color(0.271, 0.659, 0.353, 1)
+theme_override_font_sizes/font_size = 32
+text = "EXECUTABLES"
+vertical_alignment = 1
+
+[node name="ObjectCount" type="Label" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 820.0
+offset_top = 510.0
+offset_right = 1112.0
+offset_bottom = 546.0
+theme_override_colors/font_color = Color(0.271, 0.659, 0.353, 1)
+theme_override_font_sizes/font_size = 32
+text = "0 OBJECTS"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="BottomLine" type="ColorRect" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 770.0
+offset_right = 1112.0
+offset_bottom = 772.0
+mouse_filter = 2
+color = Color(0.271, 0.659, 0.353, 0.35)
+
+[node name="NodeStatus" type="Label" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 782.0
+offset_right = 800.0
+offset_bottom = 820.0
+theme_override_colors/font_color = Color(0.271, 0.659, 0.353, 1)
+theme_override_font_sizes/font_size = 30
+text = "NODE STATUS: OPERATIONAL"
+vertical_alignment = 1

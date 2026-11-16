@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const SceneNodes := preload("res://script/scene_nodes.gd")
+
 ## HUD：交互反馈、[E] 提示与旁白字幕。
 ##
 ## 设置里的 CROSSHAIR 决定用哪种反馈：
@@ -30,7 +32,7 @@ var _subtitle_back: ColorRect
 
 
 func _ready() -> void:
-	_player = get_parent().get_node_or_null("Character")
+	_player = SceneNodes.find(get_parent(), SceneNodes.CHARACTER)
 	_prompt.visible = false
 	_subtitle.visible = false
 	_prompt.size = PROMPT_SIZE
@@ -77,6 +79,16 @@ func _place_prompt(point: Vector2, gap: float = PROMPT_GAP) -> void:
 	if y + PROMPT_SIZE.y > view.y - 8.0:
 		y = point.y - gap - PROMPT_SIZE.y
 	_prompt.position = Vector2(x, y)
+
+
+## 屏幕内容里的字幕往下让一截，避免压住显示器页面底部的 NODE STATUS
+func set_subtitle_lower(lower: bool) -> void:
+	if lower:
+		_subtitle.anchor_top = 0.935
+		_subtitle.anchor_bottom = 0.985
+	else:
+		_subtitle.anchor_top = 0.82
+		_subtitle.anchor_bottom = 0.95
 
 
 ## 旁白字幕：传空字符串表示收起

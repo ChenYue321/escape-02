@@ -1,5 +1,7 @@
 extends Node
 
+const SceneNodes := preload("res://script/scene_nodes.gd")
+
 ## 单存档：暂停菜单按 Exit 时写入，标题页按 Continue 时读回。
 ## 存档只记录"可恢复的世界状态"：玩家位姿、两盏灯、门。
 ## 设置、按键绑定、音量在 settings.cfg 里，不重复存。
@@ -59,7 +61,7 @@ func save_from(world: Node) -> void:
 	if world == null:
 		return
 
-	var player := world.get_node_or_null("Character")
+	var player := SceneNodes.find(world, SceneNodes.CHARACTER)
 	if player == null:
 		# 2D 过场等没有角色的场景：不要用空数据覆盖正常存档
 		return
@@ -73,15 +75,15 @@ func save_from(world: Node) -> void:
 		cfg.set_value("player", "yaw", data["yaw"])
 		cfg.set_value("player", "pitch", data["pitch"])
 
-	var desk := world.get_node_or_null("Desk/Lamp/Lampshade/LampSwitch")
+	var desk := SceneNodes.find(world, SceneNodes.LAMP_SWITCH)
 	if desk != null and desk.has_method("is_on"):
 		cfg.set_value("world", "desk_lamp", desk.is_on())
 
-	var ceiling := world.get_node_or_null("Room/Wall1 Right/Top Light Switch")
+	var ceiling := SceneNodes.find(world, SceneNodes.TOP_LIGHT_SWITCH)
 	if ceiling != null and ceiling.has_method("is_on"):
 		cfg.set_value("world", "ceiling_lamp", ceiling.is_on())
 
-	var door := world.get_node_or_null("Room/Door/DoorPivot/HandleHit")
+	var door := SceneNodes.find(world, SceneNodes.DOOR_HANDLE)
 	if door != null and door.has_method("is_open"):
 		cfg.set_value("world", "door_open", door.is_open())
 
@@ -97,7 +99,7 @@ func apply_to(world: Node) -> void:
 	if cfg.load(PATH) != OK:
 		return
 
-	var player := world.get_node_or_null("Character")
+	var player := SceneNodes.find(world, SceneNodes.CHARACTER)
 	if player != null and player.has_method("apply_save"):
 		player.apply_save({
 			"position": cfg.get_value("player", "position", Vector3(0, 0.05, 3.6)),
@@ -105,14 +107,14 @@ func apply_to(world: Node) -> void:
 			"pitch": cfg.get_value("player", "pitch", 0.0),
 		})
 
-	var desk := world.get_node_or_null("Desk/Lamp/Lampshade/LampSwitch")
+	var desk := SceneNodes.find(world, SceneNodes.LAMP_SWITCH)
 	if desk != null and desk.has_method("set_on"):
 		desk.set_on(bool(cfg.get_value("world", "desk_lamp", false)))
 
-	var ceiling := world.get_node_or_null("Room/Wall1 Right/Top Light Switch")
+	var ceiling := SceneNodes.find(world, SceneNodes.TOP_LIGHT_SWITCH)
 	if ceiling != null and ceiling.has_method("set_on"):
 		ceiling.set_on(bool(cfg.get_value("world", "ceiling_lamp", true)))
 
-	var door := world.get_node_or_null("Room/Door/DoorPivot/HandleHit")
+	var door := SceneNodes.find(world, SceneNodes.DOOR_HANDLE)
 	if door != null and door.has_method("set_open"):
 		door.set_open(bool(cfg.get_value("world", "door_open", false)))

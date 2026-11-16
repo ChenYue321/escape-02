@@ -15,6 +15,7 @@ const NOISE_MIN_DB := -60.0
 
 @onready var _crt: ColorRect = $CRT
 @onready var _black: ColorRect = $Black
+@onready var _facility: Control = $FacilityUI
 
 var _noise: AudioStreamPlayer3D
 var _noise_db: float = -6.0
@@ -30,6 +31,7 @@ func bind_static_noise(player: AudioStreamPlayer3D) -> void:
 func _ready() -> void:
 	_black.modulate.a = 0.0
 	_crt.modulate.a = 0.0
+	_facility.visible = false
 
 
 ## 进入屏幕内容：雪花先退成黑色，再"通电"成 CRT
@@ -55,10 +57,13 @@ func play_intro() -> void:
 	on.tween_property(_crt, "modulate:a", 1.0, CRT_ON) \
 		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	await on.finished
+	_facility.appear()
 
 
 ## 离开屏幕内容：CRT 断电，退回雪花
 func play_outro() -> void:
+	await _facility.disappear()
+
 	var off := create_tween()
 	off.tween_property(_crt, "modulate:a", 0.0, CRT_OFF) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)

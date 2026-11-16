@@ -1,5 +1,7 @@
 extends Control
 
+const SceneNodes := preload("res://script/scene_nodes.gd")
+
 ## 主菜单。背景直接把主场景实例化进来（去掉玩家和 HUD、关掉所有灯），
 ## 所以菜单背后是那台在黑暗里闪的显示器本身，不是一张图。
 ##
@@ -212,8 +214,8 @@ func _build_background() -> void:
 	# 还没进场景树就删掉：玩家的 _ready 会捕获鼠标，等它跑完就晚了。
 	# PauseMenu/WorldState 也必须删：否则菜单背景里按 Esc 会弹出暂停界面，
 	# WorldState 还可能把 CONTINUE 的待读档标记吃掉。
-	for path in ["Character", "HUD", "PauseMenu", "WorldState"]:
-		var node := _world.get_node_or_null(path)
+	for node_name in [SceneNodes.CHARACTER, SceneNodes.HUD, SceneNodes.PAUSE_MENU, SceneNodes.WORLD_STATE]:
+		var node := SceneNodes.find(_world, node_name)
 		if node != null:
 			node.free()
 

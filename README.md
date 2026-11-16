@@ -56,7 +56,7 @@
   - 进入屏幕内容前也会先存一次；在屏幕里退出再 `CONTINUE`，会回到坐下之前的房间（屏幕内容始终在主场景里，不再有独立的黑屏场景）
 - **VHS 覆盖层**：`HUD/VHS` 是一个常驻的全屏 CanvasItem 着色器（`shaders/vhs.gdshader`）——轻微扫描线、色差、抖动、跟踪带、暗角和鱼眼；平时很淡。贴近屏幕的过程不再把 VHS 参数推到满，避免视线扭曲
 - **贴近屏幕**：坐上凳子、把视线停在显示器屏幕上并保持 **1.5 秒**——前 1.5 秒只有显示器屏幕自身慢慢变亮，相机不推进、画面不扭曲（视角仍然自由，移开就会中断）；中途移开视线或起身，屏幕亮度会在 0.25 秒内退回去。满 1.5 秒后相机在 2.8 秒内推近到「显示器屏幕占画面高度约 85%」的距离：显示器边框、桌面和房间边缘仍然看得见。随后显示器材质切换成 `SubViewport` 里的 2D 雪花 → CRT，全程不切换场景
-- **屏幕内部**：`screen_void.tscn` 现在是 `SubViewport` 里的 **1152×836** 内容（1.378:1，和 3D 显示器屏幕的 0.31 × 0.225 m 一致），不是全屏 2D 场景：雪花先退成黑色（显示器底噪同步淡出，CRT 通电时完全静音），再"通电"成一块绿色 CRT，带扫描线、暗角和轻微球面弯曲；CRT 断电、雪花回来时底噪同步淡入。它被直接贴到 3D 显示器屏幕上，所以房间和显示器边框一直都在。屏幕里没有可操作内容；鼠标会在屏幕放大后释放，离开提示使用和起身提示同一套 HUD 字幕（底部，5 秒）；暂停菜单仍然用主场景的。按住 `Shift` 原地倒放：CRT 断电 → 雪花回来 → 相机退回坐姿 → 人站起来。2D 排版直接在 `ScreenVoid` 的 1152×836 画布上做，比例固定；屏幕高度占比由 `Character/ScreenTrance` 的 `close_up_screen_height` 控制。
+- **屏幕内部**：`screen_void.tscn` 现在是 `SubViewport` 里的 **1152×836** 内容（1.378:1，和 3D 显示器屏幕的 0.31 × 0.225 m 一致），不是全屏 2D 场景：雪花先退成黑色（显示器底噪同步淡出，CRT 通电时完全静音），再"通电"成一块绿色 CRT，带扫描线、暗角和轻微球面弯曲；CRT 断电、雪花回来时底噪同步淡入。它被直接贴到 3D 显示器屏幕上，所以房间和显示器边框一直都在。屏幕里是 `FACILITY CONTROL` 主页面：左上标题、右上设备本地时间/日期（每分钟刷新）、三个文件夹、`EXECUTABLES` / `0 OBJECTS`、底部 `NODE STATUS: OPERATIONAL`；暂时没有可操作的目录内容。鼠标会在屏幕放大后释放，离开提示使用和起身提示同一套 HUD 字幕（底部，5 秒）；暂停菜单仍然用主场景的。按住 `Shift` 原地倒放：CRT 断电 → 雪花回来 → 相机退回坐姿 → 人站起来。2D 排版直接在 `ScreenVoid` 的 1152×836 画布上做，比例固定；屏幕高度占比由 `Character/ScreenTrance` 的 `close_up_screen_height` 控制。
 - **彩蛋房间**：第二次坠落时玩家会被送进 `Scenes/escape01_room.tscn`。房间实例化在 `(2000, 0, 0)` 的独立空间里，不与主场景重叠；原场景的 18 个网格各有凸包碰撞体，展台和按钮另有自己的碰撞
   - **睁眼之后**才开始播放 `audio/voice/easter_01.mp3`（旁白吐槽这个房间），**说完之后**房间中央才升起展台：金色底座 + 黑漆柱 + 发光红环 + 红色亮面按钮
   - 展台和按钮都有实体碰撞（底座 / 柱身 / 按钮球三个形状，层 1），玩家撞得到；按钮另有层 2 的交互球
@@ -119,6 +119,17 @@
 3. 想给提示加动词，再实现 `func interact_prompt() -> String:`（例如 `"Open"`），HUD 会拼成 `[E] Open`；按键文字自动取设置里实际绑定的键，不写死 `E`
 4. 焦点标记的位置和提示文字由 `player.gd` 的 `_update_focus()` 发出，视觉在 `crosshair.gd` 和 `hud.gd` 里调
 
+### 场景节点引用约定
+
+跨父级的场景节点（`Screen`、`Static Noise`、`LampSwitch`、`Top Light Switch`、`HandleHit`、`Stool`、`PauseMenu` 等）不要写 `Room/Desk/...` 这种父路径。统一在 `script/scene_nodes.gd` 里加名字常量，用按名字的查找：
+
+```gdscript
+const SceneNodes := preload("res://script/scene_nodes.gd")
+var screen := SceneNodes.find(world, SceneNodes.SCREEN) as MeshInstance3D
+```
+
+查找是递归的；找不到或出现同名节点会 `push_warning`，不会再静默失效。脚本自己的子节点仍然用 `$Child`。
+
 
 按键映射定义在项目设置的 `input/` 段，可在 `项目 → 项目设置 → 输入映射` 中改键或加重绑定（比如手柄）。
 
@@ -142,7 +153,10 @@ escape-02/
 │   ├── door.gd            # 门把手交互：先转把手，再推开门
 │   ├── sit_spot.gd        # 凳子：按 E 坐下
 │   ├── screen_trance.gd   # 坐姿 + 盯着屏幕 1.5 秒 → 蓄力 / 推镜 / SubViewport / 原地返回
+│   ├── scene_nodes.gd     # 场景节点名常量 + 按名字查找（不写父路径）
 │   ├── screen_void.gd     # 屏幕里的 2D 雪花/CRT（1152×836 画布）
+│   ├── facility_ui.gd     # FACILITY CONTROL 主页面：时间/日期同步
+│   ├── folder_icon.gd     # 主页面上的线框文件夹图标
 │   ├── menu.gd            # 主菜单：3D 背景 + START/CONTINUE/SETTING/EXIT
 │   ├── pause_menu.gd      # 暂停菜单：RESUME / SETTING / EXIT
 │   ├── save_game.gd       # autoload SaveGame：单存档读写
@@ -156,7 +170,9 @@ escape-02/
 │   └── process_voice.sh   # 旁白批处理：降调 / 滤波 / 回声 / 响度归一
 ├── fonts/
 │   ├── PatrickHand-Regular.ttf # Linux 上替代 Bradley Hand 的手写字体（OFL）
-│   └── OFL.txt
+│   ├── VT323-Regular.ttf  # FACILITY CONTROL 页面字体（OFL）
+│   ├── OFL.txt            # Patrick Hand 的许可见
+│   └── OFL-VT323.txt      # VT323 的许可见
 ├── environment/
 │   └── room_env.tres      # 环境资源：环境光、色调映射、SSAO、辉光
 ├── shaders/
@@ -259,13 +275,13 @@ tools/process_voice.sh ~/Downloads/某句台词.m4a audio/voice/xxx.mp3
 
 `texture/` 下的 PBR 贴图取自公开素材库（ambientCG / Poly Haven 系列命名格式），主体为 CC0 授权。由于本仓库为公开仓库，**如需再分发或商用，请自行核对其原始授权条款**；`texture/*.tres` 材质与场景文件均为本项目原创。
 
-`fonts/PatrickHand-Regular.ttf` 为 Patrick Hand 字体，遵循 SIL Open Font License 1.1，完整许可见 `fonts/OFL.txt`。
+`fonts/PatrickHand-Regular.ttf` 为 Patrick Hand 字体，`fonts/VT323-Regular.ttf` 为 VT323 字体，二者都遵循 SIL Open Font License 1.1；完整许可见 `fonts/OFL.txt` 和 `fonts/OFL-VT323.txt`。
 
 ## License
 
 代码以 [MIT License](LICENSE) 开源，随便用，不必打招呼。
 
-需要说明的是，MIT 只覆盖本仓库中的原创部分（脚本、场景、材质资源等）；`texture/` 下的第三方贴图与 `fonts/` 下的 Patrick Hand 仍遵循其原始授权条款，不在 MIT 覆盖范围内。
+需要说明的是，MIT 只覆盖本仓库中的原创部分（脚本、场景、材质资源等）；`texture/` 下的第三方贴图与 `fonts/` 下的 Patrick Hand、VT323 仍遵循其原始授权条款，不在 MIT 覆盖范围内。
 
 ---
 

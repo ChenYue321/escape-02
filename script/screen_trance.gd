@@ -1,5 +1,7 @@
 extends Node
 
+const SceneNodes := preload("res://script/scene_nodes.gd")
+
 ## 坐在凳子上 + 视线停在显示器屏幕上：
 ## 前 1.5 秒屏幕自身轻微发亮（不做视线扭曲）；中途移开目光 / 站起来，亮度会退回去。
 ## 连续满 1.5 秒后相机推近到"能看见整台显示器"的距离，
@@ -60,7 +62,7 @@ func _setup() -> void:
 		return
 
 	_world = _player.get_parent()
-	_screen = _world.get_node_or_null("Desk/Computer/Monitor/Screen") as MeshInstance3D
+	_screen = SceneNodes.find(_world, SceneNodes.SCREEN) as MeshInstance3D
 	if _screen == null:
 		return
 
@@ -96,7 +98,7 @@ func _setup_screen_ui() -> void:
 	_ui_scene = load(UI_SCENE).instantiate() as Control
 	_ui_viewport.add_child(_ui_scene)
 
-	var noise := _world.get_node_or_null("Desk/Computer/Monitor/Static Noise") as AudioStreamPlayer3D
+	var noise := SceneNodes.find(_world, SceneNodes.STATIC_NOISE) as AudioStreamPlayer3D
 	if noise != null and _ui_scene.has_method("bind_static_noise"):
 		_ui_scene.call("bind_static_noise", noise)
 
@@ -211,8 +213,10 @@ func _play() -> void:
 
 	_player.begin_trance()
 
-	# 保留 HUD 的 Subtitle（离开提示要用），只藏准星和交互提示
+	# 保留 HUD 的 Subtitle（离开提示要用），只藏准星和交互提示；
+	# 屏幕页面占了画面大部分，字幕往下让一截，别压住 NODE STATUS
 	_set_focus_hud_visible(false)
+	_set_hud_subtitle_lower(true)
 
 	# 推进/退出期间不允许暂停，避免把相机补间冻在半路
 	_set_pause_enabled(false)
@@ -351,20 +355,27 @@ func _return_from_screen() -> void:
 	_set_charge_glow(0.0)
 
 	_set_focus_hud_visible(true)
+	_set_hud_subtitle_lower(false)
 	_set_pause_enabled(true)
 	_player.end_return()
 
 
+func _set_hud_subtitle_lower(lower: bool) -> void:
+	var hud := SceneNodes.find(_world, SceneNodes.HUD)
+	if hud != null and hud.has_method("set_subtitle_lower"):
+		hud.set_subtitle_lower(lower)
+
+
 func _set_focus_hud_visible(visible_now: bool) -> void:
-	var crosshair := _world.get_node_or_null("HUD/UIRoot/Crosshair") as Control
-	var prompt := _world.get_node_or_null("HUD/UIRoot/Prompt") as Control
+	var crosshair := SceneNodes.find(_world, SceneNodes.CROSSHAIR) as Control
+	var prompt := SceneNodes.find(_world, SceneNodes.PROMPT) as Control
 	if crosshair != null:
 		crosshair.visible = visible_now
 	if prompt != null:
 		prompt.visible = visible_now
 
 func _set_pause_enabled(enabled: bool) -> void:
-	var pause := _world.get_node_or_null("PauseMenu")
+	var pause := SceneNodes.find(_world, SceneNodes.PAUSE_MENU)
 	if pause != null:
 		pause.process_mode = Node.PROCESS_MODE_ALWAYS if enabled else Node.PROCESS_MODE_DISABLED
 
@@ -386,7 +397,7 @@ func begin_return() -> void:
 
 	_player.begin_return()
 
-	var stool := _world.get_node_or_null("Stool") as Node3D
+	var stool := SceneNodes.find(_world, SceneNodes.STOOL) as Node3D
 	if stool != null:
 		var eye_height := 1.1
 		var value: Variant = stool.get("seat_eye_height")
@@ -395,6 +406,7 @@ func begin_return() -> void:
 		_player.enter_seated_for_return(stool, eye_height)
 
 	_set_focus_hud_visible(false)
+	_set_hud_subtitle_lower(true)
 	_player.clear_subtitle()
 	_set_charge_glow(0.0)
 	_set_pause_enabled(false)
@@ -432,5 +444,6 @@ func begin_return() -> void:
 	_hold = 0.0
 	_charging = false
 	_set_focus_hud_visible(true)
+	_set_hud_subtitle_lower(false)
 	_set_pause_enabled(true)
 	_player.end_return()

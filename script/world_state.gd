@@ -1,5 +1,7 @@
 extends Node
 
+const SceneNodes := preload("res://script/scene_nodes.gd")
+
 ## 主场景加载完后，如果标题页按了 Continue，就把存档套到场景上。
 ## 等一帧：玩家、灯开关、门的 _ready 都跑完，碰撞/材质状态就位。
 
@@ -13,7 +15,7 @@ func _ready() -> void:
 	if want_load or want_return:
 		save.apply_to(get_parent())
 	if want_return:
-		var trance := get_parent().get_node_or_null("Character/ScreenTrance")
+		var trance := SceneNodes.find(get_parent(), SceneNodes.SCREEN_TRANCE)
 		if trance != null and trance.has_method("begin_return"):
 			trance.begin_return()
 
