@@ -18,8 +18,8 @@ const UI_SCENE := "res://Scenes/screen_void.tscn"
 const UI_VIEWPORT_SIZE := Vector2i(1152, 836)
 
 ## 推近后，显示器屏幕占画面高度的比例。
-## 0.7 = 屏幕占七成高，显示器边框、桌面和房间边缘仍然看得见。
-@export_range(0.3, 1.0, 0.05) var close_up_screen_height: float = 0.7
+## 0.85 = 屏幕占八成五高，显示器边框和一点房间边缘仍然看得见。
+@export_range(0.3, 1.0, 0.05) var close_up_screen_height: float = 0.85
 
 var _player: CharacterBody3D
 var _world: Node

@@ -2,7 +2,7 @@ shader_type canvas_item;
 
 // 2D 雪花屏：和显示器上的 crt_static 同一套图案，供"被屏幕吞进去"的过场使用。
 
-uniform float brightness : hint_range(0.0, 2.0) = 0.86;
+uniform float brightness : hint_range(0.0, 2.0) = 0.84;
 uniform float grain : hint_range(20.0, 2000.0) = 560.0;
 uniform float speed : hint_range(1.0, 60.0) = 20.0;
 uniform float scanlines : hint_range(40.0, 600.0) = 240.0;
@@ -11,9 +11,9 @@ uniform float vignette : hint_range(0.0, 1.5) = 0.7;
 uniform float flicker : hint_range(0.0, 0.4) = 0.08;
 uniform float roll_speed : hint_range(0.0, 1.0) = 0.11;
 // 和 3D 显示器上的绿色荧光屏同一套颜色（GREEN PHOSPHOR）
-uniform vec3 tint : source_color = vec3(0.514, 0.851, 0.584);
+uniform vec3 tint : source_color = vec3(0.271, 0.659, 0.353);
 uniform vec3 base_color : source_color = vec3(0.0275, 0.0627, 0.0353);
-uniform vec3 highlight_color : source_color = vec3(0.765, 0.922, 0.796);
+uniform vec3 highlight_color : source_color = vec3(0.514, 0.851, 0.584);
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);

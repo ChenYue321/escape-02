@@ -6,11 +6,11 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_snow"]
 shader = ExtResource("2_snow")
-shader_parameter/brightness = 0.86
+shader_parameter/brightness = 0.84
 shader_parameter/grain = 560.0
-shader_parameter/tint = Color(0.514, 0.851, 0.584, 1)
+shader_parameter/tint = Color(0.271, 0.659, 0.353, 1)
 shader_parameter/base_color = Color(0.0275, 0.0627, 0.0353, 1)
-shader_parameter/highlight_color = Color(0.765, 0.922, 0.796, 1)
+shader_parameter/highlight_color = Color(0.514, 0.851, 0.584, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_void_crt"]
 shader = ExtResource("3_crt")

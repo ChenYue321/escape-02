@@ -22,12 +22,12 @@ uniform float flicker : hint_range(0.0, 0.4) = 0.08;
 uniform float roll_speed : hint_range(0.0, 1.0) = 0.11;
 // 蓄力时屏幕自身轻微发亮，作为"保持 3 秒"的反馈（不做全屏扭曲）
 uniform float charge_glow : hint_range(0.0, 1.0) = 0.0;
-// 荧光粉的亮部绿色（参考 ESCAPE-02 GREEN PHOSPHOR 的 Phosphor Green #83D995）
-uniform vec3 tint : source_color = vec3(0.514, 0.851, 0.584);
+// 荧光粉的亮部绿色（GREEN PHOSPHOR 的 Terminal Green，调深一档：#45A85A）
+uniform vec3 tint : source_color = vec3(0.271, 0.659, 0.353);
 // 荧光屏的底色：没被电子束打到的部分也只是极暗的绿（Deep Black #071009）
 uniform vec3 base_color : source_color = vec3(0.0275, 0.0627, 0.0353);
-// 最亮的颗粒偏白一点（Highlight #C3EBCB）
-uniform vec3 highlight_color : source_color = vec3(0.765, 0.922, 0.796);
+// 最亮的颗粒保留一点荧光感（Phosphor Green #83D995，比之前的 Highlight 更深）
+uniform vec3 highlight_color : source_color = vec3(0.514, 0.851, 0.584);
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
