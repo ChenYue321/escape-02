@@ -34,6 +34,7 @@
 [ext_resource type="Script" uid="uid://b1sqptdxikvai" path="res://script/world_state.gd" id="32_world_state"]
 [ext_resource type="Shader" uid="uid://1pgs1t2yyelx" path="res://shaders/vhs.gdshader" id="33_vhs"]
 [ext_resource type="Script" uid="uid://dckcgg6krtt2o" path="res://script/screen_trance.gd" id="34_trance"]
+[ext_resource type="Script" path="res://script/hanging_sign.gd" id="39_sign"]
 [ext_resource type="Material" uid="uid://bk2fg7if2fmju" path="res://texture/floor/granite_floor.tres" id="35_granite"]
 [ext_resource type="Material" path="res://texture/wall/stucco_ceiling.tres" id="36_stucco_ceiling"]
 [ext_resource type="Material" path="res://texture/desk_leg_light.tres" id="37_leg_light"]
@@ -252,6 +253,27 @@ _surfaces = [{
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_desk"]
 size = Vector3(1.8, 0.05, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_computer_case"]
+size = Vector3(0.46, 0.14, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_computer_monitor"]
+size = Vector3(0.36, 0.33, 0.32)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_computer_keyboard"]
+size = Vector3(0.44, 0.03, 0.16)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_base"]
+radius = 0.16
+height = 0.06
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_stem"]
+radius = 0.04
+height = 0.4
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_shade"]
+radius = 0.18
+height = 0.16
 
 [sub_resource type="BoxMesh" id="BoxMesh_tkkqb"]
 size = Vector3(1.8, 0.05, 1)
@@ -809,6 +831,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.83, 1.05, -0.015)
 material_override = SubResource("StandardMaterial3D_door_metal")
 mesh = SubResource("BoxMesh_door_plate")
 
+[node name="Handle Plate Back" type="MeshInstance3D" parent="Room/Door/DoorPivot" unique_id=204839301]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.83, 1.05, 0.05)
+material_override = SubResource("StandardMaterial3D_door_metal")
+mesh = SubResource("BoxMesh_door_plate")
+
 [node name="HandlePivot" type="Node3D" parent="Room/Door/DoorPivot" unique_id=1212099733]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.83, 1.05, -0.035)
 
@@ -819,6 +846,16 @@ mesh = SubResource("CylinderMesh_door_rose")
 
 [node name="Handle Lever" type="MeshInstance3D" parent="Room/Door/DoorPivot/HandlePivot" unique_id=1567691064]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.065, -0.03, -0.015)
+material_override = SubResource("StandardMaterial3D_door_metal")
+mesh = SubResource("BoxMesh_door_lever")
+
+[node name="Handle Rose Back" type="MeshInstance3D" parent="Room/Door/DoorPivot/HandlePivot" unique_id=204839302]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0.105)
+material_override = SubResource("StandardMaterial3D_door_metal")
+mesh = SubResource("CylinderMesh_door_rose")
+
+[node name="Handle Lever Back" type="MeshInstance3D" parent="Room/Door/DoorPivot/HandlePivot" unique_id=204839303]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.065, -0.03, 0.12)
 material_override = SubResource("StandardMaterial3D_door_metal")
 mesh = SubResource("BoxMesh_door_lever")
 
@@ -836,9 +873,15 @@ sound_handle = ExtResource("20_door_knob")
 visible = false
 shape = SubResource("BoxShape3D_door_handle")
 
+[node name="CollisionShape3D Back" type="CollisionShape3D" parent="Room/Door/DoorPivot/HandleHit" unique_id=204839304]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.09)
+visible = false
+shape = SubResource("BoxShape3D_door_handle")
+
 [node name="Hanging Sign" type="Node3D" parent="Room/Door/DoorPivot" unique_id=1915867419]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47, 0, -0.020674706)
 visible = false
+script = ExtResource("39_sign")
 
 [node name="Board" type="MeshInstance3D" parent="Room/Door/DoorPivot/Hanging Sign" unique_id=2000996587]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4604824, 0)
@@ -920,6 +963,23 @@ mesh = SubResource("BoxMesh_3xxii")
 
 [node name="Computer" type="Node3D" parent="Room/Desk" unique_id=209154535]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -0.075595126, 0.07499999, -0.0077810287)
+
+[node name="ComputerCollision" type="StaticBody3D" parent="Room/Desk/Computer" unique_id=204839401]
+
+[node name="Case" type="CollisionShape3D" parent="Room/Desk/Computer/ComputerCollision" unique_id=204839402]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.027, 0)
+visible = false
+shape = SubResource("BoxShape3D_computer_case")
+
+[node name="Monitor" type="CollisionShape3D" parent="Room/Desk/Computer/ComputerCollision" unique_id=204839403]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.209, -0.02)
+visible = false
+shape = SubResource("BoxShape3D_computer_monitor")
+
+[node name="Keyboard" type="CollisionShape3D" parent="Room/Desk/Computer/ComputerCollision" unique_id=204839404]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, 0.35)
+visible = false
+shape = SubResource("BoxShape3D_computer_keyboard")
 
 [node name="Case" type="Node3D" parent="Room/Desk/Computer" unique_id=2061642083]
 
@@ -1110,6 +1170,23 @@ mesh = SubResource("BoxMesh_kb_keys")
 [node name="Lamp" type="Node3D" parent="Room/Desk" unique_id=1249673965]
 transform = Transform3D(0.3890401, 0, -0.9212208, 0, 1, 0, 0.9212208, 0, 0.3890401, 0.58769476, 0.029999971, 0.22208929)
 
+[node name="LampCollision" type="StaticBody3D" parent="Room/Desk/Lamp" unique_id=204839405]
+
+[node name="Base" type="CollisionShape3D" parent="Room/Desk/Lamp/LampCollision" unique_id=204839406]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+visible = false
+shape = SubResource("CylinderShape3D_lamp_base")
+
+[node name="Stem" type="CollisionShape3D" parent="Room/Desk/Lamp/LampCollision" unique_id=204839407]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.23, 0)
+visible = false
+shape = SubResource("CylinderShape3D_lamp_stem")
+
+[node name="Shade" type="CollisionShape3D" parent="Room/Desk/Lamp/LampCollision" unique_id=204839408]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+visible = false
+shape = SubResource("CylinderShape3D_lamp_shade")
+
 [node name="Lampshade" type="Node3D" parent="Room/Desk/Lamp" unique_id=305833023]
 transform = Transform3D(0.8301945, 0.39278173, -0.39560038, 0.012588946, 0.69624037, 0.71769816, 0.55733204, -0.60080934, 0.57307005, -0.06726992, 0.4187225, 0.100144625)
 
@@ -1234,6 +1311,7 @@ visible = false
 shape = SubResource("BoxShape3D_stool_solid")
 
 [node name="Corridor" type="Node3D" parent="." unique_id=1744776724]
+visible = false
 
 [node name="Corridor Floor" type="MeshInstance3D" parent="Corridor" unique_id=740719327]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 14)
@@ -1246,6 +1324,8 @@ material_override = ExtResource("36_stucco_ceiling")
 mesh = SubResource("BoxMesh_8cuat")
 
 [node name="CorridorCollision" type="StaticBody3D" parent="Corridor" unique_id=204839201]
+collision_layer = 0
+collision_mask = 0
 
 [node name="Floor" type="CollisionShape3D" parent="Corridor/CorridorCollision" unique_id=204839202]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 14)
@@ -1379,3 +1459,4 @@ script = ExtResource("32_world_state")
 [connection signal="prompt_text_changed" from="Character" to="HUD" method="_on_prompt_text_changed"]
 [connection signal="respawned" from="Character" to="Room/Door/DoorPivot/HandleHit" method="reset_door"]
 [connection signal="subtitle_changed" from="Character" to="HUD" method="_on_subtitle_changed"]
+[connection signal="easter_voice_started" from="Character" to="Room/Door/DoorPivot/Hanging Sign" method="on_easter_voice_started"]

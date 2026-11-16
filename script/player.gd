@@ -67,6 +67,7 @@ signal focus_changed(target: Node)
 
 ## 掉出世界（门外没有地面）时发出，方便以后接旁白、字幕或成就
 signal fell_out_of_world
+signal easter_voice_started
 
 ## 从虚空被送回出生点之后发出（门会在这时复位）
 signal respawned
@@ -612,6 +613,8 @@ func _start_fall() -> void:
 	var line := _current_fall_line()
 	if line >= 0:
 		_play_voice(fall_voices[line], fall_cue_paths[line] if line < fall_cue_paths.size() else "")
+		if line == 0 and fall_voices[line] != null:
+			easter_voice_started.emit()
 
 	fell_out_of_world.emit()
 

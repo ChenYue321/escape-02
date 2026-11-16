@@ -17,6 +17,8 @@ const LAMP_SWITCH := &"LampSwitch"
 const TOP_LIGHT_SWITCH := &"Top Light Switch"
 const DOOR_HANDLE := &"HandleHit"
 const STOOL := &"Stool"
+const CORRIDOR := &"Corridor"
+const HANGING_SIGN := &"Hanging Sign"
 const HUD := &"HUD"
 const PAUSE_MENU := &"PauseMenu"
 const WORLD_STATE := &"WorldState"
@@ -24,7 +26,7 @@ const CROSSHAIR := &"Crosshair"
 const PROMPT := &"Prompt"
 
 
-static func find(root: Node, node_name: StringName) -> Node:
+static func find(root: Node, node_name: StringName, warn: bool = true) -> Node:
 	if root == null:
 		push_warning("SceneNodes: 查找 '%s' 时 root 为空" % node_name)
 		return null
@@ -33,9 +35,10 @@ static func find(root: Node, node_name: StringName) -> Node:
 	_collect(root, node_name, matches)
 
 	if matches.is_empty():
-		push_warning("SceneNodes: 在 '%s' 下找不到 '%s'" % [root.name, node_name])
+		if warn:
+			push_warning("SceneNodes: 在 '%s' 下找不到 '%s'" % [root.name, node_name])
 		return null
-	if matches.size() > 1:
+	if matches.size() > 1 and warn:
 		push_warning("SceneNodes: '%s' 有 %d 个同名节点（根 '%s'），使用第一个"
 			% [node_name, matches.size(), root.name])
 	return matches[0]

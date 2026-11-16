@@ -14,7 +14,7 @@ extends StaticBody3D
 @export var handle_pivot: Node3D
 ## 门转轴（绕它的 Y 轴旋转）
 @export var door_pivot: Node3D
-## 挂在门上的告示牌（钉子 + 木板 + 吊绳），第一次复位后才出现
+## 挂在门上的告示牌（钉子 + 木板 + 吊绳），显隐由 Hanging Sign 自己控制
 @export var hanging_sign: Node3D
 
 @export_group("角度")
@@ -51,27 +51,31 @@ func _ready() -> void:
 
 
 func interact(_user: Node3D) -> void:
-	if _busy or _open:
+	if _busy:
 		return
 	_busy = true
 
 	# 把手刚开始转就发声，录音已经剪掉了前面的静音，所以能对上
 	_play_handle_sound()
 
-	# Tween 默认串行：第一段结束后才开始第二段
+	var opening := not _open
+	var target_handle := deg_to_rad(handle_angle_deg) if opening else 0.0
+	var target_door := -deg_to_rad(door_angle_deg) if opening else 0.0
+
+	# Tween 默认串行：先把把手转回去/转下去，再开关门
 	var tween := create_tween()
 	_tween = tween
-	tween.tween_property(handle_pivot, "rotation:z", deg_to_rad(handle_angle_deg), handle_duration) \
+	tween.tween_property(handle_pivot, "rotation:z", target_handle, handle_duration) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	tween.tween_property(door_pivot, "rotation:y", -deg_to_rad(door_angle_deg), door_duration) \
+	tween.tween_property(door_pivot, "rotation:y", target_door, door_duration) \
 		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 	await tween.finished
 
-	_open = true
+	_open = opening
 	_busy = false
-	# 门开着就不再作为交互目标，视线移过去也不会闪提示
-	collision_layer = 0
+	# 开门后仍然保留交互层，玩家可以再从任意一面把门关回去
+	collision_layer = 2
 
 
 ## 存档用：门是不是开着
@@ -79,9 +83,9 @@ func is_open() -> bool:
 	return _open
 
 
-## 提示文字里的动词（HUD 拼成 [E] Open）
+## 提示文字里的动词（HUD 拼成 [E] Open / [E] Close）
 func interact_prompt() -> String:
-	return "Open"
+	return "Close" if _open else "Open"
 
 
 ## 读档用：直接把门摆到开/关状态，不播动画、不发声
@@ -97,8 +101,8 @@ func set_open(open: bool) -> void:
 	if door_pivot != null:
 		door_pivot.rotation.y = -deg_to_rad(door_angle_deg) if open else 0.0
 
-	# 门开着就不再作为交互目标
-	collision_layer = 2 if not open else 0
+	# 开着的门也可以再交互关回去
+	collision_layer = 2
 
 
 func _play_handle_sound() -> void:
@@ -121,6 +125,3 @@ func reset_door() -> void:
 	_busy = false
 	# 重新变成可交互目标
 	collision_layer = 2
-
-	if hanging_sign != null:
-		hanging_sign.visible = true

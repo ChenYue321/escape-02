@@ -7,6 +7,8 @@
 [ext_resource type="Script" path="res://script/facility_ui.gd" id="5_facility"]
 [ext_resource type="Script" path="res://script/folder_icon.gd" id="6_folder"]
 [ext_resource type="Script" path="res://script/folder_card.gd" id="7_card"]
+[ext_resource type="Script" path="res://script/access_status.gd" id="8_access"]
+[ext_resource type="Script" path="res://script/status_dot.gd" id="9_dot"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_snow"]
 shader = ExtResource("2_snow")
@@ -251,9 +253,9 @@ vertical_alignment = 1
 [node name="Executables" type="Label" parent="FacilityUI/Content"]
 layout_mode = 0
 offset_left = 40.0
-offset_top = 510.0
+offset_top = 440.0
 offset_right = 500.0
-offset_bottom = 546.0
+offset_bottom = 476.0
 theme_override_colors/font_color = Color(0.271, 0.659, 0.353, 1)
 theme_override_font_sizes/font_size = 32
 text = "EXECUTABLES"
@@ -262,14 +264,139 @@ vertical_alignment = 1
 [node name="ObjectCount" type="Label" parent="FacilityUI/Content"]
 layout_mode = 0
 offset_left = 820.0
-offset_top = 510.0
+offset_top = 440.0
 offset_right = 1112.0
-offset_bottom = 546.0
+offset_bottom = 476.0
 theme_override_colors/font_color = Color(0.271, 0.659, 0.353, 1)
 theme_override_font_sizes/font_size = 32
 text = "0 OBJECTS"
 horizontal_alignment = 2
 vertical_alignment = 1
+
+[node name="MainFileHover" type="ColorRect" parent="FacilityUI/Content"]
+visible = false
+layout_mode = 0
+offset_left = 70.0
+offset_top = 476.0
+offset_right = 1082.0
+offset_bottom = 518.0
+mouse_filter = 2
+color = Color(0.271, 0.659, 0.353, 1)
+
+[node name="MainFileName" type="Label" parent="FacilityUI/Content"]
+visible = false
+layout_mode = 0
+offset_left = 80.0
+offset_top = 480.0
+offset_right = 800.0
+offset_bottom = 516.0
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 32
+text = "corridor.exe"
+vertical_alignment = 1
+
+[node name="MainActionBox" type="Panel" parent="FacilityUI/Content"]
+visible = false
+layout_mode = 0
+offset_left = 930.0
+offset_top = 482.0
+offset_right = 1060.0
+offset_bottom = 512.0
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="FacilityUI/Content/MainActionBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 22
+text = "DISABLE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainSubDivider" type="ColorRect" parent="FacilityUI/Content"]
+visible = false
+layout_mode = 0
+offset_left = 80.0
+offset_top = 530.0
+offset_right = 1072.0
+offset_bottom = 532.0
+mouse_filter = 2
+color = Color(0.271, 0.659, 0.353, 0.22)
+
+[node name="FolderContent" type="Control" parent="FacilityUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="FileHover" type="ColorRect" parent="FacilityUI/FolderContent"]
+visible = false
+layout_mode = 0
+offset_left = 70.0
+offset_top = 158.0
+offset_right = 1082.0
+offset_bottom = 200.0
+mouse_filter = 2
+color = Color(0.271, 0.659, 0.353, 1)
+
+[node name="FileName" type="Label" parent="FacilityUI/FolderContent"]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 162.0
+offset_right = 800.0
+offset_bottom = 198.0
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 32
+text = "corridor.exe"
+vertical_alignment = 1
+
+[node name="FileStatus" type="Label" parent="FacilityUI/FolderContent"]
+visible = false
+layout_mode = 0
+offset_left = 800.0
+offset_top = 162.0
+offset_right = 1072.0
+offset_bottom = 198.0
+theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SubDivider" type="ColorRect" parent="FacilityUI/FolderContent"]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 206.0
+offset_right = 1072.0
+offset_bottom = 208.0
+mouse_filter = 2
+color = Color(0.271, 0.659, 0.353, 0.22)
+
+[node name="RecordsContent" type="Control" parent="FacilityUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="RecordsList" type="VBoxContainer" parent="FacilityUI/RecordsContent"]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 160.0
+offset_right = 1072.0
+offset_bottom = 720.0
+mouse_filter = 2
+theme_override_constants/separation = 8
 
 [node name="BottomLine" type="ColorRect" parent="FacilityUI"]
 layout_mode = 0
@@ -280,12 +407,49 @@ offset_bottom = 772.0
 mouse_filter = 2
 color = Color(0.271, 0.659, 0.353, 0.35)
 
+[node name="AccessStatus" type="Control" parent="FacilityUI"]
+layout_mode = 0
+offset_left = 780.0
+offset_top = 779.0
+offset_right = 1112.0
+offset_bottom = 817.0
+mouse_filter = 2
+script = ExtResource("8_access")
+
+[node name="StatusRow" type="HBoxContainer" parent="FacilityUI/AccessStatus"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 2
+theme_override_constants/separation = 8
+
+[node name="Dot" type="Control" parent="FacilityUI/AccessStatus/StatusRow"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("9_dot")
+
+[node name="Label" type="Label" parent="FacilityUI/AccessStatus/StatusRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.18, 0.18, 1)
+theme_override_font_sizes/font_size = 24
+text = "Unauthorized access"
+vertical_alignment = 1
+
+[node name="BlinkTimer" type="Timer" parent="FacilityUI/AccessStatus"]
+wait_time = 1.5
+one_shot = true
+
 [node name="NodeStatus" type="Label" parent="FacilityUI"]
 layout_mode = 0
 offset_left = 40.0
-offset_top = 782.0
+offset_top = 776.0
 offset_right = 800.0
-offset_bottom = 820.0
+offset_bottom = 814.0
 theme_override_colors/font_color = Color(0.271, 0.659, 0.353, 1)
 theme_override_font_sizes/font_size = 30
 text = "NODE STATUS: OPERATIONAL"
