@@ -29,7 +29,7 @@ docs/
 
 - **Header**: the `ESCAPE_02` wordmark and two rectangular links, **GitHub Page** and **Download**.
 - **Notice**: the AI disclosure. It uses a paper background and system sans-serif so it reads as website copy, not game content. The `×` button removes it with a small script.
-- **Intro**: one paragraph set in VT323, with the two room screenshots stacked on the right. On narrow screens the text and images stack vertically.
+- **Intro**: four short paragraphs set in VT323, with the two room screenshots stacked on the right. On narrow screens the text and images stack vertically.
 - **Footer**: compact three-column footer with project links, license note and copyright.
 
 The header and footer are duplicated in `index.html` and `download.html`; keep them in sync. The **Download** button in both headers points to `download.html`, not to GitHub Releases.
