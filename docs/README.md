@@ -41,7 +41,11 @@ docs/
 4. random garbled token for 0.5 seconds
 5. repeat
 
-To change the timings, edit the `phases` array in `main.js`. There are no other animations on the page.
+To change the timings, edit the `phases` array in `main.js`.
+
+## Background data rain
+
+The `<main>` area is decorated with falling columns of random green glyphs. `main.js` generates 20 columns on desktop and 8 on mobile; each column gets a random position, speed, size, opacity and character string. Characters mutate every 0.8 seconds so the columns feel unstable. The effect is pure CSS animation plus a small interval, sits behind the content with `pointer-events: none`, and is disabled under `prefers-reduced-motion: reduce`.
 
 ## Screenshots
 
