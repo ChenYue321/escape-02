@@ -116,16 +116,16 @@ main {
 
 .footer {
   flex: 0 0 auto;
-  padding: 3rem 0;
+  padding: 2rem 0;
   border-top: 1px solid var(--line);
   background: var(--bg-deep);
 }
 
 .footer__grid {
   display: grid;
-  grid-template-columns: 1.1fr 1fr 1.5fr;
+  grid-template-columns: 0.7fr 1.1fr 2fr;
   gap: 2rem;
-  align-items: start;
+  align-items: center;
 }
 
 .footer__logo {
@@ -159,8 +159,8 @@ main {
 .footer__fine {
   margin: 0;
   color: var(--dim);
-  font-size: 0.78rem;
-  line-height: 2;
+  font-size: 0.75rem;
+  line-height: 1.9;
   text-align: right;
   text-wrap: balance;
 }
