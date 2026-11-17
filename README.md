@@ -5,6 +5,8 @@
 目前仍是早期原型：以手工搭建的 3D 室内场景为主体，探索程序化生成几何体（电线、管道）与写实 PBR 材质的组合效果。已经能走动、开关灯、开门、坐下，还有一小段"盯着屏幕看"的过场，但离完整的解谜游戏还很远。
 
 > 可玩的 demo：[Releases](https://github.com/ChenYue321/escape-02/releases)（macOS / Windows / Linux）。
+>
+> 项目主页：[chenyue321.github.io/escape-02](https://chenyue321.github.io/escape-02/)（截图、操作方式与路线图）。
 
 ![Godot](https://img.shields.io/badge/Godot-4.7-478cbf)
 ![Status](https://img.shields.io/badge/status-prototype-orange)
@@ -28,8 +30,10 @@
 
 目前的主体是一间可自由行走的封闭房间（`Scenes/main.tscn`，152 个节点），外加菜单、暂停、单存档和一小段屏幕过场：
 
-- **房间**：房间地面是花岗岩地砖，天花板是深色灰泥，四面墙是白色灰泥；走廊地面暂时保留原混凝土材质，走廊天花板与房间共用同一套深色灰泥；踢脚线处有电源插座；`RoomCollision` 提供 8 个盒形碰撞体（地面/天花板/四面墙；门那面墙拆成左右两段 + 门楣）
+- **房间**：房间地面是花岗岩地砖，天花板是深色灰泥，四面墙是白色灰泥；走廊地面换成白色方形瓷砖，左右墙下段换成带竖向接缝的米色抹灰，走廊天花板与房间共用同一套深色灰泥；踢脚线处有电源插座；`RoomCollision` 提供 8 个盒形碰撞体（地面/天花板/四面墙；门那面墙拆成左右两段 + 门楣）
   - 地面 `granite_floor.tres` 的 `uv1_scale = (4.8, 3.2, 1.0)`：BoxMesh 顶面 U/V 范围不同，补偿后是 8×8 块约 1 m 的方砖
+  - 走廊地面 `white_square_tiles.tres` 使用 2K PBR 白色方形瓷砖（albedo / normal / roughness / AO），world triplanar 铺贴，约 0.5 m 方砖
+  - 走廊左右墙下段 `Corridor Wall 1b / 2b` 使用 `plastered_wall_02.tres`（4K PBR 抹灰，triplanar）；上段 `1a / 2a` 仍用白色灰泥
   - 走廊天花板沿 20 m 长边（Z）均匀布置 5 个 0.3 m 方形灯，做法和房间顶灯一致（发光面板 + `OmniLight3D`）；目前常亮，没有单独开关
   - 走廊 `CorridorCollision` 六面都有碰撞：地面、天花板、左右墙、远端墙，以及靠房间门一端的墙；门洞留 1.1 × 2.1 m，碰撞体本身不可见
   - 电脑和台灯各有独立碰撞：电脑机箱 / 显示器 / 键盘，台灯底座 / 支杆 / 灯罩，都不能再穿过去
@@ -38,7 +42,7 @@
   - 按下 `E` 的同时播放 `audio/sfx/door_knob.mp3`，录音开头的静音已剪掉，所以咔哒声和把手转动是同步的
   - **每次从虚空被送回，门都会自动关回原位**（把手归零、恢复可交互）
   - 门板两面各有一套对称把手（面板、圆座、把手柄），背面把手和正面共用 `HandlePivot`，转动同步；背面也有交互碰撞，可以从走廊侧开门
-  - 第一条下落彩蛋旁白触发前，门上的 **Don't Open 告示牌**（`Room/Door/DoorPivot/Hanging Sign`，木板 + 纸面 + 手写文字 + 钉头 + 两根由 `wire.gd` 生成的吊绳）完全不可见；触发后仅当 Corridor 不可见时整块出现，Corridor 可见时大部分收起、只保留钉子
+  - 第一条下落彩蛋旁白触发前，门上的 **Don't Open 告示牌**（`Room/Door/DoorPivot/Hanging Sign`，木板 + 纸面 + 手写文字 + 钉头 + 两根由 `wire.gd` 生成的吊绳）完全不可见；触发后仅当 `Corridor 1` 不可见时整块出现，`Corridor 1` 可见时大部分收起、只保留钉子
   - 纸上的字是 `texture/door/notice_dont_open.png`——用 Bradley Hand 手写体渲染的「Don't open!」，带轻微倾斜和墨迹扩散，透明背景叠在纸面上
   - 门与墙体碰撞都拆好了，门开后人可以走出去；**门外没有地面**，走出去会直接掉下去
   - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**再黑屏复位到出生点，复位时位置、朝向、俯仰和蹲姿全部重置
@@ -63,11 +67,11 @@
 - **贴近屏幕**：坐上凳子、把视线停在显示器屏幕上并保持 **1.5 秒**——前 1.5 秒只有显示器屏幕自身慢慢变亮，相机不推进、画面不扭曲（视角仍然自由，移开就会中断）；中途移开视线或起身，屏幕亮度会在 0.25 秒内退回去。满 1.5 秒后相机在 2.8 秒内推近到「显示器屏幕占画面高度约 85%」的距离：显示器边框、桌面和房间边缘仍然看得见。随后显示器材质切换成 `SubViewport` 里的 2D 雪花 → CRT，全程不切换场景
 - **屏幕内部**：`screen_void.tscn` 现在是 `SubViewport` 里的 **1152×836** 内容（1.378:1，和 3D 显示器屏幕的 0.31 × 0.225 m 一致），不是全屏 2D 场景：雪花先退成黑色（显示器底噪同步淡出，CRT 通电时完全静音），再"通电"成一块绿色 CRT，带扫描线、暗角和轻微球面弯曲；CRT 断电、雪花回来时底噪同步淡入。它被直接贴到 3D 显示器屏幕上，所以房间和显示器边框一直都在。屏幕里是 `FACILITY CONTROL` 主页面：左上标题、右上设备本地时间/日期（精确到秒）、三张圆角文件夹卡片、`EXECUTABLES` / `0 OBJECTS`、底部 `NODE STATUS: OPERATIONAL`。鼠标会在屏幕放大后释放；悬停卡片时黑色底和绿色标注互换；双击卡片后，两条分割线之间的内容淡出，标题下方显示打开的文件夹名；文件夹名左侧的 `<` 单击可返回上一层。离开提示使用和起身提示同一套 HUD 字幕（底部，5 秒）；暂停菜单仍然用主场景的。按住 `Shift` 原地倒放：CRT 断电 → 雪花回来 → 相机退回坐姿 → 人站起来。2D 排版直接在 `ScreenVoid` 的 1152×836 画布上做，比例固定；屏幕高度占比由 `Character/ScreenTrance` 的 `close_up_screen_height` 控制。
   - 右下角分割线下方常驻红色圆点 + `Unauthorized access`，亮 1.5 秒、熄 0.5 秒循环；电脑页面出现时会从「亮」重新开始
-  - `ENVIRONMENT` 文件夹里显示 `corridor.exe`，下面有一条比底部主分割线更短、更淡的次分割线；文件行周围有一个不可见矩形悬停区（比次分割线略长，上下留出空隙），悬停时整行绿底黑字反色；`PROCESSES` 暂时为空
-  - 双击 `corridor.exe` 会播放 `[.]` 到 `[......]` 三遍，随后变为 `[OPERATING]`，主页面计数 0→1；返回主页面后 `EXECUTABLES` 下方出现该文件行和 `DISABLE` 小框，点击小框同样播放加载动画后变为 `ENABLE`
+  - `ENVIRONMENT` 文件夹里显示 `corridor_1.exe`，下面有一条比底部主分割线更短、更淡的次分割线；文件行周围有一个不可见矩形悬停区（比次分割线略长，上下留出空隙），悬停时整行绿底黑字反色；`PROCESSES` 暂时为空
+  - 双击 `corridor_1.exe` 会播放 `[.]` 到 `[......]` 三遍，随后变为 `[OPERATING]`，主页面计数 0→1；返回主页面后 `EXECUTABLES` 下方出现该文件行和 `DISABLE` 小框，点击小框同样播放加载动画后变为 `ENABLE`
   - `RECORDS` 按操作记录 `[date][time] XXX.exe ...`：首次启动 / `Disabled` / `Enabled`，时间取运行设备本地时间；文件名从当前文件行读取，方便以后增加其他可执行文件
-  - `corridor.exe` 和场景里的 `Corridor` 绑定：默认 Corridor 隐藏且没有碰撞，走出门会直接掉落；首次显示 `[OPERATING]` 时 Corridor 出现；主页面 `DISABLE` 隐藏视觉和碰撞并清掉 Environment 的 `[OPERATING]`，`ENABLE` 恢复
-  - 门上的 `Don't Open`：第一条下落彩蛋语音触发前完全隐藏；触发后 Corridor 不可见时整块牌子出现，Corridor 可见时只保留钉子
+  - `corridor_1.exe` 和场景里的 `Corridor 1` 绑定：默认 `Corridor 1` 隐藏且没有碰撞，走出门会直接掉落；首次显示 `[OPERATING]` 时 `Corridor 1` 出现；主页面 `DISABLE` 隐藏视觉和碰撞并清掉 Environment 的 `[OPERATING]`，`ENABLE` 恢复
+  - 门上的 `Don't Open`：第一条下落彩蛋语音触发前完全隐藏；触发后 `Corridor 1` 不可见时整块牌子出现，`Corridor 1` 可见时只保留钉子
 - **彩蛋房间**：第二次坠落时玩家会被送进 `Scenes/escape01_room.tscn`。房间实例化在 `(2000, 0, 0)` 的独立空间里，不与主场景重叠；原场景的 18 个网格各有凸包碰撞体，展台和按钮另有自己的碰撞
   - **睁眼之后**才开始播放 `audio/voice/easter_01.mp3`（旁白吐槽这个房间），**说完之后**房间中央才升起展台：金色底座 + 黑漆柱 + 发光红环 + 红色亮面按钮
   - 展台和按钮都有实体碰撞（底座 / 柱身 / 按钮球三个形状，层 1），玩家撞得到；按钮另有层 2 的交互球
@@ -150,6 +154,7 @@ var screen := SceneNodes.find(world, SceneNodes.SCREEN) as MeshInstance3D
 escape-02/
 ├── project.godot          # 项目配置（渲染后端、物理引擎、ETC2/ASTC 导入）
 ├── export_presets.cfg     # macOS / Windows / Linux 导出预设
+├── docs/                  # GitHub Pages 项目介绍网站（纯静态）
 ├── Scenes/
 │   ├── menu.tscn          # 主菜单（项目启动场景）
 │   ├── main.tscn          # 游戏场景：房间 / 书桌 / 电脑 / 灯 / 凳子
@@ -209,8 +214,8 @@ escape-02/
 ├── texture/
 │   ├── computer/          # 电脑外壳的米色粗塑料（albedo / normal / roughness）
 │   ├── door/              # 门上告示牌的手写文字贴图（透明背景）
-│   ├── floor/             # 花岗岩地砖 PBR 贴图 + granite_floor.tres
-│   ├── wall/              # 白色灰泥 PBR 贴图 + stucco_wall.tres / stucco_ceiling.tres
+│   ├── floor/             # 花岗岩地砖 / 白色方形瓷砖 PBR 贴图 + granite_floor.tres / white_square_tiles.tres
+│   ├── wall/              # 白色灰泥 / 米色抹灰 PBR 贴图 + stucco_wall.tres / stucco_ceiling.tres / plastered_wall_02.tres
 │   ├── ceiling/           # 天花板 PBR 贴图
 │   ├── table/             # 木纹桌面 PBR 贴图
 │   ├── concrete_floor_1k/ # 混凝土地面（含位移贴图）

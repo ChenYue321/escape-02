@@ -292,7 +292,7 @@ offset_right = 800.0
 offset_bottom = 516.0
 theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
 theme_override_font_sizes/font_size = 32
-text = "corridor.exe"
+text = "corridor_1.exe"
 vertical_alignment = 1
 
 [node name="MainActionBox" type="Panel" parent="FacilityUI/Content"]
@@ -355,7 +355,7 @@ offset_right = 800.0
 offset_bottom = 198.0
 theme_override_colors/font_color = Color(0.514, 0.851, 0.584, 1)
 theme_override_font_sizes/font_size = 32
-text = "corridor.exe"
+text = "corridor_1.exe"
 vertical_alignment = 1
 
 [node name="FileStatus" type="Label" parent="FacilityUI/FolderContent"]

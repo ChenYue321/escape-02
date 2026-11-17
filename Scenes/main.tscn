@@ -1,14 +1,11 @@
 [gd_scene format=4 uid="uid://kkc5foqf1t6f"]
 
-[ext_resource type="Texture2D" uid="uid://d1d58poev6wch" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_nor_gl_1k.jpg" id="1_21xkr"]
 [ext_resource type="Script" uid="uid://dnbeuh1k5xa1u" path="res://script/wire.gd" id="1_jjgbg"]
-[ext_resource type="Texture2D" uid="uid://ciobpku1sjrx6" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_rough_1k.jpg" id="2_6bp64"]
 [ext_resource type="Material" path="res://texture/wall/stucco_wall.tres" id="3_344ge"]
 [ext_resource type="Texture2D" uid="uid://bkd6ioqs57g0k" path="res://texture/table/wood_table_diff_1k.jpg" id="4_ynf5e"]
 [ext_resource type="Texture2D" uid="uid://cli80dl3lj78" path="res://texture/table/wood_table_nor_gl_1k.jpg" id="5_hptm8"]
 [ext_resource type="Texture2D" uid="uid://dvbc36oxrftfi" path="res://texture/table/wood_table_rough_1k.jpg" id="6_d1ilt"]
 [ext_resource type="Material" uid="uid://dnxrsnwevuoe0" path="res://texture/desk_leg.tres" id="7_6iyac"]
-[ext_resource type="Texture2D" uid="uid://canlgd0cn0aba" path="res://texture/concrete_floor_worn_001_1k/textures/concrete_floor_worn_001_diff_1k.jpg" id="8_k4x2p"]
 [ext_resource type="Environment" path="res://environment/room_env.tres" id="9_env"]
 [ext_resource type="Script" uid="uid://cp55x6qmufw1o" path="res://script/player.gd" id="10_player"]
 [ext_resource type="Script" uid="uid://c6n7ga4qfn233" path="res://script/crosshair.gd" id="11_crosshair"]
@@ -34,10 +31,12 @@
 [ext_resource type="Script" uid="uid://b1sqptdxikvai" path="res://script/world_state.gd" id="32_world_state"]
 [ext_resource type="Shader" uid="uid://1pgs1t2yyelx" path="res://shaders/vhs.gdshader" id="33_vhs"]
 [ext_resource type="Script" uid="uid://dckcgg6krtt2o" path="res://script/screen_trance.gd" id="34_trance"]
-[ext_resource type="Script" path="res://script/hanging_sign.gd" id="39_sign"]
 [ext_resource type="Material" uid="uid://bk2fg7if2fmju" path="res://texture/floor/granite_floor.tres" id="35_granite"]
 [ext_resource type="Material" path="res://texture/wall/stucco_ceiling.tres" id="36_stucco_ceiling"]
 [ext_resource type="Material" path="res://texture/desk_leg_light.tres" id="37_leg_light"]
+[ext_resource type="Script" uid="uid://jqbusyqror8j" path="res://script/hanging_sign.gd" id="39_sign"]
+[ext_resource type="Material" path="res://texture/floor/white_square_tiles.tres" id="40_floor"]
+[ext_resource type="Material" path="res://texture/wall/plastered_wall_02.tres" id="41_plaster"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vhs"]
 resource_local_to_scene = true
@@ -254,27 +253,6 @@ _surfaces = [{
 [sub_resource type="BoxShape3D" id="BoxShape3D_desk"]
 size = Vector3(1.8, 0.05, 1)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_computer_case"]
-size = Vector3(0.46, 0.14, 0.42)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_computer_monitor"]
-size = Vector3(0.36, 0.33, 0.32)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_computer_keyboard"]
-size = Vector3(0.44, 0.03, 0.16)
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_base"]
-radius = 0.16
-height = 0.06
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_stem"]
-radius = 0.04
-height = 0.4
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_shade"]
-radius = 0.18
-height = 0.16
-
 [sub_resource type="BoxMesh" id="BoxMesh_tkkqb"]
 size = Vector3(1.8, 0.05, 1)
 
@@ -288,6 +266,15 @@ uv1_scale = Vector3(2, 2, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_3xxii"]
 size = Vector3(0.05, 0.6, 0.05)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_computer_case"]
+size = Vector3(0.46, 0.14, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_computer_monitor"]
+size = Vector3(0.36, 0.33, 0.32)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_computer_keyboard"]
+size = Vector3(0.44, 0.03, 0.16)
 
 [sub_resource type="BoxMesh" id="BoxMesh_case_body"]
 size = Vector3(0.46, 0.14, 0.4)
@@ -414,6 +401,18 @@ size = Vector3(0.44, 0.022, 0.16)
 [sub_resource type="BoxMesh" id="BoxMesh_kb_keys"]
 size = Vector3(0.4, 0.008, 0.125)
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_base"]
+height = 0.06
+radius = 0.16
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_stem"]
+height = 0.4
+radius = 0.04
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_shade"]
+height = 0.16
+radius = 0.18
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_shade"]
 albedo_color = Color(0.54, 0.55, 0.58, 1)
 metallic = 0.05
@@ -501,16 +500,6 @@ size = Vector3(0.34, 0.5, 0.34)
 [sub_resource type="BoxMesh" id="BoxMesh_jwpg7"]
 size = Vector3(5, 0.1, 20)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8gbba"]
-albedo_color = Color(0.881126, 0.881179, 0.8661595, 1)
-albedo_texture = ExtResource("8_k4x2p")
-roughness = 0.9
-roughness_texture = ExtResource("2_6bp64")
-normal_enabled = true
-normal_scale = 0.3
-normal_texture = ExtResource("1_21xkr")
-uv1_scale = Vector3(4, 4, 4)
-
 [sub_resource type="BoxMesh" id="BoxMesh_8cuat"]
 size = Vector3(5, 0.1, 20)
 
@@ -539,11 +528,17 @@ size = Vector3(1.95, 3, 0.1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_corridor_near_lintel"]
 size = Vector3(1.1, 0.9, 0.1)
 
+[sub_resource type="BoxMesh" id="BoxMesh_aqgau"]
+size = Vector3(0.1, 1.5, 20)
+
 [sub_resource type="BoxMesh" id="BoxMesh_o1aky"]
-size = Vector3(0.1, 3, 20)
+size = Vector3(0.1, 1.5, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_aa8k8"]
+size = Vector3(0.1, 1.5, 20)
 
 [sub_resource type="BoxMesh" id="BoxMesh_kwxat"]
-size = Vector3(0.1, 3, 20)
+size = Vector3(0.1, 1.5, 20)
 
 [node name="Main" type="Node3D" unique_id=2012244315]
 
@@ -763,12 +758,12 @@ shape = SubResource("BoxShape3D_wall_x")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.95)
 
 [node name="Frame Left" type="MeshInstance3D" parent="Room/Door" unique_id=75254238]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.53, 1.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.515, 1.1, 0)
 material_override = SubResource("StandardMaterial3D_door_frame")
 mesh = SubResource("BoxMesh_door_jamb")
 
 [node name="Frame Right" type="MeshInstance3D" parent="Room/Door" unique_id=1276243978]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.53, 1.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.515, 1.1, 0)
 material_override = SubResource("StandardMaterial3D_door_frame")
 mesh = SubResource("BoxMesh_door_jamb")
 
@@ -1310,145 +1305,149 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 visible = false
 shape = SubResource("BoxShape3D_stool_solid")
 
-[node name="Corridor" type="Node3D" parent="." unique_id=1744776724]
-visible = false
+[node name="Corridor 1" type="Node3D" parent="." unique_id=1744776724]
 
-[node name="Corridor Floor" type="MeshInstance3D" parent="Corridor" unique_id=740719327]
+[node name="Corridor Floor" type="MeshInstance3D" parent="Corridor 1" unique_id=740719327]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 14)
 mesh = SubResource("BoxMesh_jwpg7")
-surface_material_override/0 = SubResource("StandardMaterial3D_8gbba")
+surface_material_override/0 = ExtResource("40_floor")
 
-[node name="Corridor Ceiling" type="MeshInstance3D" parent="Corridor" unique_id=1744850073]
+[node name="Corridor Ceiling" type="MeshInstance3D" parent="Corridor 1" unique_id=1744850073]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 14)
 material_override = ExtResource("36_stucco_ceiling")
 mesh = SubResource("BoxMesh_8cuat")
 
-[node name="CorridorCollision" type="StaticBody3D" parent="Corridor" unique_id=204839201]
+[node name="Corridor Light 1" type="Node3D" parent="Corridor 1/Corridor Ceiling" unique_id=204839101]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="Panel" type="MeshInstance3D" parent="Corridor 1/Corridor Ceiling/Corridor Light 1" unique_id=204839102]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
+material_override = SubResource("StandardMaterial3D_corridor_panel")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_corridor_panel")
+
+[node name="Light" type="OmniLight3D" parent="Corridor 1/Corridor Ceiling/Corridor Light 1" unique_id=204839103]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+light_color = Color(1, 0.96, 0.9, 1)
+omni_range = 7.0
+
+[node name="Corridor Light 2" type="Node3D" parent="Corridor 1/Corridor Ceiling" unique_id=204839104]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Panel" type="MeshInstance3D" parent="Corridor 1/Corridor Ceiling/Corridor Light 2" unique_id=204839105]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
+material_override = SubResource("StandardMaterial3D_corridor_panel")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_corridor_panel")
+
+[node name="Light" type="OmniLight3D" parent="Corridor 1/Corridor Ceiling/Corridor Light 2" unique_id=204839106]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+light_color = Color(1, 0.96, 0.9, 1)
+omni_range = 7.0
+
+[node name="Corridor Light 3" type="Node3D" parent="Corridor 1/Corridor Ceiling" unique_id=204839107]
+
+[node name="Panel" type="MeshInstance3D" parent="Corridor 1/Corridor Ceiling/Corridor Light 3" unique_id=204839108]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
+material_override = SubResource("StandardMaterial3D_corridor_panel")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_corridor_panel")
+
+[node name="Light" type="OmniLight3D" parent="Corridor 1/Corridor Ceiling/Corridor Light 3" unique_id=204839109]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+light_color = Color(1, 0.96, 0.9, 1)
+omni_range = 7.0
+
+[node name="Corridor Light 4" type="Node3D" parent="Corridor 1/Corridor Ceiling" unique_id=204839110]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+
+[node name="Panel" type="MeshInstance3D" parent="Corridor 1/Corridor Ceiling/Corridor Light 4" unique_id=204839111]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
+material_override = SubResource("StandardMaterial3D_corridor_panel")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_corridor_panel")
+
+[node name="Light" type="OmniLight3D" parent="Corridor 1/Corridor Ceiling/Corridor Light 4" unique_id=204839112]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+light_color = Color(1, 0.96, 0.9, 1)
+omni_range = 7.0
+
+[node name="Corridor Light 5" type="Node3D" parent="Corridor 1/Corridor Ceiling" unique_id=204839113]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8)
+
+[node name="Panel" type="MeshInstance3D" parent="Corridor 1/Corridor Ceiling/Corridor Light 5" unique_id=204839114]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
+material_override = SubResource("StandardMaterial3D_corridor_panel")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_corridor_panel")
+
+[node name="Light" type="OmniLight3D" parent="Corridor 1/Corridor Ceiling/Corridor Light 5" unique_id=204839115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+light_color = Color(1, 0.96, 0.9, 1)
+omni_range = 7.0
+
+[node name="CorridorCollision" type="StaticBody3D" parent="Corridor 1" unique_id=204839201]
 collision_layer = 0
 collision_mask = 0
 
-[node name="Floor" type="CollisionShape3D" parent="Corridor/CorridorCollision" unique_id=204839202]
+[node name="Floor" type="CollisionShape3D" parent="Corridor 1/CorridorCollision" unique_id=204839202]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 14)
 visible = false
 shape = SubResource("BoxShape3D_corridor_floor")
 
-[node name="Ceiling" type="CollisionShape3D" parent="Corridor/CorridorCollision" unique_id=204839203]
+[node name="Ceiling" type="CollisionShape3D" parent="Corridor 1/CorridorCollision" unique_id=204839203]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 14)
 visible = false
 shape = SubResource("BoxShape3D_corridor_floor")
 
-[node name="Wall Left" type="CollisionShape3D" parent="Corridor/CorridorCollision" unique_id=204839204]
+[node name="Wall Left" type="CollisionShape3D" parent="Corridor 1/CorridorCollision" unique_id=204839204]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 1.5, 14)
 visible = false
 shape = SubResource("BoxShape3D_corridor_side")
 
-[node name="Wall Right" type="CollisionShape3D" parent="Corridor/CorridorCollision" unique_id=204839205]
+[node name="Wall Right" type="CollisionShape3D" parent="Corridor 1/CorridorCollision" unique_id=204839205]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 1.5, 14)
 visible = false
 shape = SubResource("BoxShape3D_corridor_side")
 
-[node name="Wall Far" type="CollisionShape3D" parent="Corridor/CorridorCollision" unique_id=204839206]
+[node name="Wall Far" type="CollisionShape3D" parent="Corridor 1/CorridorCollision" unique_id=204839206]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 24)
 visible = false
 shape = SubResource("BoxShape3D_corridor_end")
 
-[node name="Wall Near Left" type="CollisionShape3D" parent="Corridor/CorridorCollision" unique_id=204839207]
+[node name="Wall Near Left" type="CollisionShape3D" parent="Corridor 1/CorridorCollision" unique_id=204839207]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.525, 1.5, 4)
 visible = false
 shape = SubResource("BoxShape3D_corridor_near_side")
 
-[node name="Wall Near Right" type="CollisionShape3D" parent="Corridor/CorridorCollision" unique_id=204839208]
+[node name="Wall Near Right" type="CollisionShape3D" parent="Corridor 1/CorridorCollision" unique_id=204839208]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.525, 1.5, 4)
 visible = false
 shape = SubResource("BoxShape3D_corridor_near_side")
 
-[node name="Wall Near Lintel" type="CollisionShape3D" parent="Corridor/CorridorCollision" unique_id=204839209]
+[node name="Wall Near Lintel" type="CollisionShape3D" parent="Corridor 1/CorridorCollision" unique_id=204839209]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, 4)
 visible = false
 shape = SubResource("BoxShape3D_corridor_near_lintel")
 
-[node name="Corridor Light 1" type="Node3D" parent="Corridor/Corridor Ceiling" unique_id=204839101]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
-
-[node name="Panel" type="MeshInstance3D" parent="Corridor/Corridor Ceiling/Corridor Light 1" unique_id=204839102]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
-material_override = SubResource("StandardMaterial3D_corridor_panel")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_corridor_panel")
-
-[node name="Light" type="OmniLight3D" parent="Corridor/Corridor Ceiling/Corridor Light 1" unique_id=204839103]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-light_color = Color(1, 0.96, 0.9, 1)
-light_energy = 1.0
-omni_range = 7.0
-
-[node name="Corridor Light 2" type="Node3D" parent="Corridor/Corridor Ceiling" unique_id=204839104]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
-
-[node name="Panel" type="MeshInstance3D" parent="Corridor/Corridor Ceiling/Corridor Light 2" unique_id=204839105]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
-material_override = SubResource("StandardMaterial3D_corridor_panel")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_corridor_panel")
-
-[node name="Light" type="OmniLight3D" parent="Corridor/Corridor Ceiling/Corridor Light 2" unique_id=204839106]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-light_color = Color(1, 0.96, 0.9, 1)
-light_energy = 1.0
-omni_range = 7.0
-
-[node name="Corridor Light 3" type="Node3D" parent="Corridor/Corridor Ceiling" unique_id=204839107]
-
-[node name="Panel" type="MeshInstance3D" parent="Corridor/Corridor Ceiling/Corridor Light 3" unique_id=204839108]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
-material_override = SubResource("StandardMaterial3D_corridor_panel")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_corridor_panel")
-
-[node name="Light" type="OmniLight3D" parent="Corridor/Corridor Ceiling/Corridor Light 3" unique_id=204839109]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-light_color = Color(1, 0.96, 0.9, 1)
-light_energy = 1.0
-omni_range = 7.0
-
-[node name="Corridor Light 4" type="Node3D" parent="Corridor/Corridor Ceiling" unique_id=204839110]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
-
-[node name="Panel" type="MeshInstance3D" parent="Corridor/Corridor Ceiling/Corridor Light 4" unique_id=204839111]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
-material_override = SubResource("StandardMaterial3D_corridor_panel")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_corridor_panel")
-
-[node name="Light" type="OmniLight3D" parent="Corridor/Corridor Ceiling/Corridor Light 4" unique_id=204839112]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-light_color = Color(1, 0.96, 0.9, 1)
-light_energy = 1.0
-omni_range = 7.0
-
-[node name="Corridor Light 5" type="Node3D" parent="Corridor/Corridor Ceiling" unique_id=204839113]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8)
-
-[node name="Panel" type="MeshInstance3D" parent="Corridor/Corridor Ceiling/Corridor Light 5" unique_id=204839114]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
-material_override = SubResource("StandardMaterial3D_corridor_panel")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_corridor_panel")
-
-[node name="Light" type="OmniLight3D" parent="Corridor/Corridor Ceiling/Corridor Light 5" unique_id=204839115]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-light_color = Color(1, 0.96, 0.9, 1)
-light_energy = 1.0
-omni_range = 7.0
-
-[node name="Corridor Wall 1" type="MeshInstance3D" parent="Corridor" unique_id=194408968]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.45, 1.5, 14)
+[node name="Corridor Wall 1a" type="MeshInstance3D" parent="Corridor 1" unique_id=194408968]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.45, 2.25, 14)
 material_override = ExtResource("3_344ge")
+mesh = SubResource("BoxMesh_aqgau")
+
+[node name="Corridor Wall 1b" type="MeshInstance3D" parent="Corridor 1" unique_id=962859286]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.45, 0.75, 14)
+material_override = ExtResource("41_plaster")
 mesh = SubResource("BoxMesh_o1aky")
 
-[node name="Corridor Wall 2" type="MeshInstance3D" parent="Corridor" unique_id=1937626560]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 1.5, 14)
+[node name="Corridor Wall 2a" type="MeshInstance3D" parent="Corridor 1" unique_id=1937626560]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 2.25, 14)
 material_override = ExtResource("3_344ge")
+mesh = SubResource("BoxMesh_aa8k8")
+
+[node name="Corridor Wall 2b" type="MeshInstance3D" parent="Corridor 1" unique_id=684867009]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 0.75, 14)
+material_override = ExtResource("41_plaster")
 mesh = SubResource("BoxMesh_kwxat")
 
 [node name="WorldState" type="Node" parent="." unique_id=197509103]
@@ -1456,7 +1455,7 @@ script = ExtResource("32_world_state")
 
 [node name="PauseMenu" parent="." unique_id=907900229 instance=ExtResource("31_pause")]
 
+[connection signal="easter_voice_started" from="Character" to="Room/Door/DoorPivot/Hanging Sign" method="on_easter_voice_started"]
 [connection signal="prompt_text_changed" from="Character" to="HUD" method="_on_prompt_text_changed"]
 [connection signal="respawned" from="Character" to="Room/Door/DoorPivot/HandleHit" method="reset_door"]
 [connection signal="subtitle_changed" from="Character" to="HUD" method="_on_subtitle_changed"]
-[connection signal="easter_voice_started" from="Character" to="Room/Door/DoorPivot/Hanging Sign" method="on_easter_voice_started"]

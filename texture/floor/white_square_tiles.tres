@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" uid="uid://dcg75ed1pkbei" path="res://texture/floor/white_square_tiles/white_square_tiles_color.jpg" id="1_color"]
+[ext_resource type="Texture2D" uid="uid://bo4si6ogwlqtq" path="res://texture/floor/white_square_tiles/white_square_tiles_normal.jpg" id="2_normal"]
+[ext_resource type="Texture2D" uid="uid://vsksh0uecrmp" path="res://texture/floor/white_square_tiles/white_square_tiles_roughness.jpg" id="3_roughness"]
+[ext_resource type="Texture2D" uid="uid://dl4545pba2lo0" path="res://texture/floor/white_square_tiles/white_square_tiles_ao.jpg" id="4_ao"]
+
+[resource]
+resource_name = "White Square Tiles"
+albedo_texture = ExtResource("1_color")
+roughness = 1.0
+roughness_texture = ExtResource("3_roughness")
+roughness_texture_channel = 0
+normal_enabled = true
+normal_scale = 0.5
+normal_texture = ExtResource("2_normal")
+ao_enabled = true
+ao_texture = ExtResource("4_ao")
+ao_texture_channel = 0
+ao_light_affect = 0.5
+uv1_triplanar = true
+uv1_world_triplanar = true
+uv1_scale = Vector3(0.25, 0.25, 0.25)

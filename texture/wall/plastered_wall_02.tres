@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" uid="uid://bxd4igr4rfu5v" path="res://texture/wall/plastered_wall_02/plastered_wall_02_diff_4k.jpg" id="1_diff"]
+[ext_resource type="Texture2D" uid="uid://bropf6b24s4t8" path="res://texture/wall/plastered_wall_02/plastered_wall_02_nor_gl_4k.jpg" id="2_nor"]
+[ext_resource type="Texture2D" uid="uid://utvv52onhvu5" path="res://texture/wall/plastered_wall_02/plastered_wall_02_rough_4k.jpg" id="3_rough"]
+
+[resource]
+resource_name = "Plastered Wall 02"
+albedo_texture = ExtResource("1_diff")
+roughness = 1.0
+roughness_texture = ExtResource("3_rough")
+normal_enabled = true
+normal_scale = 0.5
+normal_texture = ExtResource("2_nor")
+uv1_triplanar = true
+uv1_world_triplanar = true
+uv1_scale = Vector3(0.65, 0.65, 0.65)
