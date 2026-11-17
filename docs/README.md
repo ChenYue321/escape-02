@@ -1,24 +1,51 @@
 # ESCAPE_02 Project Site
 
-This is the GitHub Pages site for `escape-02`. It is plain static HTML/CSS with no build step and no external CDN dependencies.
-
-The site is currently being redesigned: only the `<header>` and `<footer>` remain, and `<main>` is empty. The previous full page is preserved in commit `f6e4927`.
+The GitHub Pages site for `escape-02`. Plain static HTML/CSS/JS, no build step and no external CDN dependencies.
 
 Live URL: <https://chenyue321.github.io/escape-02/>
+
+The previous empty-shell version is preserved in commit `aaff524`; the full multi-section version before that is in `f6e4927`.
 
 ## Files
 
 ```
 docs/
-├── index.html                  # Shell: header + empty main + footer
+├── index.html                  # Header, notice, intro, footer
 ├── .nojekyll                   # Skip Jekyll on GitHub Pages
 ├── README.md                   # This file
 └── assets/
-    ├── css/style.css           # Site styles (header / footer only for now)
-    ├── fonts/                  # VT323 font + OFL license
+    ├── css/style.css           # Styles
+    ├── js/main.js              # Notice dismissal + [DISABLE]/[ENABLE] loop
+    ├── fonts/                  # VT323 (the in-game pixel font) + OFL license
     ├── favicon.svg
-    └── img/                    # Previous screenshots and OG cover, kept for reuse
+    └── img/
+        ├── room-desk.webp      # In-game room screenshot, desk angle
+        ├── room-door.webp      # In-game room screenshot, door angle
+        └── ...                 # Older screenshots and OG cover, kept for reuse
 ```
+
+## Page structure
+
+- **Header**: the `ESCAPE_02` wordmark and two rectangular links, **GitHub Page** and **Download**.
+- **Notice**: the AI disclosure. It uses a paper background and system sans-serif so it reads as website copy, not game content. The `×` button removes it with a small script.
+- **Intro**: one paragraph set in VT323, with the two room screenshots stacked on the right. On narrow screens the text and images stack vertically.
+- **Footer**: compact three-column footer with project links, license note and copyright.
+
+## The `[DISABLE]` / `[ENABLE]` loop
+
+`docs/assets/js/main.js` cycles the inline state word:
+
+1. `[DISABLE]` for 1 second
+2. random garbled token for 0.5 seconds
+3. `[ENABLE]` for 1 second
+4. random garbled token for 0.5 seconds
+5. repeat
+
+To change the timings, edit the `phases` array in `main.js`. There are no other animations on the page.
+
+## Screenshots
+
+`room-desk.webp` and `room-door.webp` were captured from the actual game, from two different camera angles in `Scenes/main.tscn`. They were resized to 1280×720 and saved as WebP. Replace the files directly to update the images; the HTML references the same names.
 
 ## Local preview
 
@@ -30,14 +57,6 @@ python3 -m http.server 4173 --directory docs
 
 Then open <http://127.0.0.1:4173/>.
 
-## Current state
-
-- The `<header>` contains only the `ESCAPE_02` wordmark. Navigation links, the GitHub button and the mobile menu have been removed.
-- `<main id="main">` is empty. New content goes here.
-- The `<footer>` keeps the project links, license note and copyright.
-- The old clock, scroll-reveal, gallery and lightbox scripts have been removed. Images in `assets/img/` remain available for reuse.
-- All site copy is in English.
-
 ## Deploy
 
 1. Commit and push `docs/` to `main`.
@@ -47,13 +66,13 @@ Then open <http://127.0.0.1:4173/>.
 
 Every push to `main` republishes the site automatically.
 
-## Next
+## Editing
 
-- **Add content**: edit the `<main>` in `docs/index.html`.
-- **Colors / type**: adjust the `:root` variables at the top of `docs/assets/css/style.css`.
-- **Reuse screenshots**: WebP images for the room, corridor, FACILITY CONTROL and RECORDS are in `docs/assets/img/`.
-- **Demo builds**: upload the four zips from `build/release/` as GitHub Release assets. Do not commit `build/` to the repository.
-- **Footer**: edit the `<footer>` in `index.html`; all footer links live there.
+- **Copy**: edit `index.html`; the header labels, notice text and intro paragraph are all there.
+- **Style**: `assets/css/style.css`; colors and fonts are in the `:root` variables.
+- **Notice close / state loop**: `assets/js/main.js`.
+- **Screenshots**: replace `assets/img/room-desk.webp` or `room-door.webp`.
+- **Footer**: edit the `<footer>` in `index.html`.
 
 ## Troubleshooting
 

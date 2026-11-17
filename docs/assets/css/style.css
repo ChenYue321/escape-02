@@ -1,6 +1,5 @@
 /* ============================================================
    ESCAPE_02 — project site
-   Redesign shell: header and footer only.
    ============================================================ */
 
 @font-face {
@@ -20,6 +19,7 @@
   --dim: #78827a;
   --green: #58c46e;
   --green-dim: #377f49;
+  --danger: #d96b62;
   --line: rgba(88, 196, 110, 0.14);
   --line-strong: rgba(88, 196, 110, 0.3);
   --mono: "VT323", "SFMono-Regular", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
@@ -41,13 +41,11 @@ body {
   flex-direction: column;
   min-height: 100svh;
   margin: 0;
-  background:
-    radial-gradient(1100px 700px at 85% -10%, rgba(88, 196, 110, 0.05), transparent 60%),
-    var(--bg);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
   font-size: 16px;
-  line-height: 1.85;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -70,46 +68,181 @@ a {
   margin-inline: auto;
 }
 
-.cursor {
-  color: var(--green);
-  animation: blink 1.15s steps(2, start) infinite;
-}
-
 /* ---------- Header ---------- */
 
 .site-header {
   flex: 0 0 auto;
   border-bottom: 1px solid var(--line);
-  background: rgba(6, 8, 7, 0.72);
+  background: var(--bg);
 }
 
 .site-header__inner {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 24px;
   height: 84px;
 }
 
 .brand {
-  color: var(--paper);
+  margin: 0;
   font-family: var(--mono);
   font-size: 1.7rem;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.06em;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: color 0.25s;
 }
 
-.brand:hover,
-.brand:focus-visible {
+.brand a {
+  color: var(--paper);
+  text-decoration: none;
+}
+
+.brand a:hover,
+.brand a:focus-visible {
   color: var(--green);
 }
 
-/* ---------- Main (empty for now) ---------- */
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  background: transparent;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.button:hover,
+.button:focus-visible {
+  border-color: var(--paper);
+  background: var(--paper);
+  color: var(--bg);
+}
+
+/* ---------- Content ---------- */
 
 main {
   flex: 1 1 auto;
-  min-height: 40svh;
+}
+
+.content {
+  width: min(1040px, calc(100% - 120px));
+  margin-inline: auto;
+  padding: clamp(44px, 6vw, 72px) 0 clamp(64px, 8vw, 96px);
+}
+
+/* ---------- Notice ---------- */
+
+.notice {
+  position: relative;
+  margin: 0 0 clamp(40px, 5vw, 56px);
+  padding: 20px 52px 20px 22px;
+  border: 1px solid #cfc5ae;
+  border-left: 4px solid #b0732f;
+  background: #e8e2d3;
+  color: #1a1712;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.notice p {
+  margin: 0;
+}
+
+.notice p + p {
+  margin-top: 12px;
+}
+
+.notice__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid rgba(26, 23, 18, 0.25);
+  border-radius: 0;
+  background: transparent;
+  color: #1a1712;
+  font-family: var(--sans);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.notice__close:hover,
+.notice__close:focus-visible {
+  border-color: #1a1712;
+  background: #1a1712;
+  color: #e8e2d3;
+}
+
+/* ---------- Intro ---------- */
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: clamp(36px, 5vw, 64px);
+  align-items: start;
+}
+
+.intro__copy {
+  margin: 0;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.state {
+  display: inline-block;
+  min-width: 9ch;
+  white-space: nowrap;
+}
+
+.state.is-disable {
+  color: var(--danger);
+}
+
+.state.is-enable {
+  color: var(--green);
+}
+
+.state.is-garble {
+  color: var(--dim);
+}
+
+.intro__shots {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.intro__shots img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  background: #000;
 }
 
 /* ---------- Footer ---------- */
@@ -148,7 +281,6 @@ main {
   font-size: 0.95rem;
   letter-spacing: 0.06em;
   text-decoration: none;
-  transition: color 0.25s;
 }
 
 .footer__links a:hover,
@@ -176,26 +308,26 @@ main {
   color: var(--green);
 }
 
-/* ---------- Animations ---------- */
-
-@keyframes blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-
 /* ---------- Responsive ---------- */
+
+@media (max-width: 920px) {
+  .content {
+    width: min(100% - 80px, 660px);
+  }
+
+  .intro {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  .intro__shots {
+    gap: 12px;
+  }
+}
 
 @media (max-width: 800px) {
   .wrap {
     width: calc(100% - 40px);
-  }
-
-  .site-header__inner {
-    height: 72px;
-  }
-
-  .brand {
-    font-size: 1.5rem;
   }
 
   .footer__grid {
@@ -210,12 +342,58 @@ main {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+@media (max-width: 760px) {
+  .content {
+    width: 100%;
+    padding: 32px 16px 64px;
+  }
+
+  .notice {
+    padding: 16px 42px 16px 16px;
+    font-size: 0.82rem;
+    border-left-width: 3px;
+  }
+
+  .notice__close {
+    top: 6px;
+    right: 6px;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+  }
+
+  .intro__copy {
+    font-size: 1.45rem;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-header__inner {
+    height: 68px;
+    gap: 12px;
+  }
+
+  .brand {
+    font-size: 1.35rem;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .button {
+    min-height: 34px;
+    padding: 0 9px;
+    font-size: 0.92rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .site-header__inner {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 0;
+    row-gap: 10px;
   }
 }

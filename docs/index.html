@@ -27,18 +27,36 @@
 <body>
   <header class="site-header">
     <div class="wrap site-header__inner">
-      <a class="brand" href="./" aria-label="ESCAPE_02 home">ESCAPE_02<span class="cursor" aria-hidden="true">_</span></a>
+      <h1 class="brand"><a href="./" aria-label="ESCAPE_02 home">ESCAPE_02</a></h1>
+      <nav class="header-actions" aria-label="Project links">
+        <a class="button" href="https://github.com/ChenYue321/escape-02" target="_blank" rel="noopener">GitHub Page</a>
+        <a class="button" href="https://github.com/ChenYue321/escape-02/releases" target="_blank" rel="noopener">Download</a>
+      </nav>
     </div>
   </header>
 
   <main id="main">
-    <!-- New page content starts here. Previous version: commit f6e4927. -->
+    <div class="content">
+      <aside class="notice" id="notice" aria-label="Important notice">
+        <button class="notice__close" id="notice-close" type="button" aria-label="Dismiss notice">×</button>
+        <p>Due to the author's limited time and technical capabilities, their role in the development of this game has primarily been one of conceptual direction and creative supervision. A substantial portion of the 3D modeling and game programming has been generated with the assistance of AI tools.</p>
+        <p>If you have any objections to the use of AI-generated content, please discontinue your visit to this website.</p>
+      </aside>
+
+      <article class="intro" aria-label="Introduction">
+        <p class="intro__copy">You have entered a strange world where reality can be manipulate and change easily. But how? How can you keep sane among all the conflicting informations? Will you <span class="state is-disable" id="state-word">[DISABLE]</span> all the anomalies, or completely opposite?</p>
+        <div class="intro__shots">
+          <img src="assets/img/room-desk.webp" width="1280" height="720" alt="A dark room with a desk, an old computer glowing green, a lamp and a stool, lit by a ceiling panel.">
+          <img src="assets/img/room-door.webp" width="1280" height="720" alt="The same room seen from another angle, facing a closed black door with a light above it.">
+        </div>
+      </article>
+    </div>
   </main>
 
   <footer class="footer">
     <div class="wrap footer__grid">
       <div class="footer__brand">
-        <p class="footer__logo">ESCAPE_02<span class="cursor" aria-hidden="true">_</span></p>
+        <p class="footer__logo">ESCAPE_02</p>
       </div>
 
       <nav class="footer__links" aria-label="Footer">
@@ -54,5 +72,7 @@
       </p>
     </div>
   </footer>
+
+  <script src="assets/js/main.js" defer></script>
 </body>
 </html>
