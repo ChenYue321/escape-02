@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESCAPE_02 — 手工搭建的 Godot 密室逃脱原型</title>
+  <meta name="description" content="ESCAPE_02 是一个纯兴趣驱动的个人 Godot 项目：手工搭建的第一人称密室逃脱 / 环境叙事原型。能走动、开门、关灯、坐下，也能盯着屏幕被吸进去。">
+  <meta name="theme-color" content="#060807">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/VT323-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/img/hero-room.webp" as="image" fetchpriority="high">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ESCAPE_02">
+  <meta property="og:title" content="ESCAPE_02 — 手工搭建的 Godot 密室逃脱原型">
+  <meta property="og:description" content="一间没有出口的房间，一台不该开机的电脑。一个纯兴趣驱动的个人 Godot 项目。">
+  <meta property="og:url" content="https://chenyue321.github.io/escape-02/">
+  <meta property="og:image" content="https://chenyue321.github.io/escape-02/assets/img/og-cover.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ESCAPE_02 — 手工搭建的 Godot 密室逃脱原型">
+  <meta name="twitter:description" content="一间没有出口的房间，一台不该开机的电脑。一个纯兴趣驱动的个人 Godot 项目。">
+  <meta name="twitter:image" content="https://chenyue321.github.io/escape-02/assets/img/og-cover.jpg">
+
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="crt" aria-hidden="true"></div>
+
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="#top" aria-label="ESCAPE_02 首页">ESCAPE_02<span class="cursor" aria-hidden="true">_</span></a>
+    <button class="nav__toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+      <span>MENU</span>
+      <span class="nav__toggle-bars" aria-hidden="true"><i></i><i></i></span>
+    </button>
+    <nav class="nav__links" id="nav-links" aria-label="主导航">
+      <a href="#about">关于</a>
+      <a href="#features">特性</a>
+      <a href="#screen">屏幕</a>
+      <a href="#gallery">画面</a>
+      <a href="#controls">操作</a>
+      <a href="#download">下载</a>
+    </nav>
+    <a class="nav__github" href="https://github.com/ChenYue321/escape-02" target="_blank" rel="noopener">
+      GitHub <span aria-hidden="true">↗</span>
+    </a>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <img class="hero__bg" src="assets/img/hero-room.webp" width="1280" height="720" alt="ESCAPE_02 里的房间：深色花岗岩地砖、白色灰泥墙，书桌上是一台亮着绿色雪花屏的老式电脑">
+      <div class="hero__shade" aria-hidden="true"></div>
+      <div class="wrap hero__inner">
+        <p class="status-line">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>SYSTEM STATUS: <b>OPERATIONAL</b></span>
+          <span class="status-line__sep" aria-hidden="true">/</span>
+          <span>LOCAL NODE TIME <time id="clock">--:--:--</time></span>
+        </p>
+
+        <h1 class="hero__title" id="hero-title">ESCAPE<span>_02</span></h1>
+        <p class="hero__kicker">A HAND-BUILT ENVIRONMENTAL ESCAPE PROTOTYPE</p>
+        <p class="hero__lead">一间没有出口的房间。一台不该开机的电脑。<br>一个纯兴趣驱动的 Godot 密室逃脱原型。</p>
+
+        <div class="hero__actions">
+          <a class="btn btn--solid" href="https://github.com/ChenYue321/escape-02/releases">下载 demo <span aria-hidden="true">↗</span></a>
+          <a class="btn btn--ghost" href="https://github.com/ChenYue321/escape-02" target="_blank" rel="noopener">查看源码</a>
+        </div>
+
+        <ul class="hero__meta" aria-label="项目信息">
+          <li>GODOT 4.7</li>
+          <li>JOLT PHYSICS</li>
+          <li>GDSCRIPT</li>
+          <li>MIT</li>
+        </ul>
+      </div>
+
+      <p class="hero__scroll" aria-hidden="true">SCROLL <span>↓</span></p>
+    </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track">
+        <span>PURE INTEREST PROJECT</span><i></i>
+        <span>NO SCHEDULE</span><i></i>
+        <span>NO CLIENT</span><i></i>
+        <span>WORK IN PROGRESS</span><i></i>
+        <span>GODOT 4.7</span><i></i>
+        <span>ENVIRONMENTAL STORYTELLING</span><i></i>
+        <span>PURE INTEREST PROJECT</span><i></i>
+        <span>NO SCHEDULE</span><i></i>
+        <span>NO CLIENT</span><i></i>
+        <span>WORK IN PROGRESS</span><i></i>
+        <span>GODOT 4.7</span><i></i>
+        <span>ENVIRONMENTAL STORYTELLING</span><i></i>
+      </div>
+    </div>
+
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="wrap">
+        <header class="section__head reveal">
+          <p class="label">[01] ABOUT</p>
+          <h2 id="about-title">先有一个房间，<br>然后才有一个故事。</h2>
+        </header>
+
+        <div class="about__grid">
+          <div class="about__copy reveal">
+            <p>ESCAPE_02 是一个纯兴趣驱动的个人 Godot 项目。它从一间手工搭建的 3D 房间开始：花岗岩地砖、白色灰泥墙、深色天花，一扇门，一张书桌，一台泛黄的 90 年代电脑。</p>
+            <p>没有排期，也没有甲方。所有东西都是边做边学：程序化生成的电线、写实 PBR 材质、视线锥交互、全屏 VHS 后处理，以及一块贴在 3D 显示器上的 2D CRT 屏幕。</p>
+            <p>目前仍是早期原型——能走、能开门、能关灯、能坐下，也能盯着屏幕被吸进去；但完整的解谜链路还没接上。</p>
+            <blockquote>
+              <p>「门外没有地面。这是设计，不是 bug。」</p>
+            </blockquote>
+          </div>
+
+          <aside class="stats reveal" aria-label="项目数据">
+            <div class="stat">
+              <span class="stat__num">152</span>
+              <span class="stat__label">SCENE NODES<em>主场景节点</em></span>
+            </div>
+            <div class="stat">
+              <span class="stat__num stat__num--wide">1152<span class="times">×</span>836</span>
+              <span class="stat__label">SCREEN CANVAS<em>显示器里的 2D 画布</em></span>
+            </div>
+            <div class="stat">
+              <span class="stat__num">2</span>
+              <span class="stat__label">VOICED FALLS<em>带旁白的坠落</em></span>
+            </div>
+            <div class="stat">
+              <span class="stat__num">1</span>
+              <span class="stat__label">SAVE SLOT<em>单存档位</em></span>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--panel" id="features" aria-labelledby="features-title">
+      <div class="wrap">
+        <header class="section__head reveal">
+          <p class="label">[02] FEATURES</p>
+          <h2 id="features-title">气氛不是滤镜，<br>是一堆细节堆出来的。</h2>
+        </header>
+
+        <div class="features">
+          <article class="feature reveal">
+            <div class="feature__top"><span class="feature__num">01</span><span class="feature__tag">SPACE</span></div>
+            <h3>手工搭出来的房间</h3>
+            <p>房间和走廊都由基础几何体拼成：花岗岩地砖、白色灰泥墙、深色天花、白色方砖，一共 152 个节点。没有现成模型，UV 和三平面映射都是一点点调出来的。</p>
+            <ul class="feature__spec">
+              <li>152 NODES</li>
+              <li>PBR MATERIALS</li>
+              <li>5 CORRIDOR LIGHTS</li>
+            </ul>
+          </article>
+
+          <article class="feature reveal">
+            <div class="feature__top"><span class="feature__num">02</span><span class="feature__tag">DOOR</span></div>
+            <h3>一扇真的能开的门</h3>
+            <p>1.1 × 2.1 m 的门洞，三只铰链，双面把手。按 E：把手先绕自身轴转 45°，门再向外推开 110°；门外是走廊，最初没有地面。</p>
+            <ul class="feature__spec">
+              <li>HANDLE 45°</li>
+              <li>DOOR 110°</li>
+              <li>AUTO-CLOSE</li>
+            </ul>
+          </article>
+
+          <article class="feature reveal">
+            <div class="feature__top"><span class="feature__num">03</span><span class="feature__tag">SCREEN</span></div>
+            <h3>屏幕不是一张贴图</h3>
+            <p>FACILITY CONTROL 是 SubViewport 里 1152×836 的 2D 界面，实时贴回 3D 显示器。文件夹卡片、本地时间、操作记录都可以点；绿色荧光有它自己的扫描线和暗角。</p>
+            <ul class="feature__spec">
+              <li>1152 × 836</li>
+              <li>SUBVIEWPORT</li>
+              <li>CLICKABLE</li>
+            </ul>
+          </article>
+
+          <article class="feature reveal">
+            <div class="feature__top"><span class="feature__num">04</span><span class="feature__tag">TRANCE</span></div>
+            <h3>盯着屏幕 1.5 秒</h3>
+            <p>坐下，把视线停在屏幕上。前 1.5 秒屏幕慢慢变亮，相机不动；满 1.5 秒后，2.8 秒推近，雪花变成 CRT。按住 Shift 原路倒放，全程不切场景。</p>
+            <ul class="feature__spec">
+              <li>1.5 S HOLD</li>
+              <li>2.8 S PUSH-IN</li>
+              <li>SHIFT TO REWIND</li>
+            </ul>
+          </article>
+
+          <article class="feature reveal">
+            <div class="feature__top"><span class="feature__num">05</span><span class="feature__tag">WORLD</span></div>
+            <h3>屏幕里的操作会改变房间</h3>
+            <p>双击 corridor_1.exe，走廊才会出现；DISABLE 之后，视觉、碰撞和状态一起消失。RECORDS 按设备本地时间，把每一次启动、禁用、启用写下来。</p>
+            <ul class="feature__spec">
+              <li>corridor_1.exe</li>
+              <li>STATE SYNC</li>
+              <li>LOCAL TIME</li>
+            </ul>
+          </article>
+
+          <article class="feature reveal">
+            <div class="feature__top"><span class="feature__num">06</span><span class="feature__tag">VOICE</span></div>
+            <h3>旁白、坠落与 VHS</h3>
+            <p>前两次掉出世界有语音和逐句字幕，第三次只剩 4 秒下坠；第二次会把你送进一间彩蛋房。全屏 VHS 着色器负责扫描线、色差、抖动和鱼眼。</p>
+            <ul class="feature__spec">
+              <li>2 VOICED FALLS</li>
+              <li>SUBTITLES</li>
+              <li>VHS SHADER</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section screen-section" id="screen" aria-labelledby="screen-title">
+      <div class="wrap screen-grid">
+        <figure class="crt-frame reveal">
+          <div class="crt-frame__glass">
+            <img src="assets/img/facility-ui.webp" width="1152" height="836" loading="lazy" alt="FACILITY CONTROL 界面：绿色等宽字体、三个文件夹卡片（ENVIRONMENT / RECORDS / PROCESSES）和底部 NODE STATUS: OPERATIONAL">
+          </div>
+          <figcaption>FIG. 03 — FACILITY CONTROL / 1152<span class="times">×</span>836</figcaption>
+        </figure>
+
+        <div class="screen-copy reveal">
+          <p class="label">[03] INSIDE THE SCREEN</p>
+          <h2 id="screen-title">屏幕里面<br>是另一个房间。</h2>
+          <p>你不是在看一段视频。显示器屏幕是 3D 场景里的一块真实表面，上面实时运行着另一个 2D 世界：开机前的雪花、通电后的绿色 CRT、可点击的文件夹卡片，以及一行一直亮着的 <span class="green">Unauthorized access</span>。</p>
+          <pre class="terminal" aria-label="FACILITY CONTROL 终端状态"><span class="t-prompt">$</span> mount /facility/control
+  node      <span class="t-value">corridor_1.exe</span>
+  status    <span class="t-value">[OPERATING]</span>
+  objects   <span class="t-value">1</span>
+  access    <span class="t-alert">UNAUTHORIZED</span>
+<span class="t-prompt">$</span> <span class="t-cursor">█</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="gallery" aria-labelledby="gallery-title">
+      <div class="wrap">
+        <header class="section__head reveal">
+          <p class="label">[04] FRAMES</p>
+          <h2 id="gallery-title">关灯之后，<br>房间才真正开始说话。</h2>
+        </header>
+
+        <div class="gallery">
+          <figure class="shot reveal">
+            <button class="shot__btn" type="button" data-caption="走廊 / 白色方砖与 5 盏顶灯" aria-label="放大查看：走廊，白色方砖与 5 盏顶灯">
+              <img src="assets/img/corridor.webp" width="1280" height="720" loading="lazy" alt="白色方形瓷砖铺成的走廊，深色天花上排列着五盏方形顶灯">
+            </button>
+            <figcaption><span>01</span> 走廊 / 白色方砖与 5 盏顶灯</figcaption>
+          </figure>
+
+          <figure class="shot reveal">
+            <button class="shot__btn" type="button" data-caption="屏幕内部 / FACILITY CONTROL 主页面" aria-label="放大查看：FACILITY CONTROL 主页面">
+              <img src="assets/img/facility-ui.webp" width="1152" height="836" loading="lazy" alt="FACILITY CONTROL 主页面，三张圆角文件夹卡片，底部显示 NODE STATUS: OPERATIONAL">
+            </button>
+            <figcaption><span>02</span> 屏幕内部 / FACILITY CONTROL</figcaption>
+          </figure>
+
+          <figure class="shot reveal">
+            <button class="shot__btn" type="button" data-caption="贴近屏幕 / 3D 显示器里的 2D 世界" aria-label="放大查看：贴近屏幕后的 3D 显示器">
+              <img src="assets/img/screen-closeup.webp" width="1280" height="720" loading="lazy" alt="相机贴近 3D 显示器，屏幕上显示绿色的 FACILITY CONTROL 界面，下方是离开提示字幕">
+            </button>
+            <figcaption><span>03</span> 贴近屏幕 / 3D 显示器里的 2D 世界</figcaption>
+          </figure>
+
+          <figure class="shot reveal">
+            <button class="shot__btn" type="button" data-caption="RECORDS / 每一次操作都留下时间" aria-label="放大查看：RECORDS 操作记录">
+              <img src="assets/img/records.webp" width="1152" height="836" loading="lazy" alt="RECORDS 页面，按日期时间记录 corridor.exe 的首次启动、禁用和启用">
+            </button>
+            <figcaption><span>04</span> RECORDS / 每一次操作都留下时间</figcaption>
+          </figure>
+
+          <figure class="shot reveal">
+            <button class="shot__btn" type="button" data-caption="走廊 / 只有灯亮着" aria-label="放大查看：只有灯亮着的走廊">
+              <img src="assets/img/lights.webp" width="1280" height="720" loading="lazy" alt="黑暗的走廊里只有天花板上的一排顶灯照亮地面">
+            </button>
+            <figcaption><span>05</span> 走廊 / 只有灯亮着</figcaption>
+          </figure>
+
+          <figure class="shot reveal">
+            <button class="shot__btn" type="button" data-caption="ENVIRONMENT / corridor_1.exe 正在运行" aria-label="放大查看：corridor_1.exe 运行状态">
+              <img src="assets/img/operating.webp" width="1152" height="836" loading="lazy" alt="ENVIRONMENT 文件夹页面，corridor.exe 一行的右侧显示 OPERATING">
+            </button>
+            <figcaption><span>06</span> ENVIRONMENT / corridor_1.exe</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--panel" id="controls" aria-labelledby="controls-title">
+      <div class="wrap">
+        <header class="section__head reveal">
+          <p class="label">[05] CONTROLS</p>
+          <h2 id="controls-title">先学会走路，<br>再决定要不要开门。</h2>
+        </header>
+
+        <div class="controls-grid">
+          <div class="keys reveal">
+            <div class="keyrow">
+              <div class="keyrow__keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></div>
+              <p>移动 <em>默认 4 m/s</em></p>
+            </div>
+            <div class="keyrow">
+              <div class="keyrow__keys"><kbd>鼠标</kbd></div>
+              <p>转动视角 <em>俯仰限制 ±89°</em></p>
+            </div>
+            <div class="keyrow">
+              <div class="keyrow__keys"><kbd>空格</kbd></div>
+              <p>跳跃 <em>0.5 m</em></p>
+            </div>
+            <div class="keyrow">
+              <div class="keyrow__keys"><kbd>Shift</kbd></div>
+              <p>蹲下 / 坐着时起身 <em>可在设置里改为切换</em></p>
+            </div>
+            <div class="keyrow">
+              <div class="keyrow__keys"><kbd>E</kbd></div>
+              <p>交互 <em>开门、开关灯、坐下、按按钮</em></p>
+            </div>
+            <div class="keyrow">
+              <div class="keyrow__keys"><kbd>Esc</kbd></div>
+              <p>暂停菜单 <em>RESUME / SETTING / EXIT</em></p>
+            </div>
+            <div class="keyrow">
+              <div class="keyrow__keys"><kbd>坐姿 · 盯屏 1.5 s</kbd></div>
+              <p>贴近屏幕 <em>按住 Shift 原路倒放</em></p>
+            </div>
+          </div>
+
+          <aside class="controls-note reveal">
+            <p class="controls-note__title">FOCUS MODE</p>
+            <p>默认没有常驻准星。视线落到可交互物上时，焦点标记才会在物体表面浮出；设置里可以切换 <span class="green">FOCUS / DOT / CROSS</span> 三档。</p>
+            <p>所有键位都能在 <span class="green">SETTING → KEY BINDING</span> 里修改，使用物理键码，换键盘布局不会错位。</p>
+            <p class="controls-note__fine">鼠标左键可在游戏里重新捕获光标。</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="build" aria-labelledby="build-title">
+      <div class="wrap">
+        <header class="section__head reveal">
+          <p class="label">[06] UNDER THE HOOD</p>
+          <h2 id="build-title">一个人，<br>和一间正在施工的房间。</h2>
+        </header>
+
+        <div class="build-grid">
+          <div class="specs reveal">
+            <h3>技术栈</h3>
+            <dl>
+              <div><dt>ENGINE</dt><dd>Godot 4.7 · Forward+</dd></div>
+              <div><dt>PHYSICS</dt><dd>Jolt Physics</dd></div>
+              <div><dt>LANGUAGE</dt><dd>GDScript</dd></div>
+              <div><dt>ART</dt><dd>基础几何体 + 公开 PBR 贴图</dd></div>
+              <div><dt>SCREEN</dt><dd>SubViewport · 1152 × 836</dd></div>
+              <div><dt>SAVE</dt><dd>user://save.cfg · 单存档</dd></div>
+              <div><dt>PLATFORM</dt><dd>macOS / Windows / Linux</dd></div>
+              <div><dt>LICENSE</dt><dd>MIT（原创部分）</dd></div>
+            </dl>
+          </div>
+
+          <div class="roadmap reveal">
+            <h3>路线图</h3>
+            <ul>
+              <li class="is-done">第一人称控制 + 碰撞体</li>
+              <li class="is-done">视线锥交互（灯、门、凳子）</li>
+              <li class="is-done">暂停菜单 + 单存档 + CONTINUE</li>
+              <li class="is-done">屏幕过场与屏幕内部 2D</li>
+              <li class="is-done">环境音效、旁白与字幕</li>
+              <li class="is-todo">黑屏之后的内容</li>
+              <li class="is-todo">至少一条完整的解谜链路</li>
+              <li class="is-todo">氛围音乐</li>
+              <li class="is-todo">体积雾 / 更细的光照调优</li>
+              <li class="is-todo">Windows / Linux x86_64 实机验证、手柄支持</li>
+            </ul>
+            <p class="roadmap__note">想到哪做到哪，不保证稳定性。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="download" id="download" aria-labelledby="download-title">
+      <div class="wrap">
+        <p class="label reveal">[07] DOWNLOAD</p>
+        <h2 id="download-title" class="reveal">关掉灯，<br>戴上耳机。</h2>
+        <p class="download__lead reveal">构建包发布在 GitHub Releases，当前为早期原型。macOS / Windows / Linux 都能跑，但 Windows 与 Linux x86_64 还没在对应系统上实机验证过。</p>
+
+        <div class="download__actions reveal">
+          <a class="btn btn--solid btn--lg" href="https://github.com/ChenYue321/escape-02/releases">前往 Releases 下载 <span aria-hidden="true">↗</span></a>
+          <a class="btn btn--ghost btn--lg" href="https://github.com/ChenYue321/escape-02" target="_blank" rel="noopener">在 Godot 中打开</a>
+        </div>
+
+        <ul class="download__notes reveal">
+          <li><span class="os">macOS</span><span>Universal · 未签名，首次打开若被拦，右键 → 打开</span></li>
+          <li><span class="os">Windows</span><span>x86_64 · 尚未实机验证</span></li>
+          <li><span class="os">Linux</span><span>x86_64 / arm64 · arm64 已验证</span></li>
+          <li><span class="os">SOURCE</span><span>需要 Godot 4.7，导入根目录的 project.godot</span></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__grid">
+      <div class="footer__brand">
+        <p class="footer__logo">ESCAPE_02<span class="cursor" aria-hidden="true">_</span></p>
+        <p>一个个人项目，仍在施工。</p>
+      </div>
+
+      <nav class="footer__links" aria-label="页脚导航">
+        <a href="https://github.com/ChenYue321/escape-02" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://github.com/ChenYue321/escape-02/releases" target="_blank" rel="noopener">Releases ↗</a>
+        <a href="https://github.com/ChenYue321/escape-02/issues" target="_blank" rel="noopener">Issues ↗</a>
+        <a href="https://github.com/ChenYue321/escape-02/blob/main/LICENSE" target="_blank" rel="noopener">License ↗</a>
+      </nav>
+
+      <p class="footer__fine">
+        代码以 MIT 授权；第三方贴图与字体遵循各自的原始授权（<a href="assets/fonts/OFL-VT323.txt">VT323 · OFL</a>）。<br>
+        © 2026 ChenYue321 · Built with Godot 4.7 · <span class="green">NODE STATUS: OPERATIONAL</span>
+      </p>
+    </div>
+  </footer>
+
+  <dialog class="lightbox" id="lightbox" aria-label="截图查看">
+    <button class="lightbox__close" type="button" id="lightbox-close" aria-label="关闭">CLOSE [ESC]</button>
+    <button class="lightbox__nav lightbox__nav--prev" type="button" id="lightbox-prev" aria-label="上一张">←</button>
+    <figure>
+      <img id="lightbox-img" alt="">
+      <figcaption id="lightbox-cap"></figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__nav--next" type="button" id="lightbox-next" aria-label="下一张">→</button>
+  </dialog>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
