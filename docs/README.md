@@ -11,11 +11,12 @@ The previous empty-shell version is preserved in commit `aaff524`; the full mult
 ```
 docs/
 ├── index.html                  # Header, notice, intro, footer
+├── download.html               # Windows / Mac / Linux download buttons
 ├── .nojekyll                   # Skip Jekyll on GitHub Pages
 ├── README.md                   # This file
 └── assets/
-    ├── css/style.css           # Styles
-    ├── js/main.js              # Notice dismissal + [DISABLE]/[ENABLE] loop
+    ├── css/style.css           # Styles for both pages
+    ├── js/main.js              # Notice, [DISABLE]/[ENABLE] loop, data rain
     ├── fonts/                  # VT323 (the in-game pixel font) + OFL license
     ├── favicon.svg
     └── img/
@@ -30,6 +31,8 @@ docs/
 - **Notice**: the AI disclosure. It uses a paper background and system sans-serif so it reads as website copy, not game content. The `×` button removes it with a small script.
 - **Intro**: one paragraph set in VT323, with the two room screenshots stacked on the right. On narrow screens the text and images stack vertically.
 - **Footer**: compact three-column footer with project links, license note and copyright.
+
+The header and footer are duplicated in `index.html` and `download.html`; keep them in sync. The **Download** button in both headers points to `download.html`, not to GitHub Releases.
 
 ## The `[DISABLE]` / `[ENABLE]` loop
 
@@ -46,6 +49,19 @@ To change the timings, edit the `phases` array in `main.js`.
 ## Background data rain
 
 The `<main>` area is decorated with falling columns of random green glyphs. `main.js` generates 20 columns on desktop and 8 on mobile; each column gets a random position, speed, size, opacity and character string. Characters mutate every 0.8 seconds so the columns feel unstable. The effect is pure CSS animation plus a small interval, sits behind the content with `pointer-events: none`, and is disabled under `prefers-reduced-motion: reduce`.
+
+## Download page
+
+`download.html` shows three large platform buttons — Windows, Mac and Linux — in a centered row. They are ordinary links styled as buttons:
+
+- Windows: `ESCAPE_02-Windows-x86_64.zip`
+- Mac: `ESCAPE_02-macOS-universal.zip`
+- Linux: `ESCAPE_02-Linux-x86_64.zip`
+- Linux arm64: `ESCAPE_02-Linux-arm64.zip` (small link below the row)
+
+Each link points to `https://github.com/ChenYue321/escape-02/releases/latest/download/<filename>`. **This only works after a release has been published with those exact asset filenames.** If there is no release yet, GitHub returns 404.
+
+On hover (and keyboard focus) each platform tile inverts to the game's FACILITY CONTROL palette: green background, black icon and label. There is no transition, so the swap is immediate.
 
 ## Screenshots
 
@@ -73,13 +89,18 @@ Every push to `main` republishes the site automatically.
 ## Editing
 
 - **Copy**: edit `index.html`; the header labels, notice text and intro paragraph are all there.
+- **Download page**: edit `download.html`; platform links are in the three `.platform` anchors.
 - **Style**: `assets/css/style.css`; colors and fonts are in the `:root` variables.
-- **Notice close / state loop**: `assets/js/main.js`.
+- **Notice close / state loop / data rain**: `assets/js/main.js`.
 - **Screenshots**: replace `assets/img/room-desk.webp` or `room-door.webp`.
-- **Footer**: edit the `<footer>` in `index.html`.
+- **Footer / header**: edit both `index.html` and `download.html`.
 
 ## Troubleshooting
 
 - **404**: Confirm Pages uses branch `main` and folder `/docs`, wait 1–2 minutes, and make sure `docs/index.html` has been pushed.
 - **Styles look stale**: Pages caches aggressively. Wait a moment or force refresh (`Cmd/Ctrl + Shift + R`).
 - **Custom domain**: Enter it in Pages settings and GitHub will create a `CNAME` file, or add one under `docs/` and configure DNS.
+
+## Credits
+
+Platform glyphs are based on [Simple Icons](https://simpleicons.org/) (CC0 1.0). Apple and Windows logos are trademarks of their respective owners and are used only to identify the download platforms.

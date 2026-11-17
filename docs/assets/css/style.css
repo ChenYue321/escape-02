@@ -281,6 +281,95 @@ main {
   background: #000;
 }
 
+
+/* ---------- Download page ---------- */
+
+.download-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.download-page {
+  margin-block: auto;
+  padding-block: clamp(44px, 8vh, 84px);
+}
+
+.platforms {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(10px, 2vw, 24px);
+}
+
+.platform {
+  --tile-bg: #070a08;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.4vw, 16px);
+  min-height: clamp(180px, 22vw, 310px);
+  padding: clamp(14px, 2.2vw, 32px) 8px;
+  border: 1px solid var(--line-strong);
+  background: var(--tile-bg);
+  color: var(--green);
+  text-align: center;
+  text-decoration: none;
+}
+
+.platform:hover,
+.platform:focus-visible {
+  --tile-bg: var(--green);
+  border-color: var(--green);
+  background: var(--green);
+  color: #04140a;
+}
+
+.platform:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
+}
+
+.platform__icon {
+  display: block;
+  flex: 0 0 auto;
+  width: clamp(44px, 7vw, 96px);
+  height: clamp(44px, 7vw, 96px);
+}
+
+.platform__name {
+  font-family: var(--mono);
+  font-size: clamp(1.2rem, 2.4vw, 2.2rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.platform__meta {
+  font-family: var(--mono);
+  font-size: clamp(0.72rem, 1vw, 0.95rem);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  opacity: 0.65;
+}
+
+.platform-note {
+  margin: clamp(20px, 3vw, 28px) 0 0;
+  color: var(--dim);
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.platform-note a {
+  color: var(--muted);
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 2px;
+}
+
+.platform-note a:hover,
+.platform-note a:focus-visible {
+  color: var(--green);
+}
+
 /* ---------- Footer ---------- */
 
 .footer {
@@ -382,6 +471,10 @@ main {
   .content {
     width: 100%;
     padding: 32px 16px 64px;
+  }
+
+  .download-page {
+    padding-block: 40px 56px;
   }
 
   .notice {
