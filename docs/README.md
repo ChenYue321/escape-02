@@ -1,89 +1,62 @@
-# ESCAPE_02 项目介绍网站
+# ESCAPE_02 Project Site
 
-这是 `escape-02` 的 GitHub Pages 站点，纯静态 HTML / CSS / JS，没有构建步骤，也没有外部 CDN 依赖。
+This is the GitHub Pages site for `escape-02`. It is plain static HTML/CSS with no build step and no external CDN dependencies.
 
-线上地址：<https://chenyue321.github.io/escape-02/>
+The site is currently being redesigned: only the `<header>` and `<footer>` remain, and `<main>` is empty. The previous full page is preserved in commit `f6e4927`.
 
-## 文件
+Live URL: <https://chenyue321.github.io/escape-02/>
+
+## Files
 
 ```
 docs/
-├── index.html                  # 整站内容（单页）
-├── .nojekyll                   # 让 GitHub Pages 跳过 Jekyll
-├── README.md                   # 本文件
+├── index.html                  # Shell: header + empty main + footer
+├── .nojekyll                   # Skip Jekyll on GitHub Pages
+├── README.md                   # This file
 └── assets/
-    ├── css/style.css           # 样式
-    ├── js/main.js              # 时钟、导航、滚动淡入、截图灯箱
-    ├── fonts/                  # VT323 字体 + OFL 许可
+    ├── css/style.css           # Site styles (header / footer only for now)
+    ├── fonts/                  # VT323 font + OFL license
     ├── favicon.svg
-    └── img/                    # 压缩后的 WebP 截图 + OG 封面
+    └── img/                    # Previous screenshots and OG cover, kept for reuse
 ```
 
-## 本地预览
+## Local preview
 
-在仓库根目录执行：
+From the repository root:
 
 ```bash
 python3 -m http.server 4173 --directory docs
 ```
 
-然后打开 <http://127.0.0.1:4173/>。
+Then open <http://127.0.0.1:4173/>.
 
-直接用浏览器打开 `docs/index.html` 也能看，但本地服务器更接近线上行为。
+## Current state
 
-## 第一次上线
+- The `<header>` contains only the `ESCAPE_02` wordmark. Navigation links, the GitHub button and the mobile menu have been removed.
+- `<main id="main">` is empty. New content goes here.
+- The `<footer>` keeps the project links, license note and copyright.
+- The old clock, scroll-reveal, gallery and lightbox scripts have been removed. Images in `assets/img/` remain available for reuse.
+- All site copy is in English.
 
-1. 把 `docs/` 提交并推送到 `main`。
-2. 打开仓库 **Settings → Pages**。
-3. **Build and deployment → Source** 选 **Deploy from a branch**。
-4. **Branch** 选 `main`，目录选 `/docs`，点 **Save**。
-5. 等 1–2 分钟，访问 <https://chenyue321.github.io/escape-02/>。
+## Deploy
 
-仓库是公开仓库，不需要 GitHub Pro。之后每次推送到 `main`，Pages 都会自动重新发布。
+1. Commit and push `docs/` to `main`.
+2. In the repository, open **Settings → Pages**.
+3. Set **Source** to **Deploy from a branch**, branch `main`, folder `/docs`, then **Save**.
+4. Wait 1–2 minutes and open <https://chenyue321.github.io/escape-02/>.
 
-## 发布可下载的 demo
+Every push to `main` republishes the site automatically.
 
-站点的“下载 demo”按钮指向仓库的 Releases 页面。当前还没有 Release 时，用户会看到空页面，所以建议先发一版：
+## Next
 
-1. 打开仓库 **Releases → Draft a new release**。
-2. Tag 填 `v0.1.0`（或当前版本号），标题写 `ESCAPE_02 v0.1.0`。
-3. 把 `build/release/` 下的四个 zip 拖进去：
-   - `ESCAPE_02-macOS-universal.zip`
-   - `ESCAPE_02-Windows-x86_64.zip`
-   - `ESCAPE_02-Linux-x86_64.zip`
-   - `ESCAPE_02-Linux-arm64.zip`
-4. 写两句更新说明，点 **Publish release**。
+- **Add content**: edit the `<main>` in `docs/index.html`.
+- **Colors / type**: adjust the `:root` variables at the top of `docs/assets/css/style.css`.
+- **Reuse screenshots**: WebP images for the room, corridor, FACILITY CONTROL and RECORDS are in `docs/assets/img/`.
+- **Demo builds**: upload the four zips from `build/release/` as GitHub Release assets. Do not commit `build/` to the repository.
+- **Footer**: edit the `<footer>` in `index.html`; all footer links live there.
 
-注意：`build/` 在 `.gitignore` 里，构建包不要提交进仓库，直接作为 Release 附件上传即可。单个附件默认上限 2 GB，这几个包都远小于上限。
+## Troubleshooting
 
-## 更新内容
-
-- **改文案**：直接编辑 `docs/index.html`，中文正文都在对应 `<section>` 里。
-- **换截图**：把新图压到 1280 px 宽左右，覆盖 `docs/assets/img/` 里的同名 WebP；或者在 HTML 里改 `src`。
-- **换主视觉 / OG 封面**：`docs/assets/img/hero-room.webp` 是首屏背景，`og-cover.jpg` 是分享卡片（1200×630）。
-- **颜色 / 字体**：`docs/assets/css/style.css` 顶部的 `:root` 变量。
-- **最近更新时间**：目前没有动态数据，避免 API 限流和额外依赖；需要的话可以加 `fetch` 拉 GitHub API。
-
-## 截图从哪来
-
-`build/preview/` 是开发时的原始截图，已被 `.gitignore` 排除。`docs/assets/img/` 是从中挑出来、转成 WebP 并压缩后的网页版本。原图更新后可以重新导出：
-
-```bash
-# 需要 Pillow
-python3 - <<'PY'
-from PIL import Image
-im = Image.open('build/preview/facility-ui.png').convert('RGB')
-im.save('docs/assets/img/facility-ui.webp', 'WEBP', quality=82, method=6)
-PY
-```
-
-## 常见问题
-
-- **访问 404**：确认 Pages 的目录是 `/docs`、分支是 `main`，再等 1–2 分钟；确认 `docs/index.html` 已推送。
-- **样式没更新**：Pages 有 CDN 缓存，等一会儿或强制刷新（`Cmd/Ctrl + Shift + R`）。
-- **macOS 打不开 demo**：构建没有签名，首次打开请右键 → 打开；或在“系统设置 → 隐私与安全性”里允许。
-- **自定义域名**：在 Pages 设置里填域名，GitHub 会生成 `CNAME`；也可以在 `docs/` 里手动放 `CNAME` 文件并配置 DNS。
-
-## 说明
-
-站点里的截图和文案来自项目 README；页面本身与游戏一样，会随着项目继续改。
+- **404**: Confirm Pages uses branch `main` and folder `/docs`, wait 1–2 minutes, and make sure `docs/index.html` has been pushed.
+- **Styles look stale**: Pages caches aggressively. Wait a moment or force refresh (`Cmd/Ctrl + Shift + R`).
+- **Custom domain**: Enter it in Pages settings and GitHub will create a `CNAME` file, or add one under `docs/` and configure DNS.

@@ -5,5 +5,9 @@
 # 导出产物
 /build/
 
+# 网站素材不需要 Godot 导入
+/docs/**/*.import
+/docs/**/*.uid
+
 # macOS
 .DS_Store
