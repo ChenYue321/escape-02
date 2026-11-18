@@ -43,7 +43,7 @@
   - **每次从虚空被送回，门都会自动关回原位**（把手归零、恢复可交互）
   - 门板两面各有一套对称把手（面板、圆座、把手柄），背面把手和正面共用 `HandlePivot`，转动同步；背面也有交互碰撞，可以从走廊侧开门
   - 第一条下落彩蛋旁白触发前，门上的 **Don't Open 告示牌**（`Room/Door/DoorPivot/Hanging Sign`，木板 + 纸面 + 手写文字 + 钉头 + 两根由 `wire.gd` 生成的吊绳）完全不可见；触发后仅当 `Corridor 1` 不可见时整块出现，`Corridor 1` 可见时大部分收起、只保留钉子
-  - 纸上的字是 `texture/door/notice_dont_open.png`——用 Share Tech Mono 渲染的「Don't open!」，带轻微倾斜，透明背景叠在纸面上
+  - 纸上的字是 `texture/door/notice_dont_open.png`——用 Caveat 渲染的「Don't open!」，带轻微倾斜，透明背景叠在纸面上
   - 门与墙体碰撞都拆好了，门开后人可以走出去；**门外没有地面**，走出去会直接掉下去
   - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**再黑屏复位到出生点，复位时位置、朝向、俯仰和蹲姿全部重置
   - 旁白只有前两次坠落有；**第三次起没有语音，掉落 4 秒后直接送回**
@@ -187,8 +187,10 @@ escape-02/
 │   └── process_voice.sh   # 旁白批处理：降调 / 滤波 / 回声 / 响度归一
 ├── fonts/
 │   ├── ShareTechMono-Regular.ttf # 全平台菜单字体（OFL）
+│   ├── Caveat-Bold.ttf    # Don't Open 告示牌用字体（OFL）
 │   ├── VT323-Regular.ttf  # FACILITY CONTROL 页面字体（OFL）
 │   ├── OFL-ShareTechMono.txt # Share Tech Mono 许可见
+│   ├── OFL-Caveat.txt     # Caveat 许可见
 │   └── OFL-VT323.txt      # VT323 的许可见
 ├── environment/
 │   └── room_env.tres      # 环境资源：环境光、色调映射、SSAO、辉光
@@ -293,13 +295,13 @@ tools/process_voice.sh ~/Downloads/某句台词.m4a audio/voice/xxx.mp3
 
 `texture/` 下的 PBR 贴图取自公开素材库（ambientCG / Poly Haven 系列命名格式），主体为 CC0 授权。由于本仓库为公开仓库，**如需再分发或商用，请自行核对其原始授权条款**；`texture/*.tres` 材质与场景文件均为本项目原创。
 
-`fonts/ShareTechMono-Regular.ttf` 为 Share Tech Mono 字体，`fonts/VT323-Regular.ttf` 为 VT323 字体，二者都遵循 SIL Open Font License 1.1；完整许可见 `fonts/OFL-ShareTechMono.txt` 和 `fonts/OFL-VT323.txt`。
+`fonts/ShareTechMono-Regular.ttf` 为 Share Tech Mono 字体，`fonts/Caveat-Bold.ttf` 为 Caveat 字体，`fonts/VT323-Regular.ttf` 为 VT323 字体，均遵循 SIL Open Font License 1.1；完整许可见 `fonts/OFL-ShareTechMono.txt`、`fonts/OFL-Caveat.txt` 和 `fonts/OFL-VT323.txt`。
 
 ## License
 
 代码以 [MIT License](LICENSE) 开源，随便用，不必打招呼。
 
-需要说明的是，MIT 只覆盖本仓库中的原创部分（脚本、场景、材质资源等）；`texture/` 下的第三方贴图与 `fonts/` 下的 Share Tech Mono、VT323 仍遵循其原始授权条款，不在 MIT 覆盖范围内。
+需要说明的是，MIT 只覆盖本仓库中的原创部分（脚本、场景、材质资源等）；`texture/` 下的第三方贴图与 `fonts/` 下的 Share Tech Mono、Caveat、VT323 仍遵循其原始授权条款，不在 MIT 覆盖范围内。
 
 ---
 

@@ -17,7 +17,7 @@ docs/
 └── assets/
     ├── css/style.css           # Styles for both pages
     ├── js/main.js              # Notice, [DISABLE]/[ENABLE] loop, data rain
-    ├── fonts/                  # VT323 / Share Tech Mono OFL license files
+    ├── fonts/                  # VT323 / Share Tech Mono / Caveat OFL license files
     ├── favicon.svg
     └── img/
         ├── room-desk.webp      # In-game room screenshot, desk angle
