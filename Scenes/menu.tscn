@@ -1,9 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://script/menu.gd" id="1_menu"]
-
-[sub_resource type="SystemFont" id="SystemFont_hand"]
-font_names = PackedStringArray("Bradley Hand", "Chalkboard SE", "Marker Felt", "Comic Sans MS")
+[ext_resource type="FontFile" path="res://fonts/ShareTechMono-Regular.ttf" id="2_sharetech"]
 
 [sub_resource type="SystemFont" id="SystemFont_ui"]
 font_names = PackedStringArray("Helvetica Neue", "Helvetica", "Arial")
@@ -37,7 +35,7 @@ offset_right = 900.0
 offset_bottom = 145.0
 grow_horizontal = 1
 theme_override_colors/font_color = Color(0.93, 0.95, 0.98, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
+theme_override_fonts/font = ExtResource("2_sharetech")
 theme_override_font_sizes/font_size = 96
 text = "ESCAPE-02"
 vertical_alignment = 1
@@ -63,7 +61,7 @@ theme_override_colors/font_color = Color(0.78, 0.81, 0.86, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
+theme_override_fonts/font = ExtResource("2_sharetech")
 theme_override_font_sizes/font_size = 52
 alignment = 0
 flat = true
@@ -78,7 +76,7 @@ theme_override_colors/font_color = Color(0.78, 0.81, 0.86, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
+theme_override_fonts/font = ExtResource("2_sharetech")
 theme_override_font_sizes/font_size = 52
 alignment = 0
 flat = true
@@ -93,7 +91,7 @@ theme_override_colors/font_color = Color(0.78, 0.81, 0.86, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
+theme_override_fonts/font = ExtResource("2_sharetech")
 theme_override_font_sizes/font_size = 52
 alignment = 0
 flat = true
@@ -119,7 +117,7 @@ offset_right = 900.0
 offset_bottom = 130.0
 grow_horizontal = 1
 theme_override_colors/font_color = Color(0.93, 0.95, 0.98, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
+theme_override_fonts/font = ExtResource("2_sharetech")
 theme_override_font_sizes/font_size = 96
 text = "SETTING"
 vertical_alignment = 1
@@ -160,7 +158,7 @@ offset_right = 900.0
 offset_bottom = 110.0
 grow_horizontal = 1
 theme_override_colors/font_color = Color(0.93, 0.95, 0.98, 1)
-theme_override_fonts/font = SubResource("SystemFont_hand")
+theme_override_fonts/font = ExtResource("2_sharetech")
 theme_override_font_sizes/font_size = 76
 text = "KEY BINDING"
 vertical_alignment = 1

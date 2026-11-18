@@ -124,7 +124,7 @@ var _option_buttons: Dictionary = {}
 
 
 func _ready() -> void:
-	_apply_linux_hand_font()
+	_apply_bundled_hand_font()
 
 	# 暂停菜单里的"设置页副本"：不建背景、不显示主菜单
 	if settings_only:
@@ -344,12 +344,9 @@ func _hand_font() -> Font:
 	return _start.get_theme_font("font")
 
 
-## Linux 通常没有 Bradley Hand / Comic Sans，SystemFont 会退回默认无衬线，
-## 标题就失去手写感。Linux 上整棵菜单树换成随包携带的 Patrick Hand（OFL）。
-func _apply_linux_hand_font() -> void:
-	if OS.get_name() != "Linux":
-		return
-	var font := load("res://fonts/PatrickHand-Regular.ttf") as Font
+## 菜单字体统一使用随包携带的 Share Tech Mono（OFL），不再依赖系统手写字体。
+func _apply_bundled_hand_font() -> void:
+	var font := load("res://fonts/ShareTechMono-Regular.ttf") as Font
 	if font == null:
 		return
 	for node in find_children("*", "Control", true, false):

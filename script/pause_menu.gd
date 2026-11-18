@@ -34,12 +34,7 @@ func _ready() -> void:
 	layer = 100
 	visible = false
 
-	_font = SystemFont.new()
-	_font.font_names = PackedStringArray(["Bradley Hand", "Chalkboard SE", "Marker Felt", "Comic Sans MS"])
-	if OS.get_name() == "Linux":
-		var bundled := load("res://fonts/PatrickHand-Regular.ttf") as Font
-		if bundled != null:
-			_font = bundled
+	_font = load("res://fonts/ShareTechMono-Regular.ttf") as Font
 
 	_build_pause_ui()
 	_build_settings()

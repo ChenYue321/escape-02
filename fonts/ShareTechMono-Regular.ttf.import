@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://c7qrg0xao2u3q"
-path="res://.godot/imported/PatrickHand-Regular.ttf-c2d03d51722265285f95f9f1cf0a233f.fontdata"
+uid="uid://bolmwu6mbgvr"
+path="res://.godot/imported/ShareTechMono-Regular.ttf-666de4082a27659bcd90a7d68668850a.fontdata"
 
 [deps]
 
-source_file="res://fonts/PatrickHand-Regular.ttf"
-dest_files=["res://.godot/imported/PatrickHand-Regular.ttf-c2d03d51722265285f95f9f1cf0a233f.fontdata"]
+source_file="res://fonts/ShareTechMono-Regular.ttf"
+dest_files=["res://.godot/imported/ShareTechMono-Regular.ttf-666de4082a27659bcd90a7d68668850a.fontdata"]
 
 [params]
 
