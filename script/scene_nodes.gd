@@ -2,7 +2,7 @@ extends RefCounted
 
 ## 跨父级的场景节点引用。
 ##
-## 不要写 "Room/Desk/Computer/Monitor/Screen" 这种父路径：节点被挪到别的
+## 不要写 "Initial Room/Desk/Computer/Monitor/Screen" 这种父路径：节点被挪到别的
 ## 父节点下面时，路径会静默失效。这里按名字在整棵场景树里找，并且：
 ##   · 找不到 -> push_warning，不静默
 ##   · 同名多个 -> push_warning，并返回第一个
@@ -18,6 +18,7 @@ const TOP_LIGHT_SWITCH := &"Top Light Switch"
 const DOOR_HANDLE := &"HandleHit"
 const STOOL := &"Stool"
 const CORRIDOR := &"Corridor 1"
+const STORAGE_ROOM := &"Storage Room"
 const HANGING_SIGN := &"Hanging Sign"
 const HUD := &"HUD"
 const PAUSE_MENU := &"PauseMenu"

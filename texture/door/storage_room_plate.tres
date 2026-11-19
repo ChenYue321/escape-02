@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://texture/door/storage_room_plate.png" id="1_plate"]
+
+[resource]
+resource_name = "Storage Room Door Plate"
+albedo_texture = ExtResource("1_plate")
+metallic = 0.38
+metallic_specular = 0.45
+roughness = 0.5
+cull_mode = 2
+uv1_scale = Vector3(1, -1, 1)
+uv1_offset = Vector3(0, 1, 0)

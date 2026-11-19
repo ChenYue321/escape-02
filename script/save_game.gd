@@ -74,6 +74,7 @@ func save_from(world: Node) -> void:
 		cfg.set_value("player", "position", data["position"])
 		cfg.set_value("player", "yaw", data["yaw"])
 		cfg.set_value("player", "pitch", data["pitch"])
+		cfg.set_value("player", "executed_executables", data.get("executed_executables", []))
 
 	var desk := SceneNodes.find(world, SceneNodes.LAMP_SWITCH)
 	if desk != null and desk.has_method("is_on"):
@@ -105,6 +106,7 @@ func apply_to(world: Node) -> void:
 			"position": cfg.get_value("player", "position", Vector3(0, 0.05, 3.6)),
 			"yaw": cfg.get_value("player", "yaw", 0.0),
 			"pitch": cfg.get_value("player", "pitch", 0.0),
+			"executed_executables": cfg.get_value("player", "executed_executables", []),
 		})
 
 	var desk := SceneNodes.find(world, SceneNodes.LAMP_SWITCH)

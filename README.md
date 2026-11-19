@@ -34,18 +34,24 @@
   - 地面 `granite_floor.tres` 的 `uv1_scale = (4.8, 3.2, 1.0)`：BoxMesh 顶面 U/V 范围不同，补偿后是 8×8 块约 1 m 的方砖
   - 走廊地面 `white_square_tiles.tres` 使用 2K PBR 白色方形瓷砖（albedo / normal / roughness / AO），world triplanar 铺贴，约 0.5 m 方砖
   - 走廊左右墙下段 `Corridor Wall 1b / 2b` 使用 `plastered_wall_02.tres`（4K PBR 抹灰，triplanar）；上段 `1a / 2a` 仍用白色灰泥
-  - 走廊天花板沿 20 m 长边（Z）均匀布置 5 个 0.3 m 方形灯，做法和房间顶灯一致（发光面板 + `OmniLight3D`）；目前常亮，没有单独开关
+  - 走廊天花板沿 30 m 长边（Z）均匀布置 5 个 0.3 m 方形灯，做法和房间顶灯一致（发光面板 + `OmniLight3D`）；目前常亮，没有单独开关
+  - 5 盏走廊灯全部开启阴影；走廊墙体、地板、天花板和关闭的 Storage Room Door 会挡住光线，不会把 Initial Room 或 Storage Room 整体照亮
+  - 两扇门底部都加了 2 cm 高的门底密封条，关闭时不会从门缝漏光
   - 走廊 `CorridorCollision` 六面都有碰撞：地面、天花板、左右墙、远端墙，以及靠房间门一端的墙；门洞留 1.1 × 2.1 m，碰撞体本身不可见
+  - 走廊左侧 `Corridor Wall 2a / 2b` 在走廊三分之一处（`z = 14`）开了一扇门，门挂在 `Storage Room/Storage Room Door` 下，复制房间门的双面把手和开关门操作；墙体和碰撞在门洞处断开
+  - `Storage Room` 外壳：内部 x 约 -12～-2.5 m、z 约 10.55～17.45 m、墙高 3.4 m；地板/天花板/四面墙和门口门槛都有碰撞，外壳与走廊一起显示/隐藏
+  - Storage Room 门牌 `Storage Room/Door plate` 使用程序化拉丝铁皮纹理 + Source Sans 3 文字贴图（`texture/door/storage_room_plate.png`），四角带螺钉和压边
   - 电脑和台灯各有独立碰撞：电脑机箱 / 显示器 / 键盘，台灯底座 / 支杆 / 灯罩，都不能再穿过去
-- **门**：`Room/Door` —— 后墙拆成三段留出 1.1 × 2.1 m 门洞，含门框、门板、三只铰链、把手与门头灯
+- **门**：`Initial Room/Door` —— 后墙拆成三段留出 1.1 × 2.1 m 门洞，含门框、门板、三只铰链、把手与门头灯
   - **可开关**：对着任意一面的把手按 `E`，把手先绕自身轴转 45°，随后整扇门绕合页竖轴向外推开 110°；门开着时再次交互，把手先转回，再把门关回 0°
   - 按下 `E` 的同时播放 `audio/sfx/door_knob.mp3`，录音开头的静音已剪掉，所以咔哒声和把手转动是同步的
   - **每次从虚空被送回，门都会自动关回原位**（把手归零、恢复可交互）
   - 门板两面各有一套对称把手（面板、圆座、把手柄），背面把手和正面共用 `HandlePivot`，转动同步；背面也有交互碰撞，可以从走廊侧开门
-  - 第一条下落彩蛋旁白触发前，门上的 **Don't Open 告示牌**（`Room/Door/DoorPivot/Hanging Sign`，木板 + 纸面 + 手写文字 + 钉头 + 两根由 `wire.gd` 生成的吊绳）完全不可见；触发后仅当 `Corridor 1` 不可见时整块出现，`Corridor 1` 可见时大部分收起、只保留钉子
+  - 第一条下落彩蛋旁白触发前，门上的 **Don't Open 告示牌**（`Initial Room/Door/DoorPivot/Hanging Sign`，木板 + 纸面 + 手写文字 + 钉头 + 两根由 `wire.gd` 生成的吊绳）完全不可见；触发后仅当 `Corridor 1` 不可见时整块出现，`Corridor 1` 可见时大部分收起、只保留钉子
   - 纸上的字是 `texture/door/notice_dont_open.png`——用 Caveat 渲染的「Don't open!」，带轻微倾斜，透明背景叠在纸面上
   - 门与墙体碰撞都拆好了，门开后人可以走出去；**门外没有地面**，走出去会直接掉下去
   - 掉出世界时发出 `fell_out_of_world` 信号，并播放 `Character/FallVoice` 上挂的音频；期间一直下坠，**等语音播完**再黑屏复位到出生点，复位时位置、朝向、俯仰和蹲姿全部重置
+  - 如果玩家已经运行过 `corridor_1.exe`，再掉入虚空不会播放彩蛋旁白、也不会进入彩蛋房间，只正常黑屏复位回房间
   - 旁白只有前两次坠落有；**第三次起没有语音，掉落 4 秒后直接送回**
 - **旁白与字幕**：`Character/FallVoice` 按**第几次掉下去**依次播 `fall_voices` 里的音频——第 1 次 `fall_01.mp3`（24 秒）、第 2 次 `fall_02.mp3`（12 秒），两条用完后第三次起就没有旁白；每条的字幕时间轴在同名 JSON 里，按秒数逐句推到 `HUD/UIRoot/Subtitle`
 - **主菜单**：`Scenes/menu.tscn` 是项目启动场景。背景不是图片，而是把 `main.tscn` 整个实例化进来——删掉玩家、HUD、暂停菜单和 `WorldState`，隐藏所有 `Light3D`，只留显示器在黑暗里闪，所以背景是活的
@@ -92,7 +98,7 @@
 - **交互焦点**：`HUD/UIRoot/Crosshair`（`CanvasLayer` + 自绘 `Control`），默认 `FOCUS` 档**平时完全不显示**；视线落到可交互物上时，标记才在物体表面浮出（小圆点 + 细环，带淡入和跟随），提示文字贴在标记旁边
 - **交互瞄准**：以视线中心为轴、默认 ±2.2° 的小圆锥（5×5 采样、2.5 m），取最靠近中心的可交互物，并带 0.15 秒粘滞；不用把中心精确压在把手上，稍微偏一点也能选中。参数在 `Character` 节点 Inspector 的「交互瞄准」分组
 - **交互**：焦点物体按 `E` 触发；提示会显示当前绑定的键和物体自己的动词（`[E] Open` / `[E] Turn on` / `[E] Sit down`）
-  - 顶灯：按门边墙上的按钮 `Room/Wall1 Right/Top Light Switch`（开局**默认亮着**）
+  - 顶灯：按门边墙上的按钮 `Initial Room/Wall1 Right/Top Light Switch`（开局**默认亮着**）
   - 台灯：直接对着台灯按 `E`（开局**默认熄灭**）
   - 灯的默认状态直接由场景里 `Light3D` 的 `visible` 决定，开关在 `_ready()` 时按它同步自发光灯片和按键位置
 - **环境**：`WorldEnvironment`（Filmic 色调映射、微弱冷色环境光、SSAO、辉光），见 `environment/room_env.tres`
@@ -136,7 +142,7 @@
 
 ### 场景节点引用约定
 
-跨父级的场景节点（`Screen`、`Static Noise`、`LampSwitch`、`Top Light Switch`、`HandleHit`、`Stool`、`PauseMenu` 等）不要写 `Room/Desk/...` 这种父路径。统一在 `script/scene_nodes.gd` 里加名字常量，用按名字的查找：
+跨父级的场景节点（`Screen`、`Static Noise`、`LampSwitch`、`Top Light Switch`、`HandleHit`、`Stool`、`PauseMenu` 等）不要写 `Initial Room/Desk/...` 这种父路径。统一在 `script/scene_nodes.gd` 里加名字常量，用按名字的查找：
 
 ```gdscript
 const SceneNodes := preload("res://script/scene_nodes.gd")
@@ -188,9 +194,11 @@ escape-02/
 ├── fonts/
 │   ├── ShareTechMono-Regular.ttf # 全平台菜单字体（OFL）
 │   ├── Caveat-Bold.ttf    # Don't Open 告示牌用字体（OFL）
+│   ├── SourceSans3-VariableFont_wght.ttf # Storage Room 门牌文字（OFL）
 │   ├── VT323-Regular.ttf  # FACILITY CONTROL 页面字体（OFL）
 │   ├── OFL-ShareTechMono.txt # Share Tech Mono 许可见
 │   ├── OFL-Caveat.txt     # Caveat 许可见
+│   ├── OFL-SourceSans3.txt # Source Sans 3 许可见
 │   └── OFL-VT323.txt      # VT323 的许可见
 ├── environment/
 │   └── room_env.tres      # 环境资源：环境光、色调映射、SSAO、辉光
@@ -215,7 +223,7 @@ escape-02/
 │   └── tv_static.wav      # 显示器雪花底噪（6 秒无缝循环，取原素材中段）
 ├── texture/
 │   ├── computer/          # 电脑外壳的米色粗塑料（albedo / normal / roughness）
-│   ├── door/              # 门上告示牌的手写文字贴图（透明背景）
+│   ├── door/              # 告示牌文字贴图 + Storage Room 铁皮门牌贴图
 │   ├── floor/             # 花岗岩地砖 / 白色方形瓷砖 PBR 贴图 + granite_floor.tres / white_square_tiles.tres
 │   ├── wall/              # 白色灰泥 / 米色抹灰 PBR 贴图 + stucco_wall.tres / stucco_ceiling.tres / plastered_wall_02.tres
 │   ├── ceiling/           # 天花板 PBR 贴图
@@ -295,13 +303,13 @@ tools/process_voice.sh ~/Downloads/某句台词.m4a audio/voice/xxx.mp3
 
 `texture/` 下的 PBR 贴图取自公开素材库（ambientCG / Poly Haven 系列命名格式），主体为 CC0 授权。由于本仓库为公开仓库，**如需再分发或商用，请自行核对其原始授权条款**；`texture/*.tres` 材质与场景文件均为本项目原创。
 
-`fonts/ShareTechMono-Regular.ttf` 为 Share Tech Mono 字体，`fonts/Caveat-Bold.ttf` 为 Caveat 字体，`fonts/VT323-Regular.ttf` 为 VT323 字体，均遵循 SIL Open Font License 1.1；完整许可见 `fonts/OFL-ShareTechMono.txt`、`fonts/OFL-Caveat.txt` 和 `fonts/OFL-VT323.txt`。
+`fonts/ShareTechMono-Regular.ttf` 为 Share Tech Mono 字体，`fonts/Caveat-Bold.ttf` 为 Caveat 字体，`fonts/SourceSans3-VariableFont_wght.ttf` 为 Source Sans 3 字体，`fonts/VT323-Regular.ttf` 为 VT323 字体，均遵循 SIL Open Font License 1.1；完整许可见 `fonts/OFL-ShareTechMono.txt`、`fonts/OFL-Caveat.txt`、`fonts/OFL-SourceSans3.txt` 和 `fonts/OFL-VT323.txt`。
 
 ## License
 
 代码以 [MIT License](LICENSE) 开源，随便用，不必打招呼。
 
-需要说明的是，MIT 只覆盖本仓库中的原创部分（脚本、场景、材质资源等）；`texture/` 下的第三方贴图与 `fonts/` 下的 Share Tech Mono、Caveat、VT323 仍遵循其原始授权条款，不在 MIT 覆盖范围内。
+需要说明的是，MIT 只覆盖本仓库中的原创部分（脚本、场景、材质资源等）；`texture/` 下的第三方贴图与 `fonts/` 下的 Share Tech Mono、Caveat、Source Sans 3、VT323 仍遵循其原始授权条款，不在 MIT 覆盖范围内。
 
 ---
 

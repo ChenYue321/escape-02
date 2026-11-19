@@ -53,7 +53,12 @@ var _records: Array[String] = []
 var _started_executables: Dictionary = {}
 var _corridor: Node3D
 var _corridor_collision: CollisionObject3D
+var _storage_room: Node3D
+var _corridor_extra_collisions: Array[CollisionObject3D] = []
+var _corridor_extra_layers: Array[int] = []
+var _corridor_extra_masks: Array[int] = []
 var _hanging_sign: Node
+var _player: Node
 var _action_normal: StyleBoxFlat
 var _action_hover: StyleBoxFlat
 
@@ -337,6 +342,8 @@ func _start_environment_operation() -> void:
 	_corridor_operating = true
 	_apply_corridor_state(true)
 	_started_executables[exe_name] = true
+	if _player != null and _player.has_method("mark_executable_executed"):
+		_player.call("mark_executable_executed", exe_name)
 	_object_count += 1
 	_update_object_count()
 	_set_main_row_visible(true)
@@ -375,7 +382,27 @@ func _ensure_corridor() -> void:
 	if _corridor == null:
 		return
 	_corridor_collision = _corridor.find_child("CorridorCollision", true, false) as CollisionObject3D
+	_corridor_extra_collisions.clear()
+	_corridor_extra_layers.clear()
+	_corridor_extra_masks.clear()
+	for node in _corridor.find_children("*", "CollisionObject3D", true, false):
+		var body := node as CollisionObject3D
+		if body == null or body == _corridor_collision:
+			continue
+		_corridor_extra_collisions.append(body)
+		_corridor_extra_layers.append(body.collision_layer)
+		_corridor_extra_masks.append(body.collision_mask)
+	_storage_room = SceneNodes.find(scene, SceneNodes.STORAGE_ROOM, false) as Node3D
+	if _storage_room != null:
+		for node in _storage_room.find_children("*", "CollisionObject3D", true, false):
+			var body := node as CollisionObject3D
+			if body == null:
+				continue
+			_corridor_extra_collisions.append(body)
+			_corridor_extra_layers.append(body.collision_layer)
+			_corridor_extra_masks.append(body.collision_mask)
 	_hanging_sign = SceneNodes.find(scene, SceneNodes.HANGING_SIGN, false)
+	_player = SceneNodes.find(scene, SceneNodes.CHARACTER, false)
 	_apply_corridor_state(_corridor_operating)
 
 
@@ -388,6 +415,12 @@ func _apply_corridor_state(enabled: bool) -> void:
 	if _corridor_collision != null:
 		_corridor_collision.collision_layer = 1 if enabled else 0
 		_corridor_collision.collision_mask = 1 if enabled else 0
+	for i in range(_corridor_extra_collisions.size()):
+		var body := _corridor_extra_collisions[i]
+		body.collision_layer = _corridor_extra_layers[i] if enabled else 0
+		body.collision_mask = _corridor_extra_masks[i] if enabled else 0
+	if _storage_room != null:
+		_storage_room.visible = enabled
 	if _hanging_sign != null and _hanging_sign.has_method("set_corridor_visible"):
 		_hanging_sign.call("set_corridor_visible", enabled)
 

@@ -97,6 +97,8 @@ var _spawn_rotation_y: float = 0.0
 var _falling: bool = false
 ## 掉下去过几次，用来决定播哪一条旁白
 var _fall_count: int = 0
+## 运行过的可执行文件名（用于改变掉入虚空时的彩蛋规则）
+var _executed_executables: Dictionary = {}
 ## 彩蛋房间的实例 / 当前是否在里面
 var _easter_egg: Node3D = null
 var _in_easter_egg: bool = false
@@ -601,6 +603,7 @@ func _load_cues(cues_path: String) -> Array:
 
 ## 掉出世界：放语音、广播信号，等语音播完再黑屏回到出生点。
 ## 期间玩家一直在往下坠，这正是想要的效果。
+## 如果已经运行过 corridor_1.exe，则不再触发彩蛋旁白/彩蛋房间，只回房间。
 func _start_fall() -> void:
 	_falling = true
 
@@ -610,7 +613,8 @@ func _start_fall() -> void:
 		_falling = false
 		return
 
-	var line := _current_fall_line()
+	var skip_easter_egg := has_executable_executed("corridor_1.exe")
+	var line := -1 if skip_easter_egg else _current_fall_line()
 	if line >= 0:
 		_play_voice(fall_voices[line], fall_cue_paths[line] if line < fall_cue_paths.size() else "")
 		if line == 0 and fall_voices[line] != null:
@@ -618,7 +622,7 @@ func _start_fall() -> void:
 
 	fell_out_of_world.emit()
 
-	# 有旁白就等它说完；没有旁白的那几次按固定时长
+	# 有旁白就等它说完；没有旁白/跳过彩蛋时按固定时长
 	var voice := get_node_or_null("FallVoice") as AudioStreamPlayer
 	if line >= 0 and voice != null and voice.playing:
 		await voice.finished
@@ -629,8 +633,9 @@ func _start_fall() -> void:
 	if fade != null:
 		await fade.fade_to_black(0.8)
 
-	# 第二次坠落 = 彩蛋：进房间而不是回出生点
-	if _fall_count == 1 and easter_egg_scene != null:
+	# 第二次坠落 = 彩蛋：进房间而不是回出生点。
+	# 运行过 corridor_1.exe 后，这条分支永远跳过。
+	if not skip_easter_egg and _fall_count == 1 and easter_egg_scene != null:
 		_enter_easter_egg()
 		_falling = false
 		_fall_count += 1
@@ -735,6 +740,16 @@ func leave_easter_egg() -> void:
 		await _leave_easter_egg()
 
 
+## 记录一个可执行文件已经被玩家运行过（用于后续彩蛋规则）。
+func mark_executable_executed(exe_name: String) -> void:
+	if not exe_name.is_empty():
+		_executed_executables[exe_name] = true
+
+
+func has_executable_executed(exe_name: String) -> bool:
+	return _executed_executables.has(exe_name)
+
+
 ## 存档：把当前位姿交给 SaveGame。彩蛋房间里保存的是主房间出生点，
 ## 坐在凳子上时保存坐下前的位置，避免读档后卡在凳子高度。
 func capture_save() -> Dictionary:
@@ -748,7 +763,12 @@ func capture_save() -> Dictionary:
 	elif _seated:
 		pos = _saved_position
 		yaw = _saved_rotation_y
-	return {"position": pos, "yaw": yaw, "pitch": pitch}
+	return {
+		"position": pos,
+		"yaw": yaw,
+		"pitch": pitch,
+		"executed_executables": _executed_executables.keys(),
+	}
 
 
 ## 读档：站直、恢复位姿，并把复活点也挪到这里
@@ -757,6 +777,11 @@ func apply_save(data: Dictionary) -> void:
 	_falling = false
 	_seated = false
 	_crouching = false
+	_executed_executables.clear()
+	var executed = data.get("executed_executables", [])
+	if executed is Array:
+		for exe_name in executed:
+			_executed_executables[str(exe_name)] = true
 
 	if _collision.shape is CapsuleShape3D:
 		var capsule := _collision.shape as CapsuleShape3D
