@@ -756,7 +756,7 @@ func capture_save() -> Dictionary:
 	var pos := global_position
 	var yaw := rotation.y
 	var pitch := _camera.rotation.x
-	if _in_easter_egg:
+	if _in_easter_egg or _falling:
 		pos = _spawn_position
 		yaw = _spawn_rotation_y
 		pitch = 0.0
@@ -789,9 +789,17 @@ func apply_save(data: Dictionary) -> void:
 		_collision.position.y = _stand_capsule_height * 0.5
 
 	_camera.position.y = _stand_eye_height
-	global_position = data.get("position", _spawn_position)
-	rotation.y = float(data.get("yaw", _spawn_rotation_y))
-	_camera.rotation.x = clampf(float(data.get("pitch", 0.0)), -deg_to_rad(pitch_limit), deg_to_rad(pitch_limit))
+	var target_pos: Vector3 = data.get("position", _spawn_position)
+	var target_yaw := float(data.get("yaw", _spawn_rotation_y))
+	var target_pitch := float(data.get("pitch", 0.0))
+	# 旧存档可能把掉落途中的负高度写进来：回到场景默认出生点，避免一读档就继续掉。
+	if target_pos.y < -1.0:
+		target_pos = _spawn_position
+		target_yaw = _spawn_rotation_y
+		target_pitch = 0.0
+	global_position = target_pos
+	rotation.y = target_yaw
+	_camera.rotation.x = clampf(target_pitch, -deg_to_rad(pitch_limit), deg_to_rad(pitch_limit))
 	velocity = Vector3.ZERO
 
 	_spawn_position = global_position

@@ -39,6 +39,7 @@
   - 两扇门底部都加了 2 cm 高的门底密封条，关闭时不会从门缝漏光
   - 走廊 `CorridorCollision` 六面都有碰撞：地面、天花板、左右墙、远端墙，以及靠房间门一端的墙；门洞留 1.1 × 2.1 m，碰撞体本身不可见
   - 走廊左侧 `Corridor Wall 2a / 2b` 在走廊三分之一处（`z = 14`）开了一扇门，门挂在 `Storage Room/Storage Room Door` 下，复制房间门的双面把手和开关门操作；墙体和碰撞在门洞处断开
+  - `corridor_1.exe` 运行而 `storage_room.exe` 未启用时，门洞由 `Corridor 1/Storage Door Block` 的两块补墙封住：下段 1.5 m 沿用 2b 抹灰、上段 0.6 m 沿用 2a 白色灰泥，接缝与现有墙面对齐，并带独立碰撞；`storage_room.exe` 启用后补墙隐藏、门和门牌出现
   - `Storage Room` 外壳：内部 x 约 -12～-2.5 m、z 约 10.55～17.45 m、墙高 3.4 m；地板/天花板/四面墙和门口门槛都有碰撞，外壳与走廊一起显示/隐藏
   - 外壳的墙/地板/天花板接缝做了 1 cm 的隐藏搭接（只在墙体内部重叠，内表面仍齐平），避免三面交接处出现针孔漏光
   - Storage Room 门牌 `Storage Room/Door plate` 使用程序化拉丝铁皮纹理 + Source Sans 3 文字贴图（`texture/door/storage_room_plate.png`），四角带螺钉和压边
@@ -77,16 +78,20 @@
   - 所有设置即时生效并写进 `user://settings.cfg`；相机 FOV / 曝光 / 反转 Y / 蹲下方式在进入游戏时由 `player.gd` 读取，字幕底衬和 `CROSSHAIR` 样式由 `hud.gd` 读取
   - 相机取景由 `menu.gd` 的导出参数控制：`camera_position` / `camera_target` / `camera_fov`
 - **暂停菜单**：游戏里按 `Esc` 打开 `PauseMenu`（`CanvasLayer`，layer 100），`RESUME / SETTING / EXIT`，背后压一层半透明灰罩；`SETTING` 直接复用主菜单的设置页（`settings_only` 模式，不建 3D 背景）。推镜过场期间暂停被临时禁用，进入屏幕内容后恢复可用
-- **单存档**：暂停菜单的 `EXIT` 把玩家位姿、两盏灯和门的状态写进 `user://save.cfg`，然后回标题页；标题页检测到存档才生成 `CONTINUE`，按下读回。游戏里直接关窗口（`Cmd+Q` / 红叉）也会先落一份档。没有多存档槽，`START` 会清掉旧档
+- **单存档**：暂停菜单的 `EXIT` 把玩家位姿、两盏房间灯、Storage Room 顶灯、两扇门、Corridor/Storage Room 的运行状态、执行文件/记录/计数写进 `user://save.cfg`，然后回标题页；标题页检测到存档才生成 `CONTINUE`，按下读回。游戏里直接关窗口（`Cmd+Q` / 红叉）也会先落一份档。没有多存档槽，`START` 会清掉旧档
+  - 读档时先恢复 Corridor/Storage Room 的可见性和碰撞，再把玩家放回保存位置，所以站在 corridor 或 Storage Room 里存档，Continue 后不会消失/掉落
+  - 旧存档没有环境段时按玩家 x/z 推断区域；如果存档是在掉落途中写的（y 为负），会把玩家放回该区域地面，区域外回默认出生点，避免重复掉落
+  - 通用扩展：环境/执行文件状态以 `FacilityUI` 的状态字典整体保存；所有 `HandleHit` 门和 `lamp_switch.gd` 灯自动按场景路径存取；新房间的特殊物件加入 `save_state` 组并实现 `capture_save` / `apply_save` 即可，不用改 `save_game.gd`
   - 进入屏幕内容前也会先存一次；在屏幕里退出再 `CONTINUE`，会回到坐下之前的房间（屏幕内容始终在主场景里，不再有独立的黑屏场景）
 - **镜头覆盖层**：`HUD/Camera Filter` 是常驻的轻量全屏 CanvasItem 着色器（`shaders/camera_filter.gdshader`）——只保留很淡的暗角、静态颗粒和轻微去饱和；没有鱼眼、色差、扫描线、走带抖动或跟踪带，避免 3D 眩晕
 - **贴近屏幕**：坐上凳子、把视线停在显示器屏幕上并保持 **1.5 秒**——前 1.5 秒只有显示器屏幕自身慢慢变亮，相机不推进、画面不扭曲（视角仍然自由，移开就会中断）；中途移开视线或起身，屏幕亮度会在 0.25 秒内退回去。满 1.5 秒后相机在 2.8 秒内推近到「显示器屏幕占画面高度约 85%」的距离：显示器边框、桌面和房间边缘仍然看得见。随后显示器材质切换成 `SubViewport` 里的 2D 雪花 → CRT，全程不切换场景
 - **屏幕内部**：`screen_void.tscn` 现在是 `SubViewport` 里的 **1152×836** 内容（1.378:1，和 3D 显示器屏幕的 0.31 × 0.225 m 一致），不是全屏 2D 场景：雪花先退成黑色（显示器底噪同步淡出，CRT 通电时完全静音），再"通电"成一块绿色 CRT，带扫描线、暗角和轻微球面弯曲；CRT 断电、雪花回来时底噪同步淡入。它被直接贴到 3D 显示器屏幕上，所以房间和显示器边框一直都在。屏幕里是 `FACILITY CONTROL` 主页面：左上标题、右上设备本地时间/日期（精确到秒）、三张圆角文件夹卡片、`EXECUTABLES` / `0 OBJECTS`、底部 `NODE STATUS: OPERATIONAL`。鼠标会在屏幕放大后释放；悬停卡片时黑色底和绿色标注互换；双击卡片后，两条分割线之间的内容淡出，标题下方显示打开的文件夹名；文件夹名左侧的 `<` 单击可返回上一层。离开提示使用和起身提示同一套 HUD 字幕（底部，5 秒）；暂停菜单仍然用主场景的。按住 `Shift` 原地倒放：CRT 断电 → 雪花回来 → 相机退回坐姿 → 人站起来。2D 排版直接在 `ScreenVoid` 的 1152×836 画布上做，比例固定；屏幕高度占比由 `Character/ScreenTrance` 的 `close_up_screen_height` 控制。
   - 右下角分割线下方常驻红色圆点 + `Unauthorized access`，亮 1.5 秒、熄 0.5 秒循环；电脑页面出现时会从「亮」重新开始
-  - `ENVIRONMENT` 文件夹里显示 `corridor_1.exe`，下面有一条比底部主分割线更短、更淡的次分割线；文件行周围有一个不可见矩形悬停区（比次分割线略长，上下留出空隙），悬停时整行绿底黑字反色；`PROCESSES` 暂时为空
-  - 双击 `corridor_1.exe` 会播放 `[.]` 到 `[......]` 三遍，随后变为 `[OPERATING]`，主页面计数 0→1；返回主页面后 `EXECUTABLES` 下方出现该文件行和 `DISABLE` 小框，点击小框同样播放加载动画后变为 `ENABLE`
+  - `ENVIRONMENT` 文件夹里默认显示 `corridor_1.exe`；它首次运行后，下面会多出一行 `storage_room.exe`，两行文件下方共有那条比底部主分割线更短、更淡的次分割线；文件行周围有不可见矩形悬停区，悬停时整行绿底黑字反色；`PROCESSES` 暂时为空
+  - 双击 `corridor_1.exe` 会播放 `[.]` 到 `[......]` 三遍，随后变为 `[OPERATING]`，主页面计数 0→1，`EXECUTABLES` 下方出现该文件行和 `DISABLE` 小框，点击小框同样播放加载动画后变为 `ENABLE`；`storage_room.exe` 同样会播放加载动画并变为 `[OPERATING]`，计数 1→2，主页面再出现第二行
   - `RECORDS` 按操作记录 `[date][time] XXX.exe ...`：首次启动 / `Disabled` / `Enabled`，时间取运行设备本地时间；文件名从当前文件行读取，方便以后增加其他可执行文件
   - `corridor_1.exe` 和场景里的 `Corridor 1` 绑定：默认 `Corridor 1` 隐藏且没有碰撞，走出门会直接掉落；首次显示 `[OPERATING]` 时 `Corridor 1` 出现；主页面 `DISABLE` 隐藏视觉和碰撞并清掉 Environment 的 `[OPERATING]`，`ENABLE` 恢复
+  - `storage_room.exe` 和场景里的 `Storage Room` 绑定：只有 `corridor_1.exe` 处于 `[OPERATING]` 时才出现在 `ENVIRONMENT` 里；双击运行后 `Storage Room` 出现，顶灯亮起、所有碰撞恢复，主页面出现第二行和独立的 `DISABLE/ENABLE`；它不控制 `Corridor 1`。一旦出现过的 exe 行都不会再消失；`Corridor 1` 的 `DISABLE` 会把 `Storage Room` 藏起来，但 storage 行保留，右侧状态和主页面按钮变成红色 `[ERROR]` 且不可交互；重新 `ENABLE` corridor 后按钮恢复 `ENABLE`，但 Storage Room 仍保持关闭，直到再次启用
   - 门上的 `Don't Open`：第一条下落彩蛋语音触发前完全隐藏；触发后 `Corridor 1` 不可见时整块牌子出现，`Corridor 1` 可见时只保留钉子
 - **彩蛋房间**：第二次坠落时玩家会被送进 `Scenes/escape01_room.tscn`。房间实例化在 `(2000, 0, 0)` 的独立空间里，不与主场景重叠；原场景的 18 个网格各有凸包碰撞体，展台和按钮另有自己的碰撞
   - **睁眼之后**才开始播放 `audio/voice/easter_01.mp3`（旁白吐槽这个房间），**说完之后**房间中央才升起展台：金色底座 + 黑漆柱 + 发光红环 + 红色亮面按钮

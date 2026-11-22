@@ -368,6 +368,18 @@ size = Vector3(0.1, 1.5, 19.45)
 [sub_resource type="BoxMesh" id="BoxMesh_corridor_wall_2_header"]
 size = Vector3(0.1, 0.9, 1.1)
 
+[sub_resource type="BoxMesh" id="BoxMesh_storage_door_block_lower"]
+size = Vector3(0.1, 1.5, 1.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_storage_door_block_upper"]
+size = Vector3(0.1, 0.6, 1.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_storage_door_block_lower"]
+size = Vector3(0.1, 1.5, 1.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_storage_door_block_upper"]
+size = Vector3(0.1, 0.6, 1.1)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_storage_plate_metal"]
 albedo_color = Color(0.45, 0.47, 0.49, 1)
 metallic = 0.5
@@ -1122,6 +1134,31 @@ mesh = SubResource("BoxMesh_corridor_wall_2_near")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 0.75, 24.275)
 material_override = ExtResource("41_plaster")
 mesh = SubResource("BoxMesh_corridor_wall_2_far")
+
+[node name="Storage Door Block" type="Node3D" parent="Corridor 1" unique_id=205000401]
+visible = false
+
+[node name="Lower" type="MeshInstance3D" parent="Corridor 1/Storage Door Block" unique_id=205000402]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 0.75, 14)
+material_override = ExtResource("41_plaster")
+mesh = SubResource("BoxMesh_storage_door_block_lower")
+
+[node name="Upper" type="MeshInstance3D" parent="Corridor 1/Storage Door Block" unique_id=205000403]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 1.8, 14)
+material_override = ExtResource("3_344ge")
+mesh = SubResource("BoxMesh_storage_door_block_upper")
+
+[node name="Collision" type="StaticBody3D" parent="Corridor 1/Storage Door Block" unique_id=205000404]
+collision_layer = 1
+collision_mask = 1
+
+[node name="Lower" type="CollisionShape3D" parent="Corridor 1/Storage Door Block/Collision" unique_id=205000405]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 0.75, 14)
+shape = SubResource("BoxShape3D_storage_door_block_lower")
+
+[node name="Upper" type="CollisionShape3D" parent="Corridor 1/Storage Door Block/Collision" unique_id=205000406]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 1.8, 14)
+shape = SubResource("BoxShape3D_storage_door_block_upper")
 
 [node name="Storage Room" type="Node3D" parent="." unique_id=2026975173]
 

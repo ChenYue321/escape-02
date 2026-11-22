@@ -11,6 +11,7 @@ const MONTHS := ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
 const FILE_NORMAL_COLOR := Color(0.514, 0.851, 0.584, 1.0)
 const FILE_HOVER_COLOR := Color(0.0275, 0.0627, 0.0353, 1.0)
 const GREEN := Color(0.271, 0.659, 0.353, 1.0)
+const ERROR_RED := Color(0.92, 0.28, 0.25, 1.0)
 
 ## 打开/返回时，卡片内容和标题副标题用完全相同的时长，保证同时结束
 const FOLDER_OPEN_FADE := 0.5
@@ -25,6 +26,10 @@ const FOLDER_CLOSE_FADE := 0.35
 @onready var _file_hover: ColorRect = $FolderContent/FileHover
 @onready var _file_name: Label = $FolderContent/FileName
 @onready var _file_status: Label = $FolderContent/FileStatus
+@onready var _storage_file_hover: ColorRect = $FolderContent/StorageFileHover
+@onready var _storage_file_name: Label = $FolderContent/StorageFileName
+@onready var _storage_file_status: Label = $FolderContent/StorageFileStatus
+@onready var _sub_divider: ColorRect = $FolderContent/SubDivider
 @onready var _subtitle: Label = $FolderSubtitle
 @onready var _back: Label = $BackButton
 @onready var _access_status: Control = $AccessStatus
@@ -39,15 +44,27 @@ const FOLDER_CLOSE_FADE := 0.35
 @onready var _main_action_box: Panel = $Content/MainActionBox
 @onready var _main_action_label: Label = $Content/MainActionBox/Label
 @onready var _main_sub_divider: ColorRect = $Content/MainSubDivider
+@onready var _storage_main_hover: ColorRect = $Content/StorageMainFileHover
+@onready var _storage_main_file_name: Label = $Content/StorageMainFileName
+@onready var _storage_main_action_box: Panel = $Content/StorageMainActionBox
+@onready var _storage_main_action_label: Label = $Content/StorageMainActionBox/Label
+@onready var _storage_main_sub_divider: ColorRect = $Content/StorageMainSubDivider
 
 var _last_second: int = -1
 var _opened: bool = false
 var _file_hovered: bool = false
 var _main_hovered: bool = false
 var _main_row_visible: bool = false
+var _storage_file_hovered: bool = false
+var _storage_main_hovered: bool = false
+var _storage_main_row_visible: bool = false
 var _file_loading: bool = false
+var _storage_loading: bool = false
 var _main_action_loading: bool = false
+var _storage_action_loading: bool = false
 var _corridor_operating: bool = false
+var _storage_operating: bool = false
+var _storage_row_revealed: bool = false
 var _object_count: int = 0
 var _records: Array[String] = []
 var _started_executables: Dictionary = {}
@@ -57,10 +74,20 @@ var _storage_room: Node3D
 var _corridor_extra_collisions: Array[CollisionObject3D] = []
 var _corridor_extra_layers: Array[int] = []
 var _corridor_extra_masks: Array[int] = []
+var _storage_collisions: Array[CollisionObject3D] = []
+var _storage_collision_layers: Array[int] = []
+var _storage_collision_masks: Array[int] = []
+var _storage_lights: Array[Light3D] = []
+var _storage_light_visible: Array[bool] = []
+var _storage_door_block: Node3D
+var _storage_door_body: CollisionObject3D
+var _storage_door_layer: int = 1
+var _storage_door_mask: int = 1
 var _hanging_sign: Node
 var _player: Node
 var _action_normal: StyleBoxFlat
 var _action_hover: StyleBoxFlat
+var _action_error: StyleBoxFlat
 
 
 func _ready() -> void:
@@ -95,8 +122,12 @@ func _refresh() -> void:
 func appear() -> void:
 	visible = true
 	_ensure_corridor()
-	_reset_page()
 	_apply_corridor_state(_corridor_operating)
+	_apply_storage_room_state(_storage_operating)
+	_reset_page()
+	_refresh_file_rows()
+	_refresh_main_rows()
+	_sync_main_actions()
 	if _access_status != null and _access_status.has_method("restart_blink"):
 		_access_status.call("restart_blink")
 	modulate.a = 0.0
@@ -119,22 +150,34 @@ func set_pointer(uv) -> void:
 	if uv == null:
 		_clear_hover()
 		_set_file_hover(false)
+		_set_storage_file_hover(false)
 		_set_main_hover(false)
+		_set_storage_main_hover(false)
 		return
 
 	var pos := Vector2(float(uv.x), float(uv.y)) * size
 	if _opened:
 		_clear_hover()
 		_set_main_hover(false)
+		_set_storage_main_hover(false)
 		var over_file := _folder_content.visible and _file_hover.get_global_rect().has_point(pos)
+		var over_storage := _folder_content.visible and _storage_file_name.visible \
+			and not _storage_file_error() \
+			and _storage_file_hover.get_global_rect().has_point(pos)
 		_set_file_hover(over_file)
+		_set_storage_file_hover(over_storage)
 		return
 
 	_set_file_hover(false)
+	_set_storage_file_hover(false)
 	var over_main := _main_row_visible and _main_hover.get_global_rect().has_point(pos)
+	var over_storage_main := _storage_main_row_visible and not _storage_action_error() \
+		and _storage_main_hover.get_global_rect().has_point(pos)
 	_set_main_hover(over_main)
+	_set_storage_main_hover(over_storage_main)
 	for card in _cards:
-		card.call("set_hovered", not over_main and card.get_global_rect().has_point(pos))
+		card.call("set_hovered", not over_main and not over_storage_main \
+			and card.get_global_rect().has_point(pos))
 
 
 ## 鼠标点击：
@@ -146,11 +189,17 @@ func handle_click(uv: Vector2, double_click: bool) -> void:
 		if _back.visible and _is_back_hit(pos):
 			_close_folder()
 		elif double_click and _folder_content.visible and _file_hover.get_global_rect().has_point(pos):
-			_start_environment_operation()
+			_start_environment_operation("corridor_1.exe")
+		elif double_click and _folder_content.visible and _storage_file_name.visible \
+			and _storage_file_hover.get_global_rect().has_point(pos):
+			_start_environment_operation("storage_room.exe")
 		return
 
 	if _main_row_visible and _main_action_box.get_global_rect().has_point(pos):
-		_start_main_action()
+		_start_main_action(false)
+		return
+	if _storage_main_row_visible and _storage_main_action_box.get_global_rect().has_point(pos):
+		_start_main_action(true)
 		return
 
 	if not double_click:
@@ -184,6 +233,55 @@ func get_object_count() -> int:
 	return _object_count
 
 
+## 存档：当前环境/执行文件状态，读档时由 SaveGame 在玩家位姿之前套用。
+func capture_save() -> Dictionary:
+	return {
+		"corridor_operating": _corridor_operating,
+		"storage_operating": _storage_operating,
+		"storage_row_revealed": _storage_row_revealed,
+		"started_executables": _started_executables.keys(),
+		"object_count": _object_count,
+		"records": _records.duplicate(),
+	}
+
+
+func apply_save(data: Dictionary) -> void:
+	_started_executables.clear()
+	for exe_name in data.get("started_executables", []):
+		_started_executables[str(exe_name)] = true
+
+	_corridor_operating = bool(data.get("corridor_operating", false))
+	_storage_operating = bool(data.get("storage_operating", false)) and _corridor_operating
+	_storage_row_revealed = bool(data.get(
+		"storage_row_revealed",
+		_corridor_operating or _storage_operating or _started_executables.has("storage_room.exe")
+	))
+	_object_count = int(data.get("object_count", _started_executables.size()))
+	_records.clear()
+	var records = data.get("records", [])
+	if records is Array:
+		for line in records:
+			_records.append(str(line))
+
+	_ensure_corridor()
+	_apply_corridor_state(_corridor_operating)
+	_apply_storage_room_state(_storage_operating)
+	_refresh_file_rows()
+	_refresh_main_rows()
+	_sync_main_actions()
+	_update_object_count()
+	_refresh_records_ui()
+
+
+## 存档恢复 Storage Room 顶灯开关：记住开关状态，房间未显示时保持灯灭。
+func apply_storage_light_state(on: bool) -> void:
+	for i in range(_storage_light_visible.size()):
+		_storage_light_visible[i] = on
+	var room_on := _storage_room != null and _storage_room.visible
+	for i in range(_storage_lights.size()):
+		_storage_lights[i].visible = room_on and on
+
+
 func _build_action_styles() -> void:
 	_action_normal = StyleBoxFlat.new()
 	_action_normal.bg_color = FILE_HOVER_COLOR
@@ -194,14 +292,19 @@ func _build_action_styles() -> void:
 	_action_hover = _action_normal.duplicate() as StyleBoxFlat
 	_action_hover.bg_color = GREEN
 	_action_hover.border_color = FILE_HOVER_COLOR
+	_action_error = _action_normal.duplicate() as StyleBoxFlat
+	_action_error.border_color = ERROR_RED
 	_main_action_box.add_theme_stylebox_override("panel", _action_normal)
+	_storage_main_action_box.add_theme_stylebox_override("panel", _action_normal)
 
 
 func _open_folder(folder_name: String) -> void:
 	_opened = true
 	_clear_hover()
 	_set_file_hover(false)
+	_set_storage_file_hover(false)
 	_set_main_hover(false)
+	_set_storage_main_hover(false)
 	_subtitle.text = folder_name
 	_subtitle.visible = true
 	_subtitle.modulate.a = 0.0
@@ -217,13 +320,10 @@ func _open_folder(folder_name: String) -> void:
 	if show_records:
 		_refresh_records_ui()
 	if show_folder_content:
-		_file_status.visible = _corridor_operating or _file_loading
-		if _corridor_operating and not _file_loading:
-			_file_status.text = "[OPERATING]"
-		elif not _file_loading:
-			_file_status.text = ""
+		_refresh_file_rows()
 	else:
 		_file_status.visible = false
+		_storage_file_status.visible = false
 
 	var t := create_tween()
 	t.tween_property(_content, "modulate:a", 0.0, FOLDER_OPEN_FADE) \
@@ -244,7 +344,9 @@ func _reset_page() -> void:
 	_opened = false
 	_clear_hover()
 	_set_file_hover(false)
+	_set_storage_file_hover(false)
 	_set_main_hover(false)
+	_set_storage_main_hover(false)
 	_content.modulate.a = 1.0
 	_subtitle.visible = false
 	_subtitle.text = ""
@@ -256,7 +358,8 @@ func _reset_page() -> void:
 	_records_content.visible = false
 	_records_content.modulate.a = 0.0
 	_update_object_count()
-	_set_main_row_visible(_object_count > 0)
+	_refresh_main_rows()
+	_sync_main_actions()
 
 
 func _close_folder() -> void:
@@ -264,7 +367,9 @@ func _close_folder() -> void:
 		return
 	_opened = false
 	_set_file_hover(false)
+	_set_storage_file_hover(false)
 	_set_main_hover(false)
+	_set_storage_main_hover(false)
 	var t := create_tween()
 	t.tween_property(_content, "modulate:a", 1.0, FOLDER_CLOSE_FADE) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -302,6 +407,22 @@ func _set_file_hover(hovered: bool) -> void:
 	_file_status.add_theme_color_override("font_color", color)
 
 
+func _set_storage_file_hover(hovered: bool) -> void:
+	if _storage_file_error():
+		_storage_file_hovered = false
+		_storage_file_hover.visible = false
+		_storage_file_name.add_theme_color_override("font_color", FILE_NORMAL_COLOR)
+		_storage_file_status.add_theme_color_override("font_color", ERROR_RED)
+		return
+	if _storage_file_hovered == hovered:
+		return
+	_storage_file_hovered = hovered
+	_storage_file_hover.visible = hovered
+	var color := FILE_HOVER_COLOR if hovered else FILE_NORMAL_COLOR
+	_storage_file_name.add_theme_color_override("font_color", color)
+	_storage_file_status.add_theme_color_override("font_color", color)
+
+
 func _set_main_row_visible(visible_now: bool) -> void:
 	_main_row_visible = visible_now
 	_main_hover.visible = false
@@ -312,6 +433,18 @@ func _set_main_row_visible(visible_now: bool) -> void:
 	_main_file_name.add_theme_color_override("font_color", FILE_NORMAL_COLOR)
 	_main_action_label.add_theme_color_override("font_color", FILE_NORMAL_COLOR)
 	_main_action_box.add_theme_stylebox_override("panel", _action_normal)
+
+
+func _set_storage_main_row_visible(visible_now: bool) -> void:
+	_storage_main_row_visible = visible_now
+	_storage_main_hover.visible = false
+	_storage_main_hovered = false
+	_storage_main_file_name.visible = visible_now
+	_storage_main_sub_divider.visible = visible_now
+	_storage_main_action_box.visible = visible_now
+	_storage_main_file_name.add_theme_color_override("font_color", FILE_NORMAL_COLOR)
+	_storage_main_action_label.add_theme_color_override("font_color", FILE_NORMAL_COLOR)
+	_storage_main_action_box.add_theme_stylebox_override("panel", _action_normal)
 
 
 func _set_main_hover(hovered: bool) -> void:
@@ -325,13 +458,81 @@ func _set_main_hover(hovered: bool) -> void:
 	_main_action_box.add_theme_stylebox_override("panel", _action_hover if hovered else _action_normal)
 
 
+func _set_storage_main_hover(hovered: bool) -> void:
+	if _storage_action_error():
+		_storage_main_hovered = false
+		_storage_main_hover.visible = false
+		_storage_main_file_name.add_theme_color_override("font_color", FILE_NORMAL_COLOR)
+		_storage_main_action_label.add_theme_color_override("font_color", ERROR_RED)
+		_storage_main_action_box.add_theme_stylebox_override("panel", _action_error)
+		return
+	if _storage_main_hovered == hovered:
+		return
+	_storage_main_hovered = hovered
+	_storage_main_hover.visible = _storage_main_row_visible and hovered
+	var color := FILE_HOVER_COLOR if hovered else FILE_NORMAL_COLOR
+	_storage_main_file_name.add_theme_color_override("font_color", color)
+	_storage_main_action_label.add_theme_color_override("font_color", color)
+	_storage_main_action_box.add_theme_stylebox_override("panel", _action_hover if hovered else _action_normal)
+
+
 func _update_object_count() -> void:
 	_object_count_label.text = "%d OBJECTS" % _object_count
 
 
-func _start_environment_operation() -> void:
-	var exe_name := _file_name.text
-	if _started_executables.has(exe_name) or _file_loading:
+func _refresh_main_rows() -> void:
+	_set_main_row_visible(_started_executables.has("corridor_1.exe"))
+	_set_storage_main_row_visible(_started_executables.has("storage_room.exe"))
+
+
+func _storage_file_error() -> bool:
+	return _storage_row_revealed and not _corridor_operating
+
+
+func _storage_action_error() -> bool:
+	return _started_executables.has("storage_room.exe") and not _corridor_operating
+
+
+func _sync_main_actions() -> void:
+	if not _main_action_loading:
+		_main_action_label.text = "DISABLE" if _corridor_operating else "ENABLE"
+	if _storage_action_loading:
+		return
+	if _storage_action_error():
+		_storage_main_action_label.text = "[ERROR]"
+		_storage_main_action_label.add_theme_color_override("font_color", ERROR_RED)
+		_storage_main_action_box.add_theme_stylebox_override("panel", _action_error)
+	else:
+		_storage_main_action_label.text = "DISABLE" if _storage_operating else "ENABLE"
+		_storage_main_action_label.add_theme_color_override("font_color", FILE_NORMAL_COLOR)
+		_storage_main_action_box.add_theme_stylebox_override("panel", _action_normal)
+
+
+func _start_environment_operation(exe_name: String) -> void:
+	if _started_executables.has(exe_name):
+		return
+	if exe_name == "storage_room.exe":
+		if not _corridor_operating or _file_loading or _storage_loading:
+			return
+		_storage_loading = true
+		_append_record(exe_name, "started for the first time")
+		_storage_file_status.visible = true
+		_storage_file_status.text = "[.]"
+		await _animate_dots(_storage_file_status, "[OPERATING]")
+		_storage_loading = false
+		_storage_operating = true
+		_apply_storage_room_state(true)
+		_started_executables[exe_name] = true
+		if _player != null and _player.has_method("mark_executable_executed"):
+			_player.call("mark_executable_executed", exe_name)
+		_object_count += 1
+		_update_object_count()
+		_refresh_file_rows()
+		_refresh_main_rows()
+		_sync_main_actions()
+		return
+
+	if exe_name != "corridor_1.exe" or _file_loading or _storage_loading:
 		return
 	_file_loading = true
 	_append_record(exe_name, "started for the first time")
@@ -340,16 +541,44 @@ func _start_environment_operation() -> void:
 	await _animate_dots(_file_status, "[OPERATING]")
 	_file_loading = false
 	_corridor_operating = true
+	_storage_row_revealed = true
 	_apply_corridor_state(true)
+	_apply_storage_room_state(_storage_operating)
 	_started_executables[exe_name] = true
 	if _player != null and _player.has_method("mark_executable_executed"):
 		_player.call("mark_executable_executed", exe_name)
 	_object_count += 1
 	_update_object_count()
-	_set_main_row_visible(true)
+	_refresh_file_rows()
+	_refresh_main_rows()
+	_sync_main_actions()
 
 
-func _start_main_action() -> void:
+func _start_main_action(storage: bool) -> void:
+	if _file_loading or _storage_loading:
+		return
+	if storage:
+		if _storage_action_loading or not _storage_main_row_visible or _storage_action_error():
+			return
+		var exe_name := _storage_main_file_name.text
+		var current_text := _storage_main_action_label.text
+		var event_text := "Disabled" if current_text == "DISABLE" else "Enabled"
+		var next_text := "ENABLE" if current_text == "DISABLE" else "DISABLE"
+		if current_text == "DISABLE":
+			_storage_operating = false
+			_apply_storage_room_state(false)
+		else:
+			if not _corridor_operating:
+				return
+			_storage_operating = true
+			_apply_storage_room_state(true)
+		_append_record(exe_name, event_text)
+		_storage_action_loading = true
+		await _animate_dots(_storage_main_action_label, next_text)
+		_storage_action_loading = false
+		_refresh_file_rows()
+		return
+
 	if _main_action_loading or not _main_row_visible:
 		return
 	var exe_name := _main_file_name.text
@@ -358,18 +587,20 @@ func _start_main_action() -> void:
 	var next_text := "ENABLE" if current_text == "DISABLE" else "DISABLE"
 	if current_text == "DISABLE":
 		_corridor_operating = false
+		_storage_operating = false
 		_apply_corridor_state(false)
-		_file_status.visible = false
+		_apply_storage_room_state(false)
 	else:
 		_corridor_operating = true
 		_apply_corridor_state(true)
-		if _folder_content.visible:
-			_file_status.visible = true
-			_file_status.text = "[OPERATING]"
+		_apply_storage_room_state(false)
 	_append_record(exe_name, event_text)
 	_main_action_loading = true
 	await _animate_dots(_main_action_label, next_text)
 	_main_action_loading = false
+	_refresh_file_rows()
+	_refresh_main_rows()
+	_sync_main_actions()
 
 
 func _ensure_corridor() -> void:
@@ -382,28 +613,50 @@ func _ensure_corridor() -> void:
 	if _corridor == null:
 		return
 	_corridor_collision = _corridor.find_child("CorridorCollision", true, false) as CollisionObject3D
+	_storage_door_block = _corridor.find_child("Storage Door Block", true, false) as Node3D
+	_storage_door_body = null
+	if _storage_door_block != null:
+		_storage_door_body = _storage_door_block.get_node_or_null("Collision") as CollisionObject3D
+	if _storage_door_body != null:
+		_storage_door_layer = _storage_door_body.collision_layer
+		_storage_door_mask = _storage_door_body.collision_mask
 	_corridor_extra_collisions.clear()
 	_corridor_extra_layers.clear()
 	_corridor_extra_masks.clear()
 	for node in _corridor.find_children("*", "CollisionObject3D", true, false):
 		var body := node as CollisionObject3D
-		if body == null or body == _corridor_collision:
+		if body == null or body == _corridor_collision or body == _storage_door_body:
 			continue
 		_corridor_extra_collisions.append(body)
 		_corridor_extra_layers.append(body.collision_layer)
 		_corridor_extra_masks.append(body.collision_mask)
 	_storage_room = SceneNodes.find(scene, SceneNodes.STORAGE_ROOM, false) as Node3D
 	if _storage_room != null:
+		_storage_collisions.clear()
+		_storage_collision_layers.clear()
+		_storage_collision_masks.clear()
 		for node in _storage_room.find_children("*", "CollisionObject3D", true, false):
 			var body := node as CollisionObject3D
 			if body == null:
 				continue
-			_corridor_extra_collisions.append(body)
-			_corridor_extra_layers.append(body.collision_layer)
-			_corridor_extra_masks.append(body.collision_mask)
+			_storage_collisions.append(body)
+			_storage_collision_layers.append(body.collision_layer)
+			_storage_collision_masks.append(body.collision_mask)
+		_storage_lights.clear()
+		_storage_light_visible.clear()
+		for node in _storage_room.find_children("*", "Light3D", true, false):
+			var light := node as Light3D
+			if light == null:
+				continue
+			_storage_lights.append(light)
+			_storage_light_visible.append(light.visible)
 	_hanging_sign = SceneNodes.find(scene, SceneNodes.HANGING_SIGN, false)
 	_player = SceneNodes.find(scene, SceneNodes.CHARACTER, false)
 	_apply_corridor_state(_corridor_operating)
+	_apply_storage_room_state(_storage_operating)
+	_refresh_file_rows()
+	_refresh_main_rows()
+	_sync_main_actions()
 
 
 func _apply_corridor_state(enabled: bool) -> void:
@@ -419,10 +672,62 @@ func _apply_corridor_state(enabled: bool) -> void:
 		var body := _corridor_extra_collisions[i]
 		body.collision_layer = _corridor_extra_layers[i] if enabled else 0
 		body.collision_mask = _corridor_extra_masks[i] if enabled else 0
-	if _storage_room != null:
-		_storage_room.visible = enabled
 	if _hanging_sign != null and _hanging_sign.has_method("set_corridor_visible"):
 		_hanging_sign.call("set_corridor_visible", enabled)
+
+
+func _apply_storage_room_state(enabled: bool) -> void:
+	if _storage_room == null:
+		return
+	var on := enabled and _corridor_operating
+	if not on and _storage_room.visible:
+		for i in range(_storage_lights.size()):
+			_storage_light_visible[i] = _storage_lights[i].visible
+	_storage_room.visible = on
+	for i in range(_storage_lights.size()):
+		_storage_lights[i].visible = _storage_light_visible[i] if on else false
+	for i in range(_storage_collisions.size()):
+		var body := _storage_collisions[i]
+		body.collision_layer = _storage_collision_layers[i] if on else 0
+		body.collision_mask = _storage_collision_masks[i] if on else 0
+	var block_on := _corridor_operating and not on
+	if _storage_door_block != null:
+		_storage_door_block.visible = block_on
+	if _storage_door_body != null:
+		_storage_door_body.collision_layer = _storage_door_layer if block_on else 0
+		_storage_door_body.collision_mask = _storage_door_mask if block_on else 0
+
+
+func _refresh_file_rows() -> void:
+	if _corridor_operating:
+		_storage_row_revealed = true
+	var show_storage := _storage_row_revealed
+	_storage_file_name.visible = show_storage
+	if show_storage and not _corridor_operating:
+		_storage_file_status.visible = true
+		_storage_file_status.text = "[ERROR]"
+		_storage_file_status.add_theme_color_override("font_color", ERROR_RED)
+		_set_storage_file_hover(false)
+	elif show_storage:
+		_storage_file_status.visible = _storage_operating or _storage_loading
+		if _storage_file_status.visible:
+			if _storage_operating and not _storage_loading:
+				_storage_file_status.text = "[OPERATING]"
+			_storage_file_status.add_theme_color_override("font_color", FILE_NORMAL_COLOR)
+		elif not _storage_loading:
+			_storage_file_status.text = ""
+	else:
+		_storage_file_status.visible = false
+		_storage_file_status.text = ""
+	_sub_divider.offset_top = 266.0 if show_storage else 206.0
+	_sub_divider.offset_bottom = 268.0 if show_storage else 208.0
+
+	_file_status.visible = _corridor_operating or _file_loading
+	if _file_status.visible:
+		if _corridor_operating and not _file_loading:
+			_file_status.text = "[OPERATING]"
+	elif not _file_loading:
+		_file_status.text = ""
 
 
 func _timestamp() -> String:
