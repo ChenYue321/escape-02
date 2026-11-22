@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "File Cabinet Dark Interior"
+albedo_color = Color(0.055, 0.06, 0.065, 1)
+metallic = 0.1
+roughness = 0.72

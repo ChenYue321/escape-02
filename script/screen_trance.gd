@@ -255,7 +255,7 @@ func _cancel_charge() -> void:
 	_canceling = false
 
 
-## 只改屏幕材质的 charge_glow，不动 VHS / 相机 / 视野
+## 只改屏幕材质的 charge_glow，不动 Camera Filter / 相机 / 视野
 func _set_charge_glow(v: float) -> void:
 	_charge_glow = clampf(v, 0.0, 1.0)
 	if _static_material is ShaderMaterial:

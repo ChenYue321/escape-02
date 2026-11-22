@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://texture/cabinet/cabinet_label.png" id="1_label"]
+
+[resource]
+resource_name = "File Cabinet Label Paper"
+albedo_texture = ExtResource("1_label")
+roughness = 0.82
+texture_filter = 1

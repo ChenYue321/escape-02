@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://texture/cardboard/cardboard_outer.png" id="1_outer"]
+
+[resource]
+resource_name = "Cardboard Outer"
+albedo_texture = ExtResource("1_outer")
+roughness = 0.9
+metallic_specular = 0.15
+texture_filter = 1

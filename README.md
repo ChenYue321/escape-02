@@ -40,9 +40,19 @@
   - 走廊 `CorridorCollision` 六面都有碰撞：地面、天花板、左右墙、远端墙，以及靠房间门一端的墙；门洞留 1.1 × 2.1 m，碰撞体本身不可见
   - 走廊左侧 `Corridor Wall 2a / 2b` 在走廊三分之一处（`z = 14`）开了一扇门，门挂在 `Storage Room/Storage Room Door` 下，复制房间门的双面把手和开关门操作；墙体和碰撞在门洞处断开
   - `Storage Room` 外壳：内部 x 约 -12～-2.5 m、z 约 10.55～17.45 m、墙高 3.4 m；地板/天花板/四面墙和门口门槛都有碰撞，外壳与走廊一起显示/隐藏
+  - 外壳的墙/地板/天花板接缝做了 1 cm 的隐藏搭接（只在墙体内部重叠，内表面仍齐平），避免三面交接处出现针孔漏光
   - Storage Room 门牌 `Storage Room/Door plate` 使用程序化拉丝铁皮纹理 + Source Sans 3 文字贴图（`texture/door/storage_room_plate.png`），四角带螺钉和压边
+  - Storage Room 顶灯 `Storage Room/Storage Room Ceiling/Storage Light`：0.5 m 方形发光面板 + 0.8 能量 / 6.5 m 范围的暖色顶灯；开关挂在 `Corridor Wall 2a Far` 朝向 Storage Room 的一侧（节点本身在 `Storage Room/Storage Light Switch` 下），位置在门内左手边，初始打开
+  - Storage Room 档案柜 `Storage Room/File Cabinet`：可复用预制体 `Scenes/props/file_cabinet.tscn`，模型本体是单个 `ArrayMesh`（10 个材质面），白漆柜体 + 三层关闭抽屉 + 最下层拉开的彩色档案夹；柜体和拉开抽屉各有一块碰撞
+  - Storage Room 大型档案柜 `Storage Room/Large File Cabinet`：可复用预制体 `Scenes/props/file_cabinet_large.tscn`，同一套白漆/镀铬/标签/档案夹材质；单个 `ArrayMesh`（10 个材质面）做成 2 列 × 4 层共 8 个抽屉，左下拉开露出彩色档案，柜体和拉出抽屉各有一块碰撞
+  - Storage Room 4×6 档案墙 `Storage Room/File Cabinet 4x6`：可复用预制体 `Scenes/props/file_cabinet_4x6.tscn`，4 列 × 6 层共 24 个抽屉、全部关闭；单个 `ArrayMesh`（4 个材质面）复用同一套白漆/镀铬/标签材质，柜体一块碰撞，放在远端墙前
+  - Storage Room 纸箱三态：`Scenes/props/cardboard_box_sealed.tscn` / `cardboard_box_half_open.tscn` / `cardboard_box_open.tscn`，约 0.46 m（18 英寸）立方；半开是长边两片打开、短边两片关闭（闭合两片在中线留 4 cm 缝，开口两片底边贴合箱口），全开四片都翻到外侧；每个都是单个 `ArrayMesh`，带一块柜体碰撞，程序化瓦楞纸贴图和半透明封箱带
+  - Storage Room 打印纸堆：`Storage Room/Paper Pile`，文件柜顶上一叠 A4 打印纸（约 0.21 × 0.30 m，40 层，顶层一张微微歪斜），单个 `ArrayMesh` + 一块盒形碰撞，程序化白色纸纤维贴图
   - 电脑和台灯各有独立碰撞：电脑机箱 / 显示器 / 键盘，台灯底座 / 支杆 / 灯罩，都不能再穿过去
 - **门**：`Initial Room/Door` —— 后墙拆成三段留出 1.1 × 2.1 m 门洞，含门框、门板、三只铰链、把手与门头灯
+  - 共用门体制成 `Scenes/props/door_common.tscn`（门框、门板、合页、把手、门底密封、HandleHit 和随门转动的 Hanging Sign）
+  - `Initial Room/Door` 是一个 Node3D 包装层：内含 `Door Common` 实例，外加 Door Lamp / Door Lamp Glow / Door Light；`Storage Room/Storage Room Door` 同样用包装层，但只放 `Door Common`
+  - Character 的外部信号路径已改为 `Initial Room/Door/Door Common/DoorPivot/...`
   - **可开关**：对着任意一面的把手按 `E`，把手先绕自身轴转 45°，随后整扇门绕合页竖轴向外推开 110°；门开着时再次交互，把手先转回，再把门关回 0°
   - 按下 `E` 的同时播放 `audio/sfx/door_knob.mp3`，录音开头的静音已剪掉，所以咔哒声和把手转动是同步的
   - **每次从虚空被送回，门都会自动关回原位**（把手归零、恢复可交互）
@@ -69,7 +79,7 @@
 - **暂停菜单**：游戏里按 `Esc` 打开 `PauseMenu`（`CanvasLayer`，layer 100），`RESUME / SETTING / EXIT`，背后压一层半透明灰罩；`SETTING` 直接复用主菜单的设置页（`settings_only` 模式，不建 3D 背景）。推镜过场期间暂停被临时禁用，进入屏幕内容后恢复可用
 - **单存档**：暂停菜单的 `EXIT` 把玩家位姿、两盏灯和门的状态写进 `user://save.cfg`，然后回标题页；标题页检测到存档才生成 `CONTINUE`，按下读回。游戏里直接关窗口（`Cmd+Q` / 红叉）也会先落一份档。没有多存档槽，`START` 会清掉旧档
   - 进入屏幕内容前也会先存一次；在屏幕里退出再 `CONTINUE`，会回到坐下之前的房间（屏幕内容始终在主场景里，不再有独立的黑屏场景）
-- **VHS 覆盖层**：`HUD/VHS` 是一个常驻的全屏 CanvasItem 着色器（`shaders/vhs.gdshader`）——轻微扫描线、色差、抖动、跟踪带、暗角和鱼眼；平时很淡。贴近屏幕的过程不再把 VHS 参数推到满，避免视线扭曲
+- **镜头覆盖层**：`HUD/Camera Filter` 是常驻的轻量全屏 CanvasItem 着色器（`shaders/camera_filter.gdshader`）——只保留很淡的暗角、静态颗粒和轻微去饱和；没有鱼眼、色差、扫描线、走带抖动或跟踪带，避免 3D 眩晕
 - **贴近屏幕**：坐上凳子、把视线停在显示器屏幕上并保持 **1.5 秒**——前 1.5 秒只有显示器屏幕自身慢慢变亮，相机不推进、画面不扭曲（视角仍然自由，移开就会中断）；中途移开视线或起身，屏幕亮度会在 0.25 秒内退回去。满 1.5 秒后相机在 2.8 秒内推近到「显示器屏幕占画面高度约 85%」的距离：显示器边框、桌面和房间边缘仍然看得见。随后显示器材质切换成 `SubViewport` 里的 2D 雪花 → CRT，全程不切换场景
 - **屏幕内部**：`screen_void.tscn` 现在是 `SubViewport` 里的 **1152×836** 内容（1.378:1，和 3D 显示器屏幕的 0.31 × 0.225 m 一致），不是全屏 2D 场景：雪花先退成黑色（显示器底噪同步淡出，CRT 通电时完全静音），再"通电"成一块绿色 CRT，带扫描线、暗角和轻微球面弯曲；CRT 断电、雪花回来时底噪同步淡入。它被直接贴到 3D 显示器屏幕上，所以房间和显示器边框一直都在。屏幕里是 `FACILITY CONTROL` 主页面：左上标题、右上设备本地时间/日期（精确到秒）、三张圆角文件夹卡片、`EXECUTABLES` / `0 OBJECTS`、底部 `NODE STATUS: OPERATIONAL`。鼠标会在屏幕放大后释放；悬停卡片时黑色底和绿色标注互换；双击卡片后，两条分割线之间的内容淡出，标题下方显示打开的文件夹名；文件夹名左侧的 `<` 单击可返回上一层。离开提示使用和起身提示同一套 HUD 字幕（底部，5 秒）；暂停菜单仍然用主场景的。按住 `Shift` 原地倒放：CRT 断电 → 雪花回来 → 相机退回坐姿 → 人站起来。2D 排版直接在 `ScreenVoid` 的 1152×836 画布上做，比例固定；屏幕高度占比由 `Character/ScreenTrance` 的 `close_up_screen_height` 控制。
   - 右下角分割线下方常驻红色圆点 + `Unauthorized access`，亮 1.5 秒、熄 0.5 秒循环；电脑页面出现时会从「亮」重新开始
@@ -93,6 +103,7 @@
   - 屏幕是**绿色荧光无信号雪花屏**：`shaders/crt_static.gdshader` 程序化生成噪点 + 扫描线 + 滚动亮带 + 暗角；色调取自 GREEN PHOSPHOR 参考但整体调深：暗部 `#071009`、主体 `#45A85A`、亮部 `#83D995`
   - **会不定时抽一下**：`Desk/Computer/Monitor` 挂 `crt_flicker.gd`，只驱动屏幕着色器的 `brightness`（不照亮周围）。脚本里还留了可选的 `light_path`，指一盏灯就能连它一起闪
 - **台灯**：灯罩、支架、底座 + `SpotLight3D`
+  - 可复用预制体：`Scenes/props/desk_lamp.tscn`；主场景以 `Lamp` 实例挂在 `Initial Room/Desk` 下
 - **第一人称控制器**：`Character`（`CharacterBody3D`）+ 胶囊碰撞体 + `script/player.gd`，相机位于 1.6 m 眼高
 - **凳子**：`Stool`（紧贴桌前，凳沿与桌沿相距 10 cm，人挤不过去）——凳面用桌面木纹材质、凳腿用桌腿材质，无靠背；按 `E` 平滑坐下，坐着时只能转视角（仍可对别的东西按 `E`），按 `Shift` 平滑起身；坐下后把视线停在屏幕上并保持 1.5 秒会触发屏幕过场
 - **交互焦点**：`HUD/UIRoot/Crosshair`（`CanvasLayer` + 自绘 `Control`），默认 `FOCUS` 档**平时完全不显示**；视线落到可交互物上时，标记才在物体表面浮出（小圆点 + 细环，带淡入和跟随），提示文字贴在标记旁边
@@ -205,7 +216,7 @@ escape-02/
 ├── shaders/
 │   ├── iris_fade.gdshader # 转场用：从中心张开的椭圆黑幕
 │   ├── crt_static.gdshader # 显示器雪花屏
-│   ├── vhs.gdshader       # 全屏 VHS：扫描线 / 色差 / 抖动 / 鱼眼
+│   ├── camera_filter.gdshader # 轻量镜头覆盖层：暗角 / 静态颗粒 / 去饱和
 │   ├── snow_2d.gdshader   # 屏幕内部用的 2D 雪花
 │   ├── void_crt.gdshader  # 屏幕内部的 CRT：荧光屏 / 扫描线 / 球面弯曲
 │   └── screen_ui.gdshader # 把 SubViewport 贴到 3D 显示器屏幕

@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://texture/paper/printer_paper.png" id="1_paper"]
+
+[resource]
+resource_name = "Printer Paper"
+albedo_texture = ExtResource("1_paper")
+roughness = 0.96
+metallic_specular = 0.05
+texture_filter = 1

@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://texture/cabinet/cabinet_paint.png" id="1_paint"]
+
+[resource]
+resource_name = "File Cabinet Paint"
+albedo_texture = ExtResource("1_paint")
+metallic = 0.18
+metallic_specular = 0.4
+roughness = 0.42
+texture_filter = 1

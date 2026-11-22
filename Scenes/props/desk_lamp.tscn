@@ -1,0 +1,187 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://Scenes/lamp_shade_open.tres" id="1_t3hkm"]
+[ext_resource type="Script" path="res://script/lamp_switch.gd" id="2_nehxg"]
+[ext_resource type="AudioStream" path="res://audio/sfx/switch_on.mp3" id="3_47vbl"]
+[ext_resource type="AudioStream" path="res://audio/sfx/switch_off.mp3" id="4_jm6q6"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_base"]
+height = 0.06
+radius = 0.16
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_stem"]
+height = 0.4
+radius = 0.04
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lamp_shade"]
+height = 0.16
+radius = 0.18
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_shade"]
+albedo_color = Color(0.54, 0.55, 0.58, 1)
+metallic = 0.05
+roughness = 0.52
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_344ge"]
+top_radius = 0.02
+bottom_radius = 0.02
+height = 0.05
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ecx3r"]
+resource_local_to_scene = true
+cull_mode = 1
+albedo_color = Color(0.86, 0.8, 0.7, 1)
+roughness = 0.72
+emission_enabled = true
+emission = Color(1, 0.86, 0.72, 1)
+emission_energy_multiplier = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7ierq"]
+resource_local_to_scene = true
+albedo_color = Color(1, 0.93, 0.8, 1)
+roughness = 0.4
+emission_enabled = true
+emission = Color(1, 0.75, 0.45, 1)
+emission_energy_multiplier = 3.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_lamp_bulb"]
+radius = 0.013
+height = 0.026
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_switch"]
+radius = 0.16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_metal"]
+albedo_color = Color(0.7, 0.71, 0.73, 1)
+metallic = 0.05
+roughness = 0.46
+
+[sub_resource type="TorusMesh" id="TorusMesh_lamp_rim"]
+inner_radius = 0.058
+outer_radius = 0.068
+
+[sub_resource type="SphereMesh" id="SphereMesh_lamp_joint"]
+radius = 0.016
+height = 0.032
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_collar"]
+top_radius = 0.03
+bottom_radius = 0.048
+height = 0.05
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_arm_a"]
+top_radius = 0.007
+bottom_radius = 0.007
+height = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_arm_b"]
+top_radius = 0.007
+bottom_radius = 0.007
+height = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_base"]
+albedo_color = Color(0.53, 0.54, 0.57, 1)
+metallic = 0.05
+roughness = 0.55
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3xxii"]
+top_radius = 0.15
+bottom_radius = 0.15
+height = 0.01
+
+[node name="Lamp" type="Node3D" unique_id=1249673965]
+
+[node name="LampCollision" type="StaticBody3D" parent="." unique_id=204839405]
+
+[node name="Base" type="CollisionShape3D" parent="LampCollision" unique_id=204839406]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+visible = false
+shape = SubResource("CylinderShape3D_lamp_base")
+
+[node name="Stem" type="CollisionShape3D" parent="LampCollision" unique_id=204839407]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.23, 0)
+visible = false
+shape = SubResource("CylinderShape3D_lamp_stem")
+
+[node name="Shade" type="CollisionShape3D" parent="LampCollision" unique_id=204839408]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+visible = false
+shape = SubResource("CylinderShape3D_lamp_shade")
+
+[node name="Lampshade" type="Node3D" parent="." unique_id=305833023]
+transform = Transform3D(0.8301945, 0.39278173, -0.39560038, 0.012588946, 0.69624037, 0.71769816, 0.55733204, -0.60080934, 0.57307005, -0.06726992, 0.4187225, 0.100144625)
+
+[node name="Lampshade Part1" type="MeshInstance3D" parent="Lampshade" unique_id=1474303448]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_lamp_shade")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_344ge")
+
+[node name="Lampshade Part2" type="MeshInstance3D" parent="Lampshade" unique_id=760010785]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, 5.9604645e-08, 1, 0, -0.09945917, 1.1920929e-07)
+material_override = SubResource("StandardMaterial3D_lamp_shade")
+cast_shadow = 0
+mesh = ExtResource("1_t3hkm")
+
+[node name="Lampshade Inner" type="MeshInstance3D" parent="Lampshade" unique_id=1906720153]
+transform = Transform3D(0.972, 0, 0, 0, 0.972, 0, 0, 0, 0.972, 0, -0.09945917, 0)
+material_override = SubResource("StandardMaterial3D_ecx3r")
+cast_shadow = 0
+mesh = ExtResource("1_t3hkm")
+
+[node name="Bulb" type="MeshInstance3D" parent="Lampshade" unique_id=479128957]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.082, 0)
+material_override = SubResource("StandardMaterial3D_7ierq")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_lamp_bulb")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lampshade" unique_id=1110801615]
+transform = Transform3D(0.991899, -0.09943, 0.079059, -0.060621, 0.176421, 0.982446, 0.111633, 0.97928, -0.168964, 0, -0.086, 0)
+visible = false
+light_energy = 1.5
+light_size = 0.06
+shadow_enabled = true
+spot_range = 4.5
+spot_attenuation = 1.1
+spot_angle = 70.0
+
+[node name="LampSwitch" type="StaticBody3D" parent="Lampshade" unique_id=1674171989]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("2_nehxg")
+sound_on = ExtResource("3_47vbl")
+sound_off = ExtResource("4_jm6q6")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lampshade/LampSwitch" unique_id=645397426]
+visible = false
+shape = SubResource("SphereShape3D_switch")
+
+[node name="Shade Rim" type="MeshInstance3D" parent="Lampshade" unique_id=408420568]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.09945917, 0)
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+cast_shadow = 0
+mesh = SubResource("TorusMesh_lamp_rim")
+
+[node name="Joint" type="MeshInstance3D" parent="." unique_id=1843501450]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+mesh = SubResource("SphereMesh_lamp_joint")
+
+[node name="Stem Collar" type="MeshInstance3D" parent="." unique_id=279517845]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.035, 0)
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+mesh = SubResource("CylinderMesh_lamp_collar")
+
+[node name="Stand Part1" type="MeshInstance3D" parent="." unique_id=1342424676]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+mesh = SubResource("CylinderMesh_lamp_arm_a")
+
+[node name="Stand Part2" type="MeshInstance3D" parent="." unique_id=800982904]
+transform = Transform3D(0.8303243, -0.4679693, -0.30259916, 0, 0.5429926, -0.8397375, 0.5572805, 0.6972544, 0.45085993, -0.02028192, 0.37263346, 0.030219205)
+material_override = SubResource("StandardMaterial3D_lamp_metal")
+mesh = SubResource("CylinderMesh_lamp_arm_b")
+
+[node name="Base" type="MeshInstance3D" parent="." unique_id=1645553618]
+material_override = SubResource("StandardMaterial3D_lamp_base")
+mesh = SubResource("CylinderMesh_3xxii")
